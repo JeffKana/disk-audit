@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-24T12:00:00+08:00",
+  "scan_root": "C:\\Users\\<user>\\AppData",
+  "totals": {
+    "allocated_bytes": 53860000000,
+    "logical_bytes": 57830000000,
+    "regenerable_subtotal": 1200000000,
+    "regenerable_confirm_subtotal": 3500000000,
+    "skipped_entries": 63
+  },
+  "candidates": [
+    {
+      "path": "C:\\Users\\<user>\\AppData\\Roaming\\Microsoft\\Protect",
+      "logical_bytes": 40960,
+      "allocated_bytes": 40960,
+      "confidence": "受保护",
+      "verdict_source": "硬保护",
+      "evidence_chain": [
+        {
+          "source": "硬保护规则",
+          "content": "DPAPI 密钥目录（Roaming\\Microsoft\\Protect），永久标记'受保护'（方案文末安全边界），硬保护在判定流水线最前短路（9.1 底线一）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\<user>\\AppData\\Roaming\\sun",
+      "logical_bytes": 2048000,
+      "allocated_bytes": 2084864,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "命中知识库条目 sun：旧版 Sun Java(JRE/JDK)，残留候选·高置信，生命周期未知"
+        },
+        {
+          "source": "注册表",
+          "content": "注册表卸载项（HKLM/HKCU × 64/32 位视图）中无匹配的卸载记录"
+        }
+      ],
+      "suggested_action": "A4"
+    },
+    {
+      "path": "C:\\Users\\<user>\\AppData\\Local\\aclos",
+      "logical_bytes": 48234496,
+      "allocated_bytes": 48234496,
+      "confidence": "低",
+      "verdict_source": "启发式",
+      "evidence_chain": [
+        {
+          "source": "启发式",
+          "content": "名称简短、无 exe/无版本信息、目录陈旧（>540 天未修改）；仅启发式兜底命中，归属未知，需人工判断（5.1 低档：不给任何倾向性表述）"
+        }
+      ],
+      "suggested_action": "A5"
+    }
+  ]
+}
