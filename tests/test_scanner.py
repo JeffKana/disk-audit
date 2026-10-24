@@ -1,0 +1,249 @@
+"""T-02（待办 C2，含 W0-C3 切分修正）文件枚举器单元测试。
+
+覆盖验收②：根级文件计入（W0 缺陷①回归夹具）、长路径（>260）、reparse point
+跳过、权限跳过计数（monkeypatch 可控夹具）；另覆盖双口径合计、前沿并行路径、
+CLI JSON 摘要与异常输入。
+"""
+from __future__ import annotations
+
+import json
+import os
+import stat as stat_mod
+import subprocess
+import sys
+import types
+
+import pytest
+
+from disk_audit import scanner
+from disk_audit.__main__ import main as cli_main
+from disk_audit.scanner import scan_path
+
+
+def _write(path, size: int) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(b"x" * size)
+
+
+class _FakeIter:
+    """模拟 os.scandir 返回的迭代器（支持 with 语法）。"""
+
+    def __init__(self, items):
+        self._iter = iter(items)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self._iter)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc_info):
+        return False
+
+
+class _FakeEntry:
+    def __init__(self, path: str, is_dir: bool, size: int = 0, stat_error: OSError | None = None):
+        self.path = path
+        self._is_dir = is_dir
+        self._size = size
+        self._stat_error = stat_error
+
+    def stat(self, follow_symlinks: bool = False):
+        if self._stat_error is not None:
+            raise self._stat_error
+        mode = (stat_mod.S_IFDIR if self._is_dir else stat_mod.S_IFREG) | 0o644
+        return types.SimpleNamespace(st_mode=mode, st_size=self._size, st_file_attributes=0)
+
+
+# ---------- 验收②：根级文件计入（W0 缺陷①回归） ----------
+
+
+def test_root_level_files_counted(tmp_path):
+    """W0 缺陷①回归：并行切分曾漏算"前沿之上"的根级文件（全盘曾少算 14.76GB）。"""
+    _write(tmp_path / "top.bin", 100)
+    _write(tmp_path / "sub" / "inner.bin", 200)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.files == 2
+    assert result.stats.logical_bytes == 300
+
+
+def test_only_root_level_files(tmp_path):
+    _write(tmp_path / "a.bin", 1)
+    _write(tmp_path / "b.bin", 2)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.files == 2
+    assert result.stats.dirs == 1  # 仅根目录自身
+
+
+def test_dirs_counted_including_root(tmp_path):
+    _write(tmp_path / "f.bin", 1)
+    _write(tmp_path / "a" / "b" / "deep.bin", 2)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.dirs == 3  # 根 + a + b
+    assert result.stats.files == 2
+
+
+def test_parallel_frontier_path(tmp_path):
+    """子目录数达到 min_parts(workers*3) 触发前沿切分，走线程池路径。"""
+    for i in range(8):
+        _write(tmp_path / f"d{i}" / "x.bin", 10)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.frontier_parts == 8
+    assert result.stats.files == 8
+    assert result.stats.logical_bytes == 80
+    assert result.stats.dirs == 9  # 根 + 8 个子目录
+
+
+# ---------- 验收②：长路径（>260） ----------
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows 长路径夹具")
+def test_long_path_counted(tmp_path):
+    deep = tmp_path
+    for _ in range(6):
+        deep = deep / ("L" * 40)  # 6 层 × 40 字符，叠加 tmp 前缀必超 260
+    os.makedirs("\\\\?\\" + str(deep), exist_ok=True)
+    with open("\\\\?\\" + str(deep / "deep.bin"), "wb") as handle:
+        handle.write(b"x" * 64)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.files == 1
+    assert result.stats.logical_bytes == 64
+    assert result.stats.skips.too_long == 0
+
+
+# ---------- 验收②：reparse point 跳过 ----------
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="需要 NTFS junction")
+def test_junction_skipped_and_counted(tmp_path):
+    target = tmp_path / "real"
+    _write(target / "inner.bin", 32)
+    link = tmp_path / "link"
+    proc = subprocess.run(
+        ["cmd", "/c", "mklink", "/J", str(link), str(target)],
+        capture_output=True, text=True, errors="replace",  # cmd 输出为 ANSI 编码
+    )
+    assert proc.returncode == 0, proc.stderr
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.skips.reparse == 1
+    assert result.stats.files == 1  # 仅 real/inner.bin；junction 子树不计
+
+
+# ---------- 验收②：权限跳过计数（monkeypatch 可控夹具） ----------
+
+
+def test_permission_skip_counted(tmp_path, monkeypatch):
+    entries = {
+        str(tmp_path): [
+            _FakeEntry(str(tmp_path / "blocked"), True),
+            _FakeEntry(str(tmp_path / "ok.bin"), False, 7),
+        ],
+        str(tmp_path / "blocked"): None,  # 打开即 PermissionError
+    }
+
+    def fake_scandir(path):
+        if entries.get(path) is None:
+            raise PermissionError(13, "拒绝访问", path)
+        return _FakeIter(entries[path])
+
+    monkeypatch.setattr(scanner, "_scandir", fake_scandir)
+    # 夹具文件并不真实存在，真实占用查询会失败——以替身返回逻辑大小
+    monkeypatch.setattr(scanner, "_allocated_size", lambda path, st: st.st_size)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.skips.permission == 1
+    assert result.stats.files == 1  # 其余扫描不受影响（X-1：继续完成其余扫描）
+    assert result.stats.logical_bytes == 7
+
+
+def test_stat_failure_counted_as_other(tmp_path, monkeypatch):
+    """条目 stat 失败（如扫描间隙被删除）计入 other，不中断。"""
+    entries = {
+        str(tmp_path): [
+            _FakeEntry(str(tmp_path / "gone.bin"), False, 5,
+                       stat_error=OSError(2, "系统找不到指定的文件", str(tmp_path / "gone.bin"))),
+        ],
+    }
+
+    def fake_scandir(path):
+        return _FakeIter(entries[path])
+
+    monkeypatch.setattr(scanner, "_scandir", fake_scandir)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.skips.other == 1
+    assert result.stats.files == 0
+
+
+def test_occupied_error_counted(tmp_path, monkeypatch):
+    """共享冲突（winerror 32）计入 occupied。"""
+    entries = {
+        str(tmp_path): [
+            _FakeEntry(str(tmp_path / "locked.bin"), False, 9,
+                       stat_error=OSError(32, "另一个程序正在使用此文件", "locked.bin")),
+        ],
+    }
+
+    def fake_scandir(path):
+        return _FakeIter(entries[path])
+
+    monkeypatch.setattr(scanner, "_scandir", fake_scandir)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.skips.occupied == 1
+
+
+# ---------- 双口径计量 ----------
+
+
+def test_dual_size_single_file(tmp_path):
+    _write(tmp_path / "one.bin", 5000)  # >1KB 确保非 MFT 驻留，分配量必 ≥ 逻辑大小
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.logical_bytes == 5000
+    if sys.platform == "win32":
+        # 占用空间按簇对齐：不小于逻辑大小（与资源管理器同口径，P1）
+        assert result.stats.allocated_bytes >= 5000
+
+
+def test_empty_file_zero_allocated(tmp_path):
+    _write(tmp_path / "empty.bin", 0)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.logical_bytes == 0
+    assert result.stats.allocated_bytes == 0
+
+
+# ---------- 纯函数与 CLI ----------
+
+
+def test_long_path_prefix():
+    assert scanner._long_path("C:\\a") == "C:\\a"
+    assert scanner._long_path("C:\\" + "a" * 300).startswith("\\\\?\\")
+    assert scanner._long_path("\\\\?\\C:\\a") == "\\\\?\\C:\\a"
+    assert scanner._long_path("\\\\srv\\share\\x").startswith("\\\\?\\UNC\\")
+
+
+def test_cli_scan_outputs_json(tmp_path, capsys):
+    _write(tmp_path / "a.bin", 5)
+    assert cli_main(["scan", str(tmp_path), "--workers", "2"]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["files"] == 1
+    assert payload["entries"] == payload["files"] + payload["dirs"]
+    assert payload["logical_bytes"] == 5
+    assert payload["allocated_bytes"] >= 5
+    assert set(payload["skipped"]) >= {
+        "permission", "occupied", "too_long", "reparse", "other", "total",
+    }
+
+
+def test_cli_scan_bad_path(tmp_path, capsys):
+    assert cli_main(["scan", str(tmp_path / "nope")]) == 2
+
+
+def test_cli_scan_invalid_workers(tmp_path):
+    assert cli_main(["scan", str(tmp_path), "--workers", "0"]) == 2
+
+
+def test_selftest_still_green(capsys):
+    """--selftest 门禁不受 scan 子命令接入影响。"""
+    assert cli_main(["--selftest"]) == 0
+    assert "passed" in capsys.readouterr().out
