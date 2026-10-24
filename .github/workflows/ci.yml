@@ -30,6 +30,9 @@ jobs:
       - name: selftest
         run: python -m disk_audit --selftest
 
+      # 门禁四：import 白名单（运行时零第三方依赖，A4；开发规范 §2、CI-CD 规范 §3 阶段 B）
+      - name: import 白名单门禁
+        run: python tools/check_imports.py
+
       # Sprint 2 接入：
-      #   门禁四 import 白名单（运行时零第三方依赖，Q4）
       #   门禁五 PyInstaller --onedir 构建 + 产物内 import tkinter 断言 + 产物 --selftest
