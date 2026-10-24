@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/JeffKana/disk-audit/knowledge/schema.json",
+  "title": "disk-audit 知识库条目 schema v1",
+  "description": "依据：方案 M1 交付（知识库 500 条）、P10 来源铁律（全部自行整理，不复制 BCU 数据）、《项目治理》§6（来源登记字段与生命周期标注铁律）；待办 E1（任务卡 T-07）。分类枚举沿用调研报告/原型 12 类（docs/upstream/prototype/analyze_appdata.py 第 31~42 行）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "product", "category", "lifecycle", "source"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "目录名（小写）；未来可扩展为正则形态"
+    },
+    "product": {
+      "type": "string",
+      "minLength": 1,
+      "description": "归属产品（人读名称）"
+    },
+    "vendor": {
+      "type": "string",
+      "description": "厂商；未知时为空字符串"
+    },
+    "aliases": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "别名表（同产品的其他目录名/曾用名）"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "系统组件",
+        "兼容链接·严禁删除",
+        "已安装应用",
+        "使用中(无安装记录)",
+        "更新缓存",
+        "开发缓存",
+        "缓存/转储",
+        "游戏数据",
+        "残留候选·高置信",
+        "残留候选·中置信",
+        "残留候选·低置信",
+        "容器(已下钻)"
+      ],
+      "description": "12 类分类，沿用调研报告分类"
+    },
+    "lifecycle": {
+      "type": "string",
+      "enum": ["在用", "已停止", "未知"],
+      "description": "生命周期标注；仅允许登记有公开依据的结论（《项目治理》§6），无依据一律填'未知'"
+    },
+    "regex_family": {
+      "type": ["string", "null"],
+      "description": "正则族指针（如 updater-suffix/hash-name/guid-name），可空"
+    },
+    "source": {
+      "type": "string",
+      "enum": ["本机实测", "公开软件名", "推断"],
+      "description": "来源登记（P10/治理 §6）：本机实测=在本机扫描中观测到；公开软件名=依据公开可查的软件名；推断=经验推断"
+    },
+    "notes": {
+      "type": "string",
+      "description": "备注（含判定说明、置信度等原型遗留信息）"
+    }
+  }
+}
