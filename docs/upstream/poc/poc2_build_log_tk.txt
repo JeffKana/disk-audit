@@ -1,0 +1,71 @@
+186 INFO: PyInstaller: 6.22.3, contrib hooks: 2026.9
+186 INFO: Python: 3.13.5
+210 INFO: Platform: Windows-11-10.0.26200-SP0
+210 INFO: Python environment: C:\Users\querkecor\.workbuddy\binaries\python\envs\tkbuild
+211 INFO: wrote .\poc2_tk.spec
+215 INFO: Removing temporary files and cleaning cache in C:\Users\querkecor\AppData\Local\pyinstaller
+225 INFO: Module search paths (PYTHONPATH):
+['C:\\Users\\querkecor\\.workbuddy\\binaries\\python\\envs\\tkbuild\\Scripts\\pyinstaller.exe',
+ 'D:\\software\\WorkBuddy\\resources\\app.asar.unpacked\\cli\\vendor\\shim',
+ 'D:\\develop\\environment\\python\\python313.zip',
+ 'D:\\develop\\environment\\python\\DLLs',
+ 'D:\\develop\\environment\\python\\Lib',
+ 'D:\\develop\\environment\\python',
+ 'C:\\Users\\querkecor\\.workbuddy\\binaries\\python\\envs\\tkbuild',
+ 'C:\\Users\\querkecor\\.workbuddy\\binaries\\python\\envs\\tkbuild\\Lib\\site-packages',
+ 'C:\\Users\\querkecor\\WorkBuddy\\鐢佃剳纾佺洏娓呯悊澶у笀\\poc']
+770 INFO: checking Analysis
+771 INFO: Building Analysis because Analysis-00.toc is non existent
+771 INFO: Looking for Python shared library...
+771 INFO: Using Python shared library: D:\develop\environment\python\python313.dll
+771 INFO: Running Analysis Analysis-00.toc
+771 INFO: Target bytecode optimization level: 0
+771 INFO: Initializing module dependency graph...
+773 INFO: Initializing module graph hook caches...
+787 INFO: Analyzing modules for base_library.zip ...
+2856 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\Users\\querkecor\\.workbuddy\\binaries\\python\\envs\\tkbuild\\Lib\\site-packages\\PyInstaller\\hooks'
+2985 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\Users\\querkecor\\.workbuddy\\binaries\\python\\envs\\tkbuild\\Lib\\site-packages\\PyInstaller\\hooks'
+3668 INFO: Processing standard module hook 'hook-math.py' from 'C:\\Users\\querkecor\\.workbuddy\\binaries\\python\\envs\\tkbuild\\Lib\\site-packages\\PyInstaller\\hooks'
+5314 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\Users\\querkecor\\.workbuddy\\binaries\\python\\envs\\tkbuild\\Lib\\site-packages\\PyInstaller\\hooks'
+8064 INFO: Caching module dependency graph...
+8091 INFO: Analyzing C:\Users\querkecor\WorkBuddy\鐢佃剳纾佺洏娓呯悊澶у笀\poc\poc2_app.py
+8098 INFO: Processing pre-find-module-path hook 'hook-tkinter.py' from 'C:\\Users\\querkecor\\.workbuddy\\binaries\\python\\envs\\tkbuild\\Lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+8101 INFO: TclTkInfo: initializing cached Tcl/Tk info...
+8713 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\querkecor\\.workbuddy\\binaries\\python\\envs\\tkbuild\\Lib\\site-packages\\PyInstaller\\hooks'
+8796 INFO: Processing module hooks (post-graph stage)...
+8798 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\querkecor\\.workbuddy\\binaries\\python\\envs\\tkbuild\\Lib\\site-packages\\PyInstaller\\hooks'
+8806 INFO: Performing binary vs. data reclassification (927 entries)
+14421 INFO: Looking for ctypes DLLs
+14426 INFO: Analyzing run-time hooks ...
+14427 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'C:\\Users\\querkecor\\.workbuddy\\binaries\\python\\envs\\tkbuild\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+14430 INFO: Including run-time hook 'pyi_rth__tkinter.py' from 'C:\\Users\\querkecor\\.workbuddy\\binaries\\python\\envs\\tkbuild\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+14449 INFO: Creating base_library.zip...
+14468 INFO: Looking for dynamic libraries
+14819 INFO: Extra DLL search directories (AddDllDirectory): []
+14819 INFO: Extra DLL search directories (PATH): []
+15064 INFO: Warnings written to C:\Users\querkecor\WorkBuddy\鐢佃剳纾佺洏娓呯悊澶у笀\poc\build_tk\poc2_tk\warn-poc2_tk.txt
+15078 INFO: Graph cross-reference written to C:\Users\querkecor\WorkBuddy\鐢佃剳纾佺洏娓呯悊澶у笀\poc\build_tk\poc2_tk\xref-poc2_tk.html
+15110 INFO: checking PYZ
+15110 INFO: Building PYZ because PYZ-00.toc is non existent
+15110 INFO: Building PYZ (ZlibArchive) C:\Users\querkecor\WorkBuddy\鐢佃剳纾佺洏娓呯悊澶у笀\poc\build_tk\poc2_tk\PYZ-00.pyz
+15250 INFO: Building PYZ (ZlibArchive) C:\Users\querkecor\WorkBuddy\鐢佃剳纾佺洏娓呯悊澶у笀\poc\build_tk\poc2_tk\PYZ-00.pyz completed successfully.
+15256 INFO: checking PKG
+15256 INFO: Building PKG because PKG-00.toc is non existent
+15256 INFO: Building PKG (CArchive) poc2_tk.pkg
+15281 INFO: Building PKG (CArchive) poc2_tk.pkg completed successfully.
+15282 INFO: Bootloader C:\Users\querkecor\.workbuddy\binaries\python\envs\tkbuild\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+15282 INFO: checking EXE
+15282 INFO: Building EXE because EXE-00.toc is non existent
+15282 INFO: Building EXE from EXE-00.toc
+15282 INFO: Copying bootloader EXE to C:\Users\querkecor\WorkBuddy\鐢佃剳纾佺洏娓呯悊澶у笀\poc\build_tk\poc2_tk\poc2_tk.exe
+15388 INFO: Copying icon to EXE
+15437 INFO: Copying 0 resources to EXE
+15437 INFO: Embedding manifest in EXE
+15448 INFO: Appending PKG archive to EXE
+15576 INFO: Fixing EXE headers
+15830 INFO: Building EXE from EXE-00.toc completed successfully.
+15839 INFO: checking COLLECT
+15839 INFO: Building COLLECT because COLLECT-00.toc is non existent
+15840 INFO: Building COLLECT COLLECT-00.toc
+18265 INFO: Building COLLECT COLLECT-00.toc completed successfully.
+18277 INFO: Build complete! The results are available in: C:\Users\querkecor\WorkBuddy\鐢佃剳纾佺洏娓呯悊澶у笀\poc\dist

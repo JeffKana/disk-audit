@@ -1,0 +1,7 @@
+{
+  "rows": 5000,
+  "file_kb": 1394.5,
+  "gen_seconds": 0.04,
+  "est_dom_nodes": 35040,
+  "path": "C:\\Users\\querkecor\\WorkBuddy\\鐢佃剳纾佺洏娓呯悊澶у笀\\poc\\poc4_bigreport.html"
+}

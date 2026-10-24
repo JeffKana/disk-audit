@@ -1,0 +1,377 @@
+# -*- coding: utf-8 -*-
+"""生成《AppData 残留识别 · 技术选型决策表》HTML（依赖 build_decision.py 中的数据）"""
+import importlib.util, os, sys, io
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+spec = importlib.util.spec_from_file_location("bd", os.path.join(HERE, "build_decision.py"))
+bd = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(bd)
+
+DIMS, WEIGHTS, OPTIONS = bd.DIMS, bd.WEIGHTS, bd.OPTIONS
+SHORT = {"D1": "核心场景", "D2": "开发成本", "D3": "上线周期", "D4": "可维护性", "D5": "扩展性",
+         "D6": "合规/安全", "D7": "供应商锁定", "D8": "License", "D9": "社区活跃", "D10": "学习成本", "D11": "已知风险"}
+
+def wscore(opt, key):
+    w = WEIGHTS[key]["w"]
+    return sum(opt["s"][d] * w[d] for d in w) / 100.0
+
+for k in ("A", "B"):
+    ranked = sorted(OPTIONS, key=lambda o: -wscore(o, k))
+    for i, o in enumerate(ranked):
+        o["rank_" + k] = i + 1
+
+SC = {5: ("#dcfce7", "#166534"), 4: ("#ecfdf5", "#047857"), 3: ("#fef3c7", "#92400e"),
+      2: ("#ffedd5", "#9a3412"), 1: ("#fee2e2", "#991b1b")}
+
+def cell(v):
+    bg, fg = SC[v]
+    return f'<td class="sc" style="background:{bg};color:{fg}">{v}</td>'
+
+def rank_badge(i):
+    m = {1: ("①", "#166534", "#dcfce7"), 2: ("②", "#1d4ed8", "#dbeafe"), 3: ("③", "#6d28d9", "#ede9fe")}
+    if i in m:
+        s, fg, bg = m[i]
+        return f'<span class="rk" style="color:{fg};background:{bg}">{s}</span>'
+    return f'<span class="rk" style="color:#6b7280;background:#f3f4f6">{i}</span>'
+
+CSS = """
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:0; background:#f6f7f9; color:#1f2937;
+    font-family:"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif; font-size:15px; line-height:1.75; }
+  .page { max-width:1180px; margin:0 auto; padding:40px 32px 80px; }
+  header.rpt { border-bottom:3px solid #2563eb; padding-bottom:20px; margin-bottom:28px; }
+  header.rpt h1 { font-size:26px; margin:0 0 10px; color:#111827; }
+  .meta { color:#6b7280; font-size:13px; } .meta span { margin-right:18px; }
+  h2 { font-size:20px; color:#1d4ed8; margin:42px 0 14px; padding-left:10px; border-left:4px solid #2563eb; }
+  h3 { font-size:16px; color:#111827; margin:26px 0 10px; }
+  p { margin:10px 0; }
+  .card { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:18px 22px; margin:14px 0; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+  .tldr { background:#eff6ff; border:1px solid #bfdbfe; }
+  .tldr ol { margin:8px 0 4px; padding-left:22px; } .tldr li { margin:7px 0; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:13.5px; background:#fff; }
+  th { background:#f3f4f6; color:#374151; text-align:left; padding:8px 9px; border:1px solid #e5e7eb; font-weight:600; white-space:nowrap; }
+  td { padding:8px 9px; border:1px solid #e5e7eb; vertical-align:top; }
+  tr:nth-child(even) td { background:#fafafa; }
+  .scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  table.mx { font-size:12.8px; min-width:1080px; }
+  table.mx th, table.mx td { padding:6px 6px; text-align:center; }
+  table.mx td.nm, table.mx th.nm { text-align:left; white-space:nowrap; }
+  table.mx td.sc { font-weight:700; font-variant-numeric:tabular-nums; }
+  table.mx td.tot { font-weight:700; font-variant-numeric:tabular-nums; background:#f8fafc; }
+  .rk { display:inline-block; width:18px; height:18px; line-height:18px; border-radius:50%; font-size:11px; text-align:center; margin-right:5px; }
+  .tag { display:inline-block; font-size:11.5px; padding:1px 8px; border-radius:10px; white-space:nowrap; }
+  .tg { background:#dcfce7; color:#166534; } .ta { background:#fef3c7; color:#92400e; }
+  .tb { background:#dbeafe; color:#1e40af; } .tr2 { background:#fee2e2; color:#991b1b; }
+  .tp { background:#ede9fe; color:#5b21b6; } .tn { background:#e5e7eb; color:#374151; }
+  .num { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .note { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 16px; font-size:13.5px; margin:12px 0; color:#78350f; }
+  .danger { background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:10px 16px; font-size:13.5px; margin:12px 0; color:#7f1d1d; }
+  .okbox { background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px 16px; font-size:13.5px; margin:12px 0; color:#14532d; }
+  .src { font-size:12px; color:#6b7280; }
+  code { background:#f3f4f6; border-radius:4px; padding:1px 6px; font-size:12.8px; font-family:Consolas,"Courier New",monospace; }
+  .chk { color:#b45309; font-weight:600; white-space:nowrap; }
+  .gate { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:14px 0; }
+  .gate .box { background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:10px 14px; font-size:13px; flex:1; min-width:230px; }
+  .gate .box b { color:#1d4ed8; } .gate .box small { display:block; color:#6b7280; font-size:12px; margin-top:3px; }
+  .gate .arw { color:#94a3b8; font-weight:700; }
+  .opt { scroll-margin-top:20px; }
+  .opt h3 { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px; }
+  .opt .sid { font-size:13px; color:#fff; background:#1d4ed8; border-radius:6px; padding:1px 8px; }
+  footer { margin-top:50px; padding-top:16px; border-top:1px solid #e5e7eb; color:#9ca3af; font-size:12.5px; }
+  @media print { body{background:#fff} .page{padding:0} .scroll{overflow:visible} }
+"""
+
+# ---------------- 分数矩阵 ----------------
+mx_head = ['<th class="nm">方案</th>', '<th class="nm">许可/形态</th>']
+mx_head += [f'<th title="{d[1]}">{SHORT[d[0]]}</th>' for d in DIMS]
+mx_head += ['<th>场景A</th>', '<th>场景B</th>']
+
+mx_rows = []
+ordered = sorted(OPTIONS, key=lambda o: (-wscore(o, "A"), -wscore(o, "B")))
+for o in ordered:
+    tds = [f'<td class="nm"><b>{o["id"]}</b>&nbsp;{o["name"]}</td>',
+           f'<td class="nm"><span class="tag {o["tagcls"]}">{o["tag"]}</span></td>']
+    tds += [cell(o["s"][d[0]]) for d in DIMS]
+    tds.append(f'<td class="tot">{wscore(o,"A"):.2f}</td>')
+    tds.append(f'<td class="tot">{wscore(o,"B"):.2f}</td>')
+    mx_rows.append("<tr>" + "".join(tds) + "</tr>")
+
+wt_head = ['<th class="nm">维度</th>', '<th>判分含义</th>']
+wt_head += [f'<th>A</th>', '<th>B</th>']
+wt_rows = []
+for code, name, mean in DIMS:
+    wa, wb = WEIGHTS["A"]["w"][code], WEIGHTS["B"]["w"][code]
+    hi = ' style="background:#eff6ff;font-weight:700;color:#1d4ed8"' if max(wa, wb) >= 12 else ""
+    wt_rows.append(f'<tr><td><b>{name}</b> <span class="src">{code}</span></td><td>{mean}</td>'
+                   f'<td class="num"{hi}>{wa}</td><td class="num"{hi}>{wb}</td></tr>')
+wt_rows.append('<tr><td><b>合计</b></td><td></td><td class="num"><b>100</b></td><td class="num"><b>100</b></td></tr>')
+
+# ---------------- 逐方案依据 ----------------
+opt_blocks = []
+for o in OPTIONS:
+    ra, rb = o["rank_A"], o["rank_B"]
+    rows = "".join(
+        f'<tr><td style="width:150px"><b>{SHORT[c]}</b><br><span class="src">{name}</span></td>'
+        f'{cell(o["s"][c])}<td>{o["r"][c]}</td></tr>'
+        for c, name, _ in DIMS
+    )
+    opt_blocks.append(f"""
+<div class="card opt" id="{o['id']}">
+  <h3><span class="sid">{o['id']}</span>{o['name']}
+      <span class="tag {o['tagcls']}">{o['tag']}</span>
+      <span class="src">场景A {wscore(o,'A'):.2f}（第{ra}）/ 场景B {wscore(o,'B'):.2f}（第{rb}）</span></h3>
+  <table style="font-size:13px">
+    <tr><th style="width:150px">维度</th><th style="width:44px">分</th><th>打分依据（均来自原报告已核事实；未核项标注）</th></tr>
+    {rows}
+  </table>
+</div>""")
+
+HTML = f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AppData 残留识别 · 技术选型决策表</title>
+<style>{CSS}</style>
+</head>
+<body>
+<div class="page">
+
+<header class="rpt">
+  <h1>AppData 残留识别 · 技术选型决策表</h1>
+  <div class="meta">
+    <span>日期：2026-10-23</span>
+    <span>上游依据：《AppData 残留识别：市场调研与自研可行性评估报告》</span>
+    <span>项目：电脑磁盘清理大师</span>
+  </div>
+  <div class="meta" style="margin-top:6px">
+    <span>候选方案：9</span><span>评估维度：11</span><span>加权方案：2 套</span><span>结论：推荐 2 / 备选 2 / 不建议 5</span>
+  </div>
+</header>
+
+<div class="card tldr">
+  <b style="font-size:16px">一页结论</b>
+  <ol>
+    <li><b>先过两道硬门槛，9 个方案只剩 3 个。</b>门槛①"License 允许商用二开"（D8≥4）、门槛②"必须解决存量事后识别"（D1≥4）——同时通过的只有 <b>S1 BCU 直接使用、S6 自研只读分析器、S7 BCU 源码二开</b>。其余方案不是不好，是<b>不满足本项目的硬约束</b>。</li>
+    <li><b>两套权重下 S1 都排第一</b>（场景A 4.37 / 场景B 4.25）。这个结果本身是结论：<b>"用现成" 在当前证据下优于 "自建"</b>，因为 BCU 罕见地同时满足"能力最全 + Apache 2.0 可商用"。</li>
+    <li><b>但 S1 是"工具"不是"资产"。</b>若目标是产品化引擎，S1 只能做<b>能力基线与交叉验证基准</b>，不能作为产品内核；需要自有引擎时，起点是 <b>S6（1~2 周 MVP，89% 自动归属已被实测证明）</b>。</li>
+    <li><b>S7 是"加速器"不是"起点"。</b>Apache 2.0 允许二开，但 C#/.NET 8 中大型代码库的学习成本（D10=2）与分叉同步成本，使其不适合作为第一阶段投入。</li>
+    <li><b>明确不建议：S8 云规则库（合规 D6=1 且不解本项目核心命题）、S4 Total Uninstall（只管未来，对 319 项存量零效力）。</b></li>
+  </ol>
+</div>
+
+<h2>一、评分口径与证据边界</h2>
+<table>
+  <tr><th style="width:150px">项目</th><th>约定</th></tr>
+  <tr><td><b>分数方向</b></td><td>全部维度统一为 <b>5 = 对决策目标最有利</b>。因此"开发成本/上线周期/团队学习成本/已知风险"这 4 项是<b>反向表述</b>：5 分代表成本最低、周期最短、门槛最低、风险最低。</td></tr>
+  <tr><td><b>1~5 含义</b></td><td>5 显著优于同组；4 优于同组；3 中性/可接受；2 明显短板；1 该维度上等于不可用或严重不利。</td></tr>
+  <tr><td><b>证据来源</b></td><td>仅使用上游报告已陈述的事实（BCU 能力与 Apache 2.0、Revo 官方手册的漏报机制、CleanMyPC 2025-04-22 停运、Total Uninstall 快照原理、本机 500 判定单元实测 89% 自动归属等）。<b>未新增外部引用，未做新的资料检索。</b></td></tr>
+  <tr><td><b>不确定标注</b></td><td>凡是上游报告未给出、或报告本身使用了"评价/口碑"类二手中文社区信源的，一律标 <span class="chk">需查官方文档/POC验证</span>，不给"已确认"口径。</td></tr>
+  <tr><td><b>评分性质</b></td><td>分数是<b>决策辅助</b>，不是客观测量。权重变了排序会变——所以下文同时给出两套权重与结论的适用边界。</td></tr>
+</table>
+
+<h2>二、决策逻辑：先筛硬约束，再比加权分</h2>
+<p>11 个维度直接加权容易"平均主义"——高 License 风险会被高分项抵消。本项目有两条<b>不可妥协</b>的硬门槛，先做排除法：</p>
+
+<div class="gate">
+  <div class="box"><b>门槛①　License 可商用二开（D8≥4）</b>
+    <small>产品要能自持演进、能收编进自家代码库。闭源 freeware 与专有商业许可直接出局。</small></div>
+  <div class="arw">→</div>
+  <div class="box"><b>门槛②　解决存量事后识别（D1≥4）</b>
+    <small>本机 319 项历史残留是核心命题。只覆盖"卸载时"或"未来安装"的方案不解决问题。</small></div>
+  <div class="arw">→</div>
+  <div class="box"><b>收敛到 3 个候选</b>
+    <small>S1 BCU 直接使用 / S6 自研分析器 / S7 BCU 源码二开。两条门槛独立筛出的名单完全一致，说明评分与业务约束自洽。</small></div>
+</div>
+
+<table>
+  <tr><th style="width:56px">方案</th><th>门槛①<br>License</th><th>门槛②<br>核心场景</th><th>结论</th></tr>
+  <tr><td><b>S1</b></td><td style="color:#166534"><b>通过</b>（Apache 2.0）</td><td style="color:#166534"><b>通过</b>（最全面）</td><td><span class="tag tg">保留</span></td></tr>
+  <tr><td><b>S6</b></td><td style="color:#166534"><b>通过</b>（自有代码）</td><td style="color:#166534"><b>通过</b>（实测 89%）</td><td><span class="tag tg">保留</span></td></tr>
+  <tr><td><b>S7</b></td><td style="color:#166534"><b>通过</b>（Apache 2.0）</td><td style="color:#166534"><b>通过</b>（继承全量能力）</td><td><span class="tag tg">保留</span></td></tr>
+  <tr><td><b>S2</b></td><td style="color:#991b1b">不通过（闭源 freeware）</td><td style="color:#92400e">弱通过（仅卸载时）</td><td><span class="tag tr2">排除</span></td></tr>
+  <tr><td><b>S3</b></td><td style="color:#991b1b">不通过（专有商业许可）</td><td style="color:#92400e">弱通过（存量需手动补扫）</td><td><span class="tag tr2">排除</span></td></tr>
+  <tr><td><b>S4</b></td><td style="color:#991b1b">不通过（专有商业许可）</td><td style="color:#991b1b"><b>不通过</b>（只管未来）</td><td><span class="tag tr2">排除</span></td></tr>
+  <tr><td><b>S5</b></td><td class="chk">待验证（各仓库 LICENSE 不一）</td><td style="color:#92400e">弱通过（单点比对）</td><td><span class="tag ta">降级为参考</span></td></tr>
+  <tr><td><b>S8</b></td><td class="chk">待验证（规则库版权）</td><td style="color:#991b1b"><b>不通过</b>（不做孤儿归属）</td><td><span class="tag tr2">排除</span></td></tr>
+  <tr><td><b>S9</b></td><td>不涉及</td><td style="color:#991b1b"><b>不通过</b>（只答"哪里大"）</td><td><span class="tag tn">仅作基线</span></td></tr>
+</table>
+
+<h2>三、权重方案</h2>
+<p>同一个方案在不同目标下价值不同，因此设两套权重。A 偏向"快见效、少维护"，B 偏向"能沉淀成产品资产"。</p>
+<div class="card" style="padding:14px 18px">
+  <div><b>{WEIGHTS['A']['name']}</b> — 目标：{WEIGHTS['A']['goal']}</div>
+  <div style="margin-top:4px"><b>{WEIGHTS['B']['name']}</b> — 目标：{WEIGHTS['B']['goal']}</div>
+</div>
+<div class="scroll">
+<table style="min-width:620px">
+  <tr>{''.join(wt_head)}</tr>
+  {''.join(wt_rows)}
+</table>
+</div>
+<p class="src">高亮格＝该场景下权重 ≥12 的关键维度。A 侧重核心场景（25）与合规（12）；B 抬升可维护性（11）与扩展性（12），把上线周期从 12 压到 7。</p>
+
+<h2>四、打分矩阵</h2>
+<p>横向读＝某方案在 11 个维度上的强弱（绿＝有利，红＝不利）；纵向读＝某维度上谁最优。</p>
+<div class="scroll">
+<table class="mx">
+  <tr>{''.join(mx_head)}</tr>
+  {''.join(mx_rows)}
+</table>
+</div>
+<p class="src">按场景A 加权总分降序排列。场景A/B 为加权总分（满分 5.00），非简单平均。所有分值均可在第五节查到逐条依据。</p>
+
+<div class="note"><b>读数要点：</b>S1 在两个场景都第一，不是因为它"完美"，而是因为它把最重的两个维度（核心场景 5、License 5）同时拉满，且成本/周期为 5。S6 唯一短板是社区活跃度（1，无外部社区）与开发成本（3）。S7 的失分集中在学习成本（2）与上线周期（2）——这决定了它"不能做起点"。<br>
+<b>容易被忽略的一条：</b>S9"不做"作为基线拿到 3.52 / 3.55，<b>高于 S2、S3、S4、S5、S8</b>。含义很直接——用 Geek/Revo/Total Uninstall 这一层工具，在"自用清存量 + 可产品化"这个目标下<b>连"什么都不做"都没赢过</b>（因为它们既没解决核心场景，又不产生可沉淀资产）。真正跨过基线的只有 S1、S6、S7 三个。这也是第二节硬门槛筛选的另一种印证。</div>
+
+<h2>五、逐方案打分依据</h2>
+<p>每个方案的 11 个维度逐条给分与理由。理由中的事实均出自上游报告；标注 <span class="chk">需查官方文档/POC验证</span> 的，表示该分值建立在未一手核实的假设上。</p>
+{''.join(opt_blocks)}
+
+<h2>六、结论：推荐 / 备选 / 不建议</h2>
+
+<h3>推荐方案</h3>
+<table>
+  <tr><th style="width:120px">定位</th><th style="width:200px">方案</th><th>结论与理由</th></tr>
+  <tr>
+    <td><span class="tag tg">推荐 1</span><br><span class="src">立即执行</span></td>
+    <td><b>S1 BCUninstaller 直接使用</b><br><span class="src">场景A 4.37（第1）/ 场景B 4.25（第1）</span></td>
+    <td><b>先清存量，别先写代码。</b>它是唯一同时满足"孤儿检测 + 卸载后残留 + 置信度评级 + Apache 2.0"的方案，成本/周期双 5。用法：便携版全盘扫描 → 与报告 CSV 交叉验证 → 只按<b>高置信 16 项</b>人工确认后经回收站删除；同时把"卸载后残留扫描"设为默认习惯，从源头止血。<b>预期释放 5~8GB（不动开发缓存）。</b></td>
+  </tr>
+  <tr>
+    <td><span class="tag tg">推荐 2</span><br><span class="src">若要做引擎</span></td>
+    <td><b>S6 自研只读分析器（Python）</b><br><span class="src">场景A 3.73（第2）/ 场景B 3.86（第2）</span></td>
+    <td><b>它是唯一能变成产品资产的候选。</b>理由不是分数，是结构：S1/S7 拿到的是"别人的判定逻辑"，S6 拿到的是"自己的知识库 + 置信度模型 + 证据链"。MVP 单人 1~2 周、原型已验证 89% 自动归属，风险在可控区间。前提是死守三条原则：<b>永不自动删除、每条判定出示证据链、删除只走回收站</b>。</td>
+  </tr>
+</table>
+
+<div class="okbox"><b>组合结论（这是真正的建议）：</b>不是"二选一"，而是<b>时间上串行、职责上分离</b>——<br>
+① <b>第 0~1 周</b>：用 S1 解决 C 盘空间（它已经够用，自研替代不了这个即时价值）；<br>
+② <b>第 1~3 周</b>：用 S6 把"判定引擎"跑成自有资产，知识库从本机 320 项长尾开始沉淀，S1 的扫描结果作为<b>交叉验证基准集</b>（两套结果不一致的条目，就是最值钱的误判样本）；<br>
+③ <b>产品化阶段（≥3 个月）</b>：仅在需要重写 UI / 深度裁剪安装包 / 需要成熟卸载流程时，再评估 S7 是否值得 fork——不提前。</div>
+
+<h3>备选方案</h3>
+<table>
+  <tr><th style="width:120px">定位</th><th style="width:200px">方案</th><th>什么条件下才启用</th></tr>
+  <tr>
+    <td><span class="tag tb">备选 1</span></td>
+    <td><b>S7 BCU 源码二开（C#/.NET 8）</b><br><span class="src">场景A 3.54（第3）/ 场景B 3.67（第3）</span></td>
+    <td><b>触发条件（满足任一）：</b>① 产品确定要商业化、需要成熟的多渠道卸载（Steam/Oculus/Chocolatey）与静默批量；② 自研 S6 的知识库工程化撞到天花板，需要参考现成置信度实现；③ 团队本身有 C#/.NET 能力，学习成本 D10 可从 2 升到 4。<b>不做起点，只做加速器。</b>注意 Apache 2.0 的署名与声明保留义务。</td>
+  </tr>
+  <tr>
+    <td><span class="tag tb">备选 2</span></td>
+    <td><b>S5 PowerShell 社区脚本</b><br><span class="src">场景A 3.40 / 场景B 3.39</span></td>
+    <td><b>作为参考实现与"只读审计"交互范本</b>（Windows-Orphan-Cleanup-Audit 的"默认只读 + 删除需显式开关 + 二次确认"正是本项目要的形态），以及 UWP 比对的官方姿势（<code>Get-MsixOrphanedAppData</code>）。<b>前提：</b>先核实各仓库 LICENSE，无 License 的代码只能读思路、不能复制。</td>
+  </tr>
+</table>
+
+<p class="src">S2（Geek/HiBit）与 S3（Revo Pro）<b>不进备选名单</b>——它们的加权分（3.47 / 3.44）低于基线 S9（3.52），意味着"为它们投入的注意力"在本项目目标下不如把精力放在 S1/S6 上。它们只适合"临时手头一台机器、要立刻卸载某个软件并清残留"这种一次性场景，与"存量识别"是两条路线。</p>
+
+<h3>不建议方案</h3>
+<table>
+  <tr><th style="width:56px">方案</th><th style="width:200px">名称</th><th>不建议的核心原因</th></tr>
+  <tr><td><b>S8</b></td><td>云规则库（360/管家式）</td><td><b>两处硬伤。</b>① 合规：需上传本机文件/进程/软件清单，属个人信息处理，D6=1 是全表最低；② 场景：报告明确指出该路线<b>根本不做孤儿归属判定</b>，即使建成也不解决"这 300 个目录属于谁"。再叠加重资产运营与 CleanMyPC 停运揭示的商业退潮，投入产出不成立。</td></tr>
+  <tr><td><b>S4</b></td><td>Total Uninstall（快照 diff）</td><td><b>技术精度最高，但对本项目无效。</b>快照只覆盖"监控期间新装"的软件，本机 319 项是历史存量，快照一条都管不到（D1=2）。加上常驻 IO 开销与专有许可，这是"选错问题"而非"选错工具"。</td></tr>
+  <tr><td><b>S9</b></td><td>不做（现状基线）</td><td>唯一作用是证明"必须做"：C 盘剩 18.8GB 且会继续恶化，而现有工具只回答"哪里大"。列为基线对照，不列为选项。</td></tr>
+  <tr><td><b>S2</b></td><td>Geek + HiBit 作为主方案</td><td>能力边界在"卸载时"，对存量无解；且闭源 freeware 不可二开、不可审计，D8=1、D5=2。可作临时补充，不可作主线。</td></tr>
+  <tr><td><b>S3</b></td><td>Revo Pro 作为主方案</td><td>官方手册<b>明言安全机制会故意漏报残留下</b>——对本项目"追求高召回 + 分级置信"的目标是方向性冲突；且专有许可不可二开，存量场景仍需手动补扫。</td></tr>
+</table>
+
+<h2>七、每个结论的"假设"与"待验证项"</h2>
+<p>以下把结论拆到可被证伪的粒度。<b>未验证前，结论只在其假设成立时有效。</b></p>
+
+<table>
+  <tr><th style="width:150px">结论</th><th style="width:32%">它依赖的假设</th><th>待验证项（含验证方式）</th></tr>
+  <tr>
+    <td><b>R1</b><br>BCU 可直接用于清存量<br><span class="src">S1 推荐 1</span></td>
+    <td>① BCU 的孤儿/残留列表与本机实测 CSV 有足够重叠，可交叉验证；② 其置信度评级口径足够保守，不会把在用软件标成可删；③ 便携版在 Windows 10+ 直接可跑。</td>
+    <td>
+      <b>V1.1</b> 下载 BCU 便携版跑一轮，逐条比对 106 项残留候选的命中/遗漏率 —— <span class="chk">POC 验证（半天）</span><br>
+      <b>V1.2</b> 抽查其"可删"建议里是否有本机在用项（重点看子串匹配类误判，如 <code>Code</code> vs <code>openaicodex</code>）—— <span class="chk">POC 验证</span><br>
+      <b>V1.3</b> 版本与系统要求（报告引用第三方称 v6.3 / .NET 8 / Win10+）—— <span class="chk">需查官方文档</span>
+    </td>
+  </tr>
+  <tr>
+    <td><b>R2</b><br>自研 1~2 周可出 MVP<br><span class="src">S6 推荐 2</span></td>
+    <td>① 500 行原型已把"证据采集→归属→分级"跑通，剩下的是工程化而非探索；② 89% 自动归属率在别的机器上不会大幅下跌；③ 本机环境（Python + PowerShell + 注册表可读）可复现。</td>
+    <td>
+      <b>V2.1</b> 换 1~2 台<b>非开发机</b>（普通办公机/家用机）复跑，看自动归属率是否仍 ≥80% —— <span class="chk">POC 验证</span>（本机 89% 是单点样本，严重偏向开发者环境）<br>
+      <b>V2.2</b> 知识库规模化的边际成本：从 260 条扩到 1000 条需要多少人时 —— <span class="chk">POC 验证</span><br>
+      <b>V2.3</b> 是否真的"1~2 周"：以拿到第一份可交付报告为准，不以代码行数为准
+    </td>
+  </tr>
+  <tr>
+    <td><b>R3</b><br>BCU 可作为能力基线而非产品内核<br><span class="src">S1/S7 边界</span></td>
+    <td>① BCU 无库化 API，嵌入自家产品必须 fork（报告称其为 GUI 工具、支持 CLI/JSON 导出）；② 上游"正在招募维护者"，短期不会变更许可。</td>
+    <td>
+      <b>V3.1</b> 确认其命令行/JSON 导出能力边界（能否只导数据、不触发卸载）—— <span class="chk">需查官方文档</span><br>
+      <b>V3.2</b> 确认 Apache 2.0 下的实际约束（NOTICE/署名/修改声明）—— <span class="chk">需查官方 LICENSE 与 FAQ</span><br>
+      <b>V3.3</b> 上游维护状态的持续跟踪（是否已有人接手）—— <span class="chk">需查官方仓库</span>
+    </td>
+  </tr>
+  <tr>
+    <td><b>R4</b><br>S7 不宜作为起点<br><span class="src">备选 1</span></td>
+    <td>① BCU 代码库规模对团队构成真实门槛（D10=2 据此打分）；② .NET 8 的构建/签名/打包链路可被产品化复用。</td>
+    <td>
+      <b>V4.1</b> 评估代码库规模与模块耦合度（多少工程、是否有测试、UI 与引擎是否分离）—— <span class="chk">需查官方仓库 + POC（读代码 1~2 天）</span><br>
+      <b>V4.2</b> 引擎层是否可独立出库（能则 D5 从 4 上调，S7 竞争力显著变化）—— <span class="chk">POC 验证</span>
+    </td>
+  </tr>
+  <tr>
+    <td><b>R5</b><br>S8 云库不建议<br><span class="src">不建议</span></td>
+    <td>① 报告"360/管家类不做孤儿归属判定"这一判断准确；② 上传清单确属合规敏感动作。</td>
+    <td>
+      <b>V5.1</b> 该判断来自报告结论，未附一手证据 —— <span class="chk">需查厂商官方功能说明</span><br>
+      <b>V5.2</b> 若未来引入"匿名统计"（仅上传软件名、不上传路径），合规等级可否从 1 升到 3～4 —— 需法务/隐私评审，<b>本表未评估</b>
+    </td>
+  </tr>
+  <tr>
+    <td><b>R6</b><br>本轮评分本身可信<br><span class="src">全表</span></td>
+    <td>① 11 个维度覆盖了真实决策要素；② 两套权重能代表当前两种目标（自用 / 产品化）。</td>
+    <td>
+      <b>V6.1</b> 权重由单人设定，<b>未做多人 Delphi 校准</b> —— 建议找技术负责人与产品各打一次分，差异 &gt;1 分的维度需讨论<br>
+      <b>V6.2</b> 若出现第三种目标（如"要能卖给企业客户、需审计日志"），D6/D4 权重要重排，排序可能变化
+    </td>
+  </tr>
+</table>
+
+<h3>全表通用的"未核实"清单</h3>
+<table>
+  <tr><th style="width:180px">条目</th><th>现状</th><th>需要做什么</th></tr>
+  <tr><td>BCU 版本号与系统要求</td><td>来自第三方评测转述（v6.3 / 2026-09-07 / .NET 8 / Win10+）</td><td class="chk">需查官方 release 页</td></tr>
+  <tr><td>Geek / HiBit 的 EULA</td><td>按"免费闭源、不可二开"打分（D8=1）</td><td class="chk">需查官方 EULA 原文</td></tr>
+  <tr><td>HiBit / Revo / Total Uninstall 的更新频率</td><td>按"商业持续维护"给 3~4 分，未查版本历史</td><td class="chk">需查官方 release 记录</td></tr>
+  <tr><td>PowerShell 各仓库 LICENSE</td><td>报告未提及；按"许可不一"给 D8=2</td><td class="chk">需查各仓库 LICENSE 文件</td></tr>
+  <tr><td>BCU 中文软件覆盖度</td><td>报告称"中文生态是国外工具盲区"，属推断</td><td class="chk">POC：用本机 106 项清单比对 BCU 命中率</td></tr>
+  <tr><td>Revo/IObit 等中文口碑评价</td><td>源为中文社区横评（报告已列为来源）</td><td>仅作参考，不作为硬结论依据</td></tr>
+</table>
+
+<h2>八、切换与止损条件</h2>
+<p>决策不是一次性的。以下条件一旦触发，应重开本表而非沿用结论：</p>
+<table>
+  <tr><th style="width:220px">触发条件</th><th>应对</th></tr>
+  <tr><td>BCU 官方宣布停止维护或变更许可</td><td>R1 失效：S1 降级为"仅供当前一次性清理"，产品化路径完全转向 S6；同时把 S7 的 fork 计划提上日程。</td></tr>
+  <tr><td>S6 在 3 台非开发机上自动归属率 &lt;70%</td><td>知识库路线判断失效：停止扩知识库，转向 S7（复用 BCU 的匹配工程）或重新评估"只做可回收缓存"的窄场景。</td></tr>
+  <tr><td>自研知识库维护人时 &gt; 2 人天/月且无下降趋势</td><td>产品化不成立（护城河变负担）：退回 S1，产品收缩为"只读体检报告"轻工具。</td></tr>
+  <tr><td>出现"误删导致数据不可恢复"的任一真实案例</td><td>立即停手：复核"硬保护规则 + 只走回收站 + 人工确认"三层是否被执行，未修复前禁止任何删除类功能上线。</td></tr>
+</table>
+
+<div class="danger">
+<b>安全边界（不因选型改变）：</b>本决策表及上游报告均为<b>只读分析结论</b>。<code>Roaming\\Microsoft\\Protect</code>（DPAPI 密钥）在任何方案下都不得删除——一旦删除，浏览器密码、证书、Wi-Fi 凭据将<b>永久无法解密</b>。XP 兼容 Junction（<code>Application Data / History / Temporary Internet Files</code>）同样硬黑名单。任何删除必须：核对证据 → 关闭应用 → 经回收站（可还原）→ 大规模操作前建还原点。
+</div>
+
+<footer>
+  AppData 残留识别 · 技术选型决策表 · 电脑磁盘清理大师项目 · 2026-10-23<br>
+  本表为决策辅助材料，评分含主观权重，未做多人校准；标注"需查官方文档/POC验证"的条目在验证前不应作为承诺对外表述。
+</footer>
+
+</div>
+</body>
+</html>
+"""
+
+out = os.path.join(HERE, "AppData残留识别_技术选型决策表_2026-10-23.html")
+with io.open(out, "w", encoding="utf-8") as f:
+    f.write(HTML)
+print("written:", out, len(HTML), "chars")

@@ -1,0 +1,1650 @@
+[
+  {
+    "key": "40078385-F676-4C61-9A9C-F9028599D6D3_is1",
+    "display": "NVM for Windows 1.2.2",
+    "pub": "Author Software Inc.",
+    "loc": "D:\\develop\\environment\\nvm\\",
+    "icon": "D:\\develop\\environment\\nvm\\bin\\nvm.ico",
+    "un": "\"D:\\develop\\environment\\nvm\\unins000.exe\""
+  },
+  {
+    "key": "7-Zip",
+    "display": "7-Zip 23.01 (x64)",
+    "pub": "Igor Pavlov",
+    "loc": "D:\\software\\tools\\7-Zip\\",
+    "icon": "D:\\software\\tools\\7-Zip\\7zFM.exe",
+    "un": "\"D:\\software\\tools\\7-Zip\\Uninstall.exe\""
+  },
+  {
+    "key": "Android Studio",
+    "display": "Android Studio",
+    "pub": "Google LLC",
+    "loc": "",
+    "icon": "D:\\develop\\software\\Android\\Android Studio\\bin\\studio.exe",
+    "un": "D:\\develop\\software\\Android\\Android Studio\\uninstall.exe"
+  },
+  {
+    "key": "AntiCheatExpert",
+    "display": "AntiCheatExpert",
+    "pub": "",
+    "loc": "C:\\Program Files\\AntiCheatExpert",
+    "icon": "H:\\WeGameApps\\rail_apps\\无畏契约(2001715)\\live\\ShooterGame\\Binaries\\Win64\\AntiCheatExpert\\ACE-Setup64.exe",
+    "un": "C:\\Program Files\\AntiCheatExpert\\Uninstaller.exe"
+  },
+  {
+    "key": "EditPlus",
+    "display": "EditPlus (64 bit)",
+    "pub": "ES-Computing",
+    "loc": "D:\\software\\EditPlus",
+    "icon": "D:\\software\\EditPlus\\editplus.exe",
+    "un": "D:\\software\\EditPlus\\remove.exe"
+  },
+  {
+    "key": "Everything",
+    "display": "Everything 1.5.0.1422b (x64)",
+    "pub": "voidtools",
+    "loc": "D:\\software\\tools\\Everything",
+    "icon": "D:\\software\\tools\\Everything\\Everything.exe",
+    "un": "D:\\software\\tools\\Everything\\Everything.exe -unsetup"
+  },
+  {
+    "key": "Git_is1",
+    "display": "Git",
+    "pub": "The Git Development Community",
+    "loc": "D:\\develop\\tools\\Git\\",
+    "icon": "D:\\develop\\tools\\Git\\mingw64\\share\\git\\git-for-windows.ico",
+    "un": "\"D:\\develop\\tools\\Git\\unins001.exe\""
+  },
+  {
+    "key": "Navicat Premium 16_is1",
+    "display": "PremiumSoft Navicat Premium 16.0",
+    "pub": "PremiumSoft CyberTech Ltd.",
+    "loc": "D:\\develop\\software\\Navicat Premium 16\\",
+    "icon": "D:\\develop\\software\\Navicat Premium 16\\navicat.exe",
+    "un": "\"D:\\develop\\software\\Navicat Premium 16\\unins000.exe\""
+  },
+  {
+    "key": "PixCake-qt_pro",
+    "display": "像素蛋糕",
+    "pub": "\"PixCake-qt_pro\"",
+    "loc": "\"D:\\software\\像素蛋糕\"",
+    "icon": "\"D:\\software\\像素蛋糕\\pixcake_2\\pixcake.exe\"",
+    "un": "\"D:\\software\\像素蛋糕\\pixcake_2\\Uninstall 像素蛋糕.exe\""
+  },
+  {
+    "key": "PotPlayer64",
+    "display": "PotPlayer-64 bit",
+    "pub": "Kakao Corp.",
+    "loc": "",
+    "icon": "D:\\software\\PotPlayer\\PotPlayerMini64.exe",
+    "un": "D:\\software\\PotPlayer\\uninstall.exe"
+  },
+  {
+    "key": "Readest",
+    "display": "Readest",
+    "pub": "bilingify",
+    "loc": "\"D:\\software\\tools\\Readest\"",
+    "icon": "\"D:\\software\\tools\\Readest\\readest.exe\"",
+    "un": "\"D:\\software\\tools\\Readest\\uninstall.exe\""
+  },
+  {
+    "key": "SQLyogTrial64",
+    "display": "SQLyog Trial 13.3 (64 bit)",
+    "pub": "Webyog Inc.",
+    "loc": "D:\\develop\\software\\sqlyog\\SQLyog Trial",
+    "icon": "D:\\develop\\software\\sqlyog\\SQLyog Trial\\SQLyog.exe",
+    "un": "D:\\develop\\software\\sqlyog\\SQLyog Trial\\uninst.exe"
+  },
+  {
+    "key": "Steam App 4172450",
+    "display": "捉迷藏",
+    "pub": "奇门互娱",
+    "loc": "H:\\SteamLibrary\\steamapps\\common\\The Hidden Ones",
+    "icon": "d:\\software\\steam\\steam\\games\\56b9975fd7c6dcf7bd79c1532a578a7da2dbbc79.ico",
+    "un": "\"d:\\software\\steam\\steam.exe\" steam://uninstall/4172450"
+  },
+  {
+    "key": "Steam App 431960",
+    "display": "Wallpaper Engine：壁纸引擎",
+    "pub": "Wallpaper Engine Team",
+    "loc": "D:\\software\\Steam\\steamapps\\common\\wallpaper_engine",
+    "icon": "D:\\software\\Steam\\steam\\games\\5b3bd0d9e5800b933245b5308089a688804787eb.ico",
+    "un": "\"D:\\software\\Steam\\steam.exe\" steam://uninstall/431960"
+  },
+  {
+    "key": "Steam App 578080",
+    "display": "PUBG: BATTLEGROUNDS",
+    "pub": "PUBG Corporation",
+    "loc": "",
+    "icon": "D:\\software\\Steam\\steam\\games\\f962202b06de547cf47c156bdd7aaa5bf7f2cdbb.ico",
+    "un": "\"D:\\software\\Steam\\steam.exe\" steam://uninstall/578080"
+  },
+  {
+    "key": "WeMeet",
+    "display": "腾讯会议",
+    "pub": "腾讯科技(深圳)有限公司",
+    "loc": "\"D:\\software\\tencent\\WeMeet\\3.44.10.457\"",
+    "icon": "\"D:\\software\\tencent\\WeMeet\\WeMeetApp.exe\"",
+    "un": "\"D:\\software\\tencent\\WeMeet\\3.44.10.457\\WeMeetUninstall.exe\""
+  },
+  {
+    "key": "{000420DE-0A08-46D7-A941-E6120CB6D9CA}",
+    "display": "NVIDIA Nsight Systems 2022.4.2",
+    "pub": "NVIDIA Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{000420DE-0A08-46D7-A941-E6120CB6D9CA}"
+  },
+  {
+    "key": "{010792BA-551A-3AC0-A7EF-0FAB4156C382}",
+    "display": "Microsoft Visual C++ 2013 x64 Additional Runtime - 12.0.40664",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{010792BA-551A-3AC0-A7EF-0FAB4156C382}"
+  },
+  {
+    "key": "{011563DC-4658-4F00-838A-BE003808BD5B}",
+    "display": "Python 3.13.5 Documentation (64-bit)",
+    "pub": "Python Software Foundation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{011563DC-4658-4F00-838A-BE003808BD5B}"
+  },
+  {
+    "key": "{02FA43E9-DF15-4B93-8491-20BACB83DFD0}_is1",
+    "display": "雷神加速器",
+    "pub": "雷神（武汉）网络技术有限公司",
+    "loc": "D:\\software\\LeiGod_Acc",
+    "icon": "D:\\software\\LeiGod_Acc\\leigod_launcher.exe,0",
+    "un": "\"D:\\software\\LeiGod_Acc\\Uninstall.exe\""
+  },
+  {
+    "key": "{08274920-8908-45c2-9258-8ad67ff77b09}.sdb",
+    "display": "IIS Express Application Compatibility Database for x64",
+    "pub": "",
+    "loc": "",
+    "icon": "",
+    "un": "C:\\WINDOWS\\system32\\sdbinst.exe -u \"C:\\Windows\\AppPatch\\CustomSDB\\{08274920-8908-45c2-9258-8ad67ff77b09}.sdb\""
+  },
+  {
+    "key": "{1D0AC7F1-2B34-44AF-91F6-88757D768DA7}",
+    "display": "Microsoft .NET Host - 6.0.16 (x64)",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{1D0AC7F1-2B34-44AF-91F6-88757D768DA7}"
+  },
+  {
+    "key": "{1D8E6291-B0D5-35EC-8441-6616F567A0F7}",
+    "display": "Microsoft Visual C++ 2010  x64 Redistributable - 10.0.40219",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{1D8E6291-B0D5-35EC-8441-6616F567A0F7}"
+  },
+  {
+    "key": "{20342031-463F-47B0-B7D8-56D0BA99FCCC}",
+    "display": "Python 3.13.5 pip Bootstrap (64-bit)",
+    "pub": "Python Software Foundation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{20342031-463F-47B0-B7D8-56D0BA99FCCC}"
+  },
+  {
+    "key": "{22221111-1111-1111-1111-111111111111}.sdb",
+    "display": "Microsoft Windows Application Compatibility Fix Database",
+    "pub": "",
+    "loc": "",
+    "icon": "",
+    "un": "C:\\WINDOWS\\system32\\sdbinst.exe -u \"C:\\WINDOWS\\AppPatch\\CustomSDB\\{22221111-1111-1111-1111-111111111111}.sdb\""
+  },
+  {
+    "key": "{22B1775A-6F83-4BC4-9330-0F10CE026003}",
+    "display": "GitHub CLI",
+    "pub": "GitHub, Inc.",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{22B1775A-6F83-4BC4-9330-0F10CE026003}"
+  },
+  {
+    "key": "{26A24AE4-039D-4CA4-87B4-2F64180361F0}",
+    "display": "Java 8 Update 361 (64-bit)",
+    "pub": "Oracle Corporation",
+    "loc": "D:\\develop\\environment\\java\\jdk\\jdk1.8\\jre1.8\\",
+    "icon": "",
+    "un": "MsiExec.exe /X{26A24AE4-039D-4CA4-87B4-2F64180361F0}"
+  },
+  {
+    "key": "{2D92E6AF-35B2-4109-893F-59E4A4F2D550}",
+    "display": "Windows Subsystem for Linux",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{2D92E6AF-35B2-4109-893F-59E4A4F2D550}"
+  },
+  {
+    "key": "{2E843C78-FE5B-446C-A2AC-DE311FE1D78A}",
+    "display": "Documentation Manager",
+    "pub": "Intel Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{2E843C78-FE5B-446C-A2AC-DE311FE1D78A}"
+  },
+  {
+    "key": "{37771A20-7167-44C0-B322-FD3E54C56156}_is1",
+    "display": "Typora 1.0",
+    "pub": "typora.io",
+    "loc": "D:\\software\\Typora\\",
+    "icon": "",
+    "un": "\"D:\\software\\Typora\\unins000.exe\""
+  },
+  {
+    "key": "{37B8F9C7-03FB-3253-8781-2517C99D7C00}",
+    "display": "Microsoft Visual C++ 2012 x64 Additional Runtime - 11.0.61030",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{37B8F9C7-03FB-3253-8781-2517C99D7C00}"
+  },
+  {
+    "key": "{3B9AEBC3-8AFD-40C4-8204-A3CEA6F21058}",
+    "display": "Python 3.13.5 Executables (64-bit)",
+    "pub": "Python Software Foundation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{3B9AEBC3-8AFD-40C4-8204-A3CEA6F21058}"
+  },
+  {
+    "key": "{4B6C7001-C7D6-3710-913E-5BC23FCE91E6}",
+    "display": "Microsoft Visual C++ 2008 Redistributable - x64 9.0.30729.4148",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{4B6C7001-C7D6-3710-913E-5BC23FCE91E6}"
+  },
+  {
+    "key": "{5289E808-A4E6-5A09-804A-590097852C24}",
+    "display": "Java(TM) SE Development Kit 11.0.21 (64-bit)",
+    "pub": "Oracle Corporation",
+    "loc": "D:\\develop\\environment\\java\\jdk\\jdk11\\",
+    "icon": "",
+    "un": "MsiExec.exe /X{5289E808-A4E6-5A09-804A-590097852C24}"
+  },
+  {
+    "key": "{53CF6934-A98D-3D84-9146-FC4EDF3D5641}",
+    "display": "Microsoft Visual C++ 2013 x64 Minimum Runtime - 12.0.40664",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{53CF6934-A98D-3D84-9146-FC4EDF3D5641}"
+  },
+  {
+    "key": "{56674F3A-EE02-4EC7-B429-B8C37CA254E3}",
+    "display": "IIS 10.0 Express",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{56674F3A-EE02-4EC7-B429-B8C37CA254E3}"
+  },
+  {
+    "key": "{5FCE6D76-F5DC-37AB-B2B8-22AB8CEDB1D4}",
+    "display": "Microsoft Visual C++ 2008 Redistributable - x64 9.0.30729.7523",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{5FCE6D76-F5DC-37AB-B2B8-22AB8CEDB1D4}"
+  },
+  {
+    "key": "{605108C1-153E-43D8-8A67-7CE326B00ECA}",
+    "display": "ROGFontInstaller",
+    "pub": "ASUS",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{605108C1-153E-43D8-8A67-7CE326B00ECA}"
+  },
+  {
+    "key": "{64A3A4F4-B792-11D6-A78A-00B0D0180361}",
+    "display": "Java SE Development Kit 8 Update 361 (64-bit)",
+    "pub": "Oracle Corporation",
+    "loc": "D:\\develop\\environment\\java\\jdk\\jdk1.8\\jdk1.8\\",
+    "icon": "",
+    "un": "MsiExec.exe /X{64A3A4F4-B792-11D6-A78A-00B0D0180361}"
+  },
+  {
+    "key": "{6B5F3082-EBE8-41B4-B3F9-5A260C66185F}",
+    "display": "坚果云",
+    "pub": "上海亦净网络科技有限公司",
+    "loc": "C:\\Program Files\\Nutstore\\",
+    "icon": "",
+    "un": "MsiExec.exe /X{6B5F3082-EBE8-41B4-B3F9-5A260C66185F}"
+  },
+  {
+    "key": "{6FA797CF-6B76-4B6D-87EE-768F92008720}",
+    "display": "Microsoft Visual C++ 2022 X64 Additional Runtime - 14.51.36247",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{6FA797CF-6B76-4B6D-87EE-768F92008720}"
+  },
+  {
+    "key": "{90670CF8-7E43-4604-9ED0-A14C2FC29C15}",
+    "display": "Microsoft .NET Host FX Resolver - 8.0.32 (x64)",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{90670CF8-7E43-4604-9ED0-A14C2FC29C15}"
+  },
+  {
+    "key": "{931A2CF0-2404-45EA-82F5-345735AE6A90}",
+    "display": "Microsoft Visual C++ 2022 X64 Minimum Runtime - 14.51.36247",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{931A2CF0-2404-45EA-82F5-345735AE6A90}"
+  },
+  {
+    "key": "{970C5B01-B0C6-4312-82D8-809E04BACDD5}",
+    "display": "Python 3.13.5 Core Interpreter (64-bit)",
+    "pub": "Python Software Foundation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{970C5B01-B0C6-4312-82D8-809E04BACDD5}"
+  },
+  {
+    "key": "{9CFD7F1D-07FE-4ED5-BC70-0191659412D4}",
+    "display": "Python 3.13.5 Test Suite (64-bit)",
+    "pub": "Python Software Foundation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{9CFD7F1D-07FE-4ED5-BC70-0191659412D4}"
+  },
+  {
+    "key": "{A43104BD-8B2F-4370-97F2-BCBDCA9BA997}",
+    "display": "Microsoft .NET Runtime - 8.0.32 (x64)",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{A43104BD-8B2F-4370-97F2-BCBDCA9BA997}"
+  },
+  {
+    "key": "{AC3F660A-8ABD-4E2A-9C2E-D9C1F734D7C9}",
+    "display": "Python 3.13.5 Tcl/Tk Support (64-bit)",
+    "pub": "Python Software Foundation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{AC3F660A-8ABD-4E2A-9C2E-D9C1F734D7C9}"
+  },
+  {
+    "key": "{ad846bae-d44b-4722-abad-f7420e08bcd9}.sdb",
+    "display": "IIS Express Application Compatibility Database for x86",
+    "pub": "",
+    "loc": "",
+    "icon": "",
+    "un": "C:\\WINDOWS\\system32\\sdbinst.exe -u \"C:\\Windows\\AppPatch\\CustomSDB\\{ad846bae-d44b-4722-abad-f7420e08bcd9}.sdb\""
+  },
+  {
+    "key": "{ad8a2fa1-06e7-4b0d-927d-6e54b3d31028}",
+    "display": "Microsoft Visual C++ 2005 Redistributable (x64)",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{ad8a2fa1-06e7-4b0d-927d-6e54b3d31028}"
+  },
+  {
+    "key": "{AF316C49-9FF0-401A-9EC3-3BD0AA7049FA}",
+    "display": "MySQL Server 8.0",
+    "pub": "Oracle Corporation",
+    "loc": "D:\\develop\\software\\MySQL\\MySQL Server 8.0\\",
+    "icon": "",
+    "un": "MsiExec.exe /I{AF316C49-9FF0-401A-9EC3-3BD0AA7049FA}"
+  },
+  {
+    "key": "{B1A9B37E-00B6-4BFD-A439-3120FE4F766E}",
+    "display": "PowerShell 7-x64",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{B1A9B37E-00B6-4BFD-A439-3120FE4F766E}"
+  },
+  {
+    "key": "{B1D041B8-893D-46F2-A822-6920D17411C9}",
+    "display": "Microsoft Web Deploy 4.0",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{B1D041B8-893D-46F2-A822-6920D17411C9}"
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_cublas_11.8",
+    "display": "CUBLAS Runtime",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_cublas_dev_11.8",
+    "display": "CUBLAS Development",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_CUDADevelopment_11.8",
+    "display": "NVIDIA CUDA Development 11.8",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": "\"C:\\WINDOWS\\SysWOW64\\RunDll32.EXE\" \"C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.DLL\",UninstallPackage CUDADevelopment_11.8"
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_CUDADocument_11.8",
+    "display": "NVIDIA CUDA Documentation 11.8",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": "\"C:\\WINDOWS\\SysWOW64\\RunDll32.EXE\" \"C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.DLL\",UninstallPackage CUDADocument_11.8"
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_cudart_11.8",
+    "display": "CUDART Runtime",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_CUDARuntimes_11.8",
+    "display": "NVIDIA CUDA Runtime 11.8",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\CUDARuntimes_11.8.{77512CC5-610C-4CC0-91E1-F5970F983386}",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": "\"C:\\WINDOWS\\SysWOW64\\RunDll32.EXE\" \"C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.DLL\",UninstallPackage CUDARuntimes_11.8"
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_CUDAToolkit_11.8",
+    "display": "CUDA Toolkit",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_cuda_profiler_api_11.8",
+    "display": "CUDA Profiler API",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_cufft_11.8",
+    "display": "${{arpDisplayName}}",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_cufft_dev_11.8",
+    "display": "CUFFT Development",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_cuobjdump_11.8",
+    "display": "cuobjdump",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_cupti_11.8",
+    "display": "CUPTI",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_curand_11.8",
+    "display": "CURAND Runtime",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_curand_dev_11.8",
+    "display": "CURAND Development",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_cusolver_11.8",
+    "display": "CUSOLVER Runtime",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_cusolver_dev_11.8",
+    "display": "CUSOLVER Development",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_cusparse_11.8",
+    "display": "CUSPARSE Runtime",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_cusparse_dev_11.8",
+    "display": "CUSPARSE Development",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_cuxxfilt_11.8",
+    "display": "cuxxfilt",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_demo_suite_11.8",
+    "display": "Demo Suite",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_Display.Driver",
+    "display": "NVIDIA 图形驱动程序 596.36",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\Display.Driver.{17A871DE-6303-411D-BB7E-C3F7AD7FD8CC}",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": "\"C:\\WINDOWS\\SysWOW64\\RunDll32.EXE\" \"C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.DLL\",UninstallPackage Display.Driver"
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_Display.NvApp",
+    "display": "NVIDIA App 11.0.7.247",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\Display.NvApp.{3589EF26-48CA-4A95-B8E0-B9FDFC5147BB}",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": "\"C:\\WINDOWS\\SysWOW64\\RunDll32.EXE\" \"C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.DLL\",UninstallPackage Display.NvApp"
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_Display.NvApp.MessageBus",
+    "display": "NVIDIA MessageBus 3 for NvApp",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\Display.NvApp.MessageBus.{7DDEBA1F-AC46-4C28-B337-55B037067A43}",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_Display.NvApp.NvBackend",
+    "display": "NVIDIA Backend",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\Display.NvApp.NvBackend.{EC6843A0-0C6E-4B9A-8982-9F0941C020E2}",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_Display.NvApp.NvCPL",
+    "display": "NvCpl",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\Display.NvApp.NvCPL.{4ECC6871-84AC-4564-9DEB-DC08FAC2CB83}",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_Display.PhysX",
+    "display": "NVIDIA PhysX 系统软件 9.23.1019",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX",
+    "icon": "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Engine\\A_Ball_Trans.ico,0",
+    "un": "\"C:\\WINDOWS\\SysWOW64\\RunDll32.EXE\" \"C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.DLL\",UninstallPackage Display.PhysX"
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_documentation_11.8",
+    "display": "CUDA Documentation",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_FrameViewSdk",
+    "display": "NVIDIA FrameView SDK 1.7.12227.37421622",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\FrameViewSDK",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": "\"C:\\WINDOWS\\SysWOW64\\RunDll32.EXE\" \"C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.DLL\",UninstallPackage FrameViewSdk"
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_HDAudio.Driver",
+    "display": "NVIDIA HD 音频驱动程序 1.4.5.7",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\HDAudio.Driver.{E8D5CEFA-3F91-4AC1-9156-4F7472687DD6}",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": "\"C:\\WINDOWS\\SysWOW64\\RunDll32.EXE\" \"C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.DLL\",UninstallPackage HDAudio.Driver"
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_installer",
+    "display": "NVIDIA Install Application",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore",
+    "icon": "",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_memcheck_11.8",
+    "display": "MEMCHECK",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_npp_11.8",
+    "display": "NPP Runtime",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_npp_dev_11.8",
+    "display": "NPP Development",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_nsight_nvtx_11.8",
+    "display": "NVIDIA CUDA Nsight NVTX 11.8",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": "\"C:\\WINDOWS\\SysWOW64\\RunDll32.EXE\" \"C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.DLL\",UninstallPackage nsight_nvtx_11.8"
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_nvcc_11.8",
+    "display": "nvcc",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_NvContainer",
+    "display": "NVIDIA Container",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\NvContainer",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_NvContainer.AIUser",
+    "display": "NVIDIA AIUser Container",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\NvContainer.AIUser.{74DC526E-A004-496A-9EB2-DB2BA0420078}",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_NvContainer.LocalSystem",
+    "display": "NVIDIA LocalSystem Container",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\NvContainer.LocalSystem.{E1AFBD95-B284-433B-96C5-3233D6AE8A1F}",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_NvContainer.User",
+    "display": "NVIDIA User Container",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\NvContainer.User.{3E9B1480-EEA1-4A1C-A233-804E61286252}",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_nvdisasm_11.8",
+    "display": "Disassembler",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_NvDLISR",
+    "display": "NVIDIA NvDLISR",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\NvDLISR.{01101A93-4843-462F-B143-01328D1B2917}",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_nvjpeg_11.8",
+    "display": "NVJPEG Runtime",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_nvjpeg_dev_11.8",
+    "display": "NVJPEG Development",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_nvml_dev_11.8",
+    "display": "NVML Development",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_NvPlugin.Watchdog",
+    "display": "NVIDIA Watchdog Plugin for NvContainer",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\NvPlugin.Watchdog.{931F4D88-D835-4291-8711-A45B00D1DB13}",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_nvprof_11.8",
+    "display": "CUDA Profiler Tools",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_nvprune_11.8",
+    "display": "nvprune",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_nvrtc_11.8",
+    "display": "NVRTC Runtime",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_nvrtc_dev_11.8",
+    "display": "NVRTC Development",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_NvTelemetry",
+    "display": "NVIDIA Telemetry Client",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\NvTelemetry",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_nvtx_11.8",
+    "display": "NVTX Development",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_occupancy_calculator_11.8",
+    "display": "Occupancy Calculator",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_OSC",
+    "display": "Nvidia Share",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\OSC.{74C2C9D9-E99E-4CC7-8F0D-EDD9B934A910}",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_sanitizer_11.8",
+    "display": "Compute Sanitizer",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_ShadowPlay",
+    "display": "NVIDIA ShadowPlay 11.0.7.0",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\NVIDIA App\\ShadowPlay",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_thrust_11.8",
+    "display": "CUDA CCCL",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_VirtualAudio.Driver",
+    "display": "NVIDIA Virtual Audio 4.65.0.12",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\VirtualAudio.Driver.{3EFD2AA4-4C31-4CA7-A83F-055D20C87417}",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_visual_profiler_11.8",
+    "display": "Visual Profiler",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": ""
+  },
+  {
+    "key": "{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_visual_studio_integration_11.8",
+    "display": "NVIDIA CUDA Visual Studio Integration 11.8",
+    "pub": "NVIDIA Corporation",
+    "loc": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.8",
+    "icon": "C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.dll,0",
+    "un": "\"C:\\WINDOWS\\SysWOW64\\RunDll32.EXE\" \"C:\\Program Files\\NVIDIA Corporation\\Installer2\\InstallerCore\\NVI2.DLL\",UninstallPackage visual_studio_integration_11.8"
+  },
+  {
+    "key": "{B40BFBCD-3D0F-4608-B49A-3AA1030370A0}",
+    "display": "Python 3.13.5 Development Libraries (64-bit)",
+    "pub": "Python Software Foundation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{B40BFBCD-3D0F-4608-B49A-3AA1030370A0}"
+  },
+  {
+    "key": "{B56D2F88-8865-40FD-B7AC-F074EE4D201D}",
+    "display": "NVIDIA Tools Extension SDK (NVTX) - 64 bit",
+    "pub": "NVIDIA Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{B56D2F88-8865-40FD-B7AC-F074EE4D201D}"
+  },
+  {
+    "key": "{B8537ACA-B210-4DF5-B928-E41CEB76723D}",
+    "display": "Microsoft .NET Host FX Resolver - 6.0.16 (x64)",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{B8537ACA-B210-4DF5-B928-E41CEB76723D}"
+  },
+  {
+    "key": "{BD355C09-BBBA-4F60-95A9-3F92A3E728CD}",
+    "display": "Microsoft .NET Host - 8.0.32 (x64)",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{BD355C09-BBBA-4F60-95A9-3F92A3E728CD}"
+  },
+  {
+    "key": "{C6FD611E-7EFE-488C-A0E0-974C09EF6473}",
+    "display": "Microsoft Update Health Tools",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{C6FD611E-7EFE-488C-A0E0-974C09EF6473}"
+  },
+  {
+    "key": "{C71E93D2-B8B4-4858-B2A1-4C967DBC1C5F}",
+    "display": "Microsoft .NET Runtime - 6.0.16 (x64)",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{C71E93D2-B8B4-4858-B2A1-4C967DBC1C5F}"
+  },
+  {
+    "key": "{CCD10098-5E72-48F8-834E-AF2364A86653}",
+    "display": "Python 3.13.5 Standard Library (64-bit)",
+    "pub": "Python Software Foundation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{CCD10098-5E72-48F8-834E-AF2364A86653}"
+  },
+  {
+    "key": "{CF2BEA3C-26EA-32F8-AA9B-331F7E34BA97}",
+    "display": "Microsoft Visual C++ 2012 x64 Minimum Runtime - 11.0.61030",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{CF2BEA3C-26EA-32F8-AA9B-331F7E34BA97}"
+  },
+  {
+    "key": "{D556EDC0-3FAA-4124-B6EF-B3F5D1839EB3}",
+    "display": "Python 3.13.5 Add to Path (64-bit)",
+    "pub": "Python Software Foundation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{D556EDC0-3FAA-4124-B6EF-B3F5D1839EB3}"
+  },
+  {
+    "key": "{DA08718E-972A-58E7-AE7E-C45114C82E13}",
+    "display": "Java(TM) SE Development Kit 17.0.12 (64-bit)",
+    "pub": "Oracle Corporation",
+    "loc": "D:\\develop\\environment\\java\\jdk\\jdk-17\\",
+    "icon": "",
+    "un": "MsiExec.exe /X{DA08718E-972A-58E7-AE7E-C45114C82E13}"
+  },
+  {
+    "key": "{E9655DE8-6B03-4792-B81D-4D57722ED17C}",
+    "display": "NVIDIA Nsight Compute 2022.3.0",
+    "pub": "NVIDIA Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{E9655DE8-6B03-4792-B81D-4D57722ED17C}"
+  },
+  {
+    "key": "{EDE170F5-0149-4255-90C1-2CB7B2EC1E8B}",
+    "display": "NVIDIA Nsight Visual Studio Edition 2022.3.0.22245",
+    "pub": "NVIDIA Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{EDE170F5-0149-4255-90C1-2CB7B2EC1E8B}"
+  },
+  {
+    "key": "{F9EC45F9-074A-48BF-92E9-A8CADD56F693}",
+    "display": "UE4 Prerequisites (x64)",
+    "pub": "Epic Games, Inc.",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{F9EC45F9-074A-48BF-92E9-A8CADD56F693}"
+  },
+  {
+    "key": "DeskPins",
+    "display": "DeskPins (remove only)",
+    "pub": "",
+    "loc": "",
+    "icon": "",
+    "un": "\"D:\\software\\tools\\DeskPins\\uninstall.exe\""
+  },
+  {
+    "key": "Erlang OTP",
+    "display": "Erlang OTP 25.2.3 (13.1.5)",
+    "pub": "Ericsson AB",
+    "loc": "",
+    "icon": "",
+    "un": "D:\\develop\\tools\\Erlang OTP\\Uninstall.exe"
+  },
+  {
+    "key": "Google Chrome",
+    "display": "Google Chrome",
+    "pub": "Google LLC",
+    "loc": "C:\\Program Files\\Google\\Chrome\\Application",
+    "icon": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe,0",
+    "un": "\"C:\\Program Files\\Google\\Chrome\\Application\\147.0.7727.116\\Installer\\setup.exe\" --uninstall --channel=stable --system-level --verbose-logging"
+  },
+  {
+    "key": "Inno Setup 6_is1",
+    "display": "Inno Setup version 6.7.1",
+    "pub": "jrsoftware.org",
+    "loc": "C:\\Program Files (x86)\\Inno Setup 6\\",
+    "icon": "C:\\Program Files (x86)\\Inno Setup 6\\Compil32.exe",
+    "un": "\"C:\\Program Files (x86)\\Inno Setup 6\\unins000.exe\""
+  },
+  {
+    "key": "InstallShield_{26EE1407-A916-443F-AAE7-F42C1517067B}",
+    "display": "Kingdee Cloud Desktop application",
+    "pub": "Kingdee",
+    "loc": "C:\\Program Files (x86)\\Kingdee\\K3Cloud\\",
+    "icon": "C:\\WINDOWS\\Installer\\{26EE1407-A916-443F-AAE7-F42C1517067B}\\ARPPRODUCTICON.exe",
+    "un": "C:\\Program Files (x86)\\InstallShield Installation Information\\{26EE1407-A916-443F-AAE7-F42C1517067B}\\setup.exe -runfromtemp -l0x0804"
+  },
+  {
+    "key": "IntelliJ IDEA 2025.1.2",
+    "display": "IntelliJ IDEA 2025.1.2",
+    "pub": "JetBrains s.r.o.",
+    "loc": "D:\\develop\\software\\IntelliJ IDEA\\IntelliJ IDEA 2025.1.2",
+    "icon": "D:\\develop\\software\\IntelliJ IDEA\\IntelliJ IDEA 2025.1.2\\bin\\idea64.exe",
+    "un": "D:\\develop\\software\\IntelliJ IDEA\\IntelliJ IDEA 2025.1.2\\bin\\Uninstall.exe"
+  },
+  {
+    "key": "LTRM_15_5_1",
+    "display": "Adobe Lightroom Classic",
+    "pub": "Adobe Inc.",
+    "loc": "D:\\software\\Adobe\\Lightroom Classic",
+    "icon": "D:\\software\\Adobe\\Lightroom Classic\\Adobe Lightroom Classic\\Resources\\Installer\\InstallerIcon\\lrc_pkg.ico",
+    "un": "\"C:\\Program Files (x86)\\Common Files\\Adobe\\Adobe Desktop Common\\HDBox\\Uninstaller.exe\" --uninstall=1 --sapCode=LTRM --productVersion=15.5.1 --productPlatform=win64 --productAdobeCode={LTRM-15.5.1-64-ADBEADBEADBEADBEADBEA} --productName=\"Lightroom Classic\" --mode=1"
+  },
+  {
+    "key": "MailMaster",
+    "display": "网易邮箱大师",
+    "pub": "NetEase(Hangzhou) Network Co. Ltd.",
+    "loc": "D:\\software\\mail\\MailMaster\\Application",
+    "icon": "D:\\software\\mail\\MailMaster\\Application\\mailmaster.exe,0",
+    "un": "\"D:\\software\\mail\\MailMaster\\Application\\5.6.1.1013\\Installer\\setup.exe\" --uninstall --verbose-logging --system-level --verbose-logging"
+  },
+  {
+    "key": "Microsoft Edge",
+    "display": "Microsoft Edge",
+    "pub": "Microsoft Corporation",
+    "loc": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application",
+    "icon": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\155.0.4283.62\\msedge.exe,0",
+    "un": "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\155.0.4283.62\\Installer\\setup.exe\" --uninstall --msedge --channel=stable --system-level --verbose-logging"
+  },
+  {
+    "key": "Microsoft EdgeWebView",
+    "display": "Microsoft Edge WebView2 Runtime",
+    "pub": "Microsoft Corporation",
+    "loc": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application",
+    "icon": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.62\\msedgewebview2.exe,0",
+    "un": "\"C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\155.0.4283.62\\Installer\\setup.exe\" --uninstall --msedgewebview --system-level --verbose-logging"
+  },
+  {
+    "key": "Oray AweSun RemoteClient",
+    "display": "向日葵远程控制",
+    "pub": "上海贝锐信息科技股份有限公司",
+    "loc": "D:\\software\\AweSun",
+    "icon": "D:\\software\\AweSun\\AweSun.exe",
+    "un": "D:\\software\\AweSun\\AweSun.exe --mod=uninstall"
+  },
+  {
+    "key": "PHSP_26_11",
+    "display": "Adobe Photoshop 2025",
+    "pub": "Adobe Inc.",
+    "loc": "D:\\software\\Adobe\\PhotoShop\\Adobe Photoshop 2025",
+    "icon": "D:\\software\\Adobe\\PhotoShop\\Adobe Photoshop 2025\\AMT\\Core key files\\AddRemoveInfo\\ps_installpkg.ico",
+    "un": "\"C:\\Program Files (x86)\\Common Files\\Adobe\\Adobe Desktop Common\\HDBox\\Uninstaller.exe\" --uninstall=1 --sapCode=PHSP --productVersion=26.11 --productPlatform=win64 --productAdobeCode={PHSP-26.11-64-ADBEADBEADBEADBEADBEAD} --productName=\"Photoshop\" --mode=1"
+  },
+  {
+    "key": "QQ",
+    "display": "QQ",
+    "pub": "腾讯科技(深圳)有限公司",
+    "loc": "",
+    "icon": "D:\\software\\tencent\\QQ.exe,0",
+    "un": "D:\\software\\tencent\\Uninstall.exe"
+  },
+  {
+    "key": "QQMailPlugin",
+    "display": "Tencent QQMail Plugin",
+    "pub": "",
+    "loc": "",
+    "icon": "",
+    "un": "\"C:\\Program Files (x86)\\QQMailPlugin\\uninstall.exe\""
+  },
+  {
+    "key": "RabbitMQ",
+    "display": "RabbitMQ Server 3.11.10",
+    "pub": "VMware, Inc.",
+    "loc": "",
+    "icon": "D:\\develop\\software\\RabbitMQ\\rabbitmq.ico",
+    "un": "D:\\develop\\software\\RabbitMQ\\uninstall.exe"
+  },
+  {
+    "key": "RapooGameDev",
+    "display": "RapooGameDev 1.6.12",
+    "pub": "Rapoo, Inc.",
+    "loc": "",
+    "icon": "D:\\software\\tools\\RapooGameDev\\RapooGameDev.exe",
+    "un": "D:\\software\\tools\\RapooGameDev\\uninst.exe"
+  },
+  {
+    "key": "Stardock Fences 4",
+    "display": "Stardock Fences 4",
+    "pub": "Stardock Software, Inc.",
+    "loc": "C:\\Program Files (x86)\\Stardock\\Fences",
+    "icon": "\"C:\\Program Files (x86)\\Stardock\\Fences\\Fences.exe\",0",
+    "un": "\"C:\\Program Files (x86)\\Stardock\\Fences\\uninstall.exe\" \"/U:C:\\Program Files (x86)\\Stardock\\Fences\\Uninstall\\uninstall.xml\""
+  },
+  {
+    "key": "Steam",
+    "display": "Steam",
+    "pub": "Valve Corporation",
+    "loc": "",
+    "icon": "D:\\software\\Steam\\uninstall.exe",
+    "un": "D:\\software\\Steam\\uninstall.exe"
+  },
+  {
+    "key": "UXPW_1_3_0",
+    "display": "UXP WebView Support",
+    "pub": "Adobe Inc.",
+    "loc": "C:\\Program Files\\Common Files\\Adobe\\Microsoft\\EdgeWebView",
+    "icon": "C:\\Program Files\\Common Files\\Adobe\\Microsoft\\EdgeWebView/icons/icon_pkg.ico",
+    "un": "\"C:\\Program Files (x86)\\Common Files\\Adobe\\Adobe Desktop Common\\HDBox\\Uninstaller.exe\" --uninstall=1 --sapCode=UXPW --productVersion=1.3.0 --productPlatform=win64 --productAdobeCode={UXPW-1.3.0-64-ADBEADBEADBEADBEADBEAD} --productName=\"UXP WebView Support\" --mode=1"
+  },
+  {
+    "key": "WeChat",
+    "display": "微信",
+    "pub": "腾讯科技(深圳)有限公司",
+    "loc": "D:\\software\\tencent\\WeChat",
+    "icon": "\"D:\\software\\tencent\\WeChat\\WeChat.exe\"",
+    "un": "\"D:\\software\\tencent\\WeChat\\Uninstall.exe\""
+  },
+  {
+    "key": "WeGame",
+    "display": "WeGame",
+    "pub": "WeGame",
+    "loc": "",
+    "icon": "D:\\software\\WeGame\\wegame.exe",
+    "un": "D:\\software\\WeGame\\uninstall_complete.exe"
+  },
+  {
+    "key": "{00000200-0220-2052-84C8-B8D95FA3C8C3}",
+    "display": "英特尔(R) 无线 Bluetooth(R)",
+    "pub": "Intel Corporation",
+    "loc": "C:\\Program Files (x86)\\Intel\\",
+    "icon": "",
+    "un": "MsiExec.exe /I{00000200-0220-2052-84C8-B8D95FA3C8C3}"
+  },
+  {
+    "key": "{042d26ef-3dbe-4c25-95d3-4c1b11b235a7}",
+    "display": "Microsoft Visual C++ 2013 Redistributable (x64) - 12.0.40664",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "C:\\ProgramData\\Package Cache\\{042d26ef-3dbe-4c25-95d3-4c1b11b235a7}\\vcredist_x64.exe,0",
+    "un": "\"C:\\ProgramData\\Package Cache\\{042d26ef-3dbe-4c25-95d3-4c1b11b235a7}\\vcredist_x64.exe\"  /uninstall"
+  },
+  {
+    "key": "{050d4fc8-5d48-4b8f-8972-47c82c46020f}",
+    "display": "Microsoft Visual C++ 2013 Redistributable (x64) - 12.0.30501",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "C:\\ProgramData\\Package Cache\\{050d4fc8-5d48-4b8f-8972-47c82c46020f}\\vcredist_x64.exe,0",
+    "un": "\"C:\\ProgramData\\Package Cache\\{050d4fc8-5d48-4b8f-8972-47c82c46020f}\\vcredist_x64.exe\"  /uninstall"
+  },
+  {
+    "key": "{0cd7cb36-56f0-49ff-8be2-1250c8660c0d}",
+    "display": "PowerShell 7.6.6.0-x64",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "C:\\ProgramData\\Package Cache\\{0cd7cb36-56f0-49ff-8be2-1250c8660c0d}\\PowerShell-7.6.6-win-x64.exe,0",
+    "un": "\"C:\\ProgramData\\Package Cache\\{0cd7cb36-56f0-49ff-8be2-1250c8660c0d}\\PowerShell-7.6.6-win-x64.exe\"  /uninstall"
+  },
+  {
+    "key": "{0e3bb569-69d6-4c34-bff9-c2f81db5e5f0}",
+    "display": "Microsoft Visual C++ v14 Redistributable (x64) - 14.51.36247",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "C:\\ProgramData\\Package Cache\\{0e3bb569-69d6-4c34-bff9-c2f81db5e5f0}\\VC_redist.x64.exe,0",
+    "un": "\"C:\\ProgramData\\Package Cache\\{0e3bb569-69d6-4c34-bff9-c2f81db5e5f0}\\VC_redist.x64.exe\"  /uninstall"
+  },
+  {
+    "key": "{0F3E4057-E2BB-4114-A646-F143DB5CE4C9}",
+    "display": "Microsoft Windows Desktop Runtime - 6.0.10 (x86)",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{0F3E4057-E2BB-4114-A646-F143DB5CE4C9}"
+  },
+  {
+    "key": "{15941C7F-810D-41DF-8C5A-8D0490277AFB}",
+    "display": "Windows SDK AddOn",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{15941C7F-810D-41DF-8C5A-8D0490277AFB}"
+  },
+  {
+    "key": "{26EE1407-A916-443F-AAE7-F42C1517067B}",
+    "display": "Kingdee Cloud Desktop application",
+    "pub": "Kingdee",
+    "loc": "C:\\Program Files (x86)\\Kingdee\\K3Cloud\\",
+    "icon": "",
+    "un": ""
+  },
+  {
+    "key": "{2a8d0f2b-911b-4b58-8252-46b29e7a4590}",
+    "display": "Microsoft .NET Runtime - 6.0.16 (x64)",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "C:\\ProgramData\\Package Cache\\{2a8d0f2b-911b-4b58-8252-46b29e7a4590}\\dotnet-runtime-6.0.16-win-x64.exe,0",
+    "un": "\"C:\\ProgramData\\Package Cache\\{2a8d0f2b-911b-4b58-8252-46b29e7a4590}\\dotnet-runtime-6.0.16-win-x64.exe\"  /uninstall"
+  },
+  {
+    "key": "{33d1fd90-4274-48a1-9bc1-97e33d9c2d6f}",
+    "display": "Microsoft Visual C++ 2012 Redistributable (x86) - 11.0.61030",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "C:\\ProgramData\\Package Cache\\{33d1fd90-4274-48a1-9bc1-97e33d9c2d6f}\\vcredist_x86.exe,0",
+    "un": "\"C:\\ProgramData\\Package Cache\\{33d1fd90-4274-48a1-9bc1-97e33d9c2d6f}\\vcredist_x86.exe\"  /uninstall"
+  },
+  {
+    "key": "{34F103EB-A6CD-1CD0-36ED-7FC987ACB42D}_is1",
+    "display": "青云梯-极速版",
+    "pub": "",
+    "loc": "D:\\software\\tools\\青云梯-极速版\\",
+    "icon": "",
+    "un": "\"D:\\software\\tools\\青云梯-极速版\\unins000.exe\""
+  },
+  {
+    "key": "{3B28977C-9163-48A5-A08C-C01327E18AE2}",
+    "display": "Microsoft .NET Host - 6.0.10 (x86)",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{3B28977C-9163-48A5-A08C-C01327E18AE2}"
+  },
+  {
+    "key": "{43a03b9c-4770-409c-a999-587b60700b63}",
+    "display": "Launcher Prerequisites (x64)",
+    "pub": "Epic Games, Inc.",
+    "loc": "",
+    "icon": "C:\\ProgramData\\Package Cache\\{43a03b9c-4770-409c-a999-587b60700b63}\\LauncherPrereqSetup_x64.exe,0",
+    "un": "\"C:\\ProgramData\\Package Cache\\{43a03b9c-4770-409c-a999-587b60700b63}\\LauncherPrereqSetup_x64.exe\"  /uninstall"
+  },
+  {
+    "key": "{4A03706F-666A-4037-7777-5F2748764D10}",
+    "display": "Java Auto Updater",
+    "pub": "Oracle Corporation",
+    "loc": "",
+    "icon": "",
+    "un": ""
+  },
+  {
+    "key": "{4BF7CE18-E151-449F-9190-6CDBED0BB4A2}",
+    "display": "Microsoft Visual C++ 2022 X86 Minimum Runtime - 14.51.36247",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{4BF7CE18-E151-449F-9190-6CDBED0BB4A2}"
+  },
+  {
+    "key": "{4D5B6DDD-21F1-491F-B432-2943005C5156}",
+    "display": "MySQL Installer - Community",
+    "pub": "Oracle Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{4D5B6DDD-21F1-491F-B432-2943005C5156}"
+  },
+  {
+    "key": "{4e242cc8-5e3c-4b08-9d55-dbc62ddd1208}",
+    "display": "UE4 Prerequisites (x64)",
+    "pub": "Epic Games, Inc.",
+    "loc": "",
+    "icon": "C:\\ProgramData\\Package Cache\\{4e242cc8-5e3c-4b08-9d55-dbc62ddd1208}\\UE4PrereqSetup_x64.exe,0",
+    "un": "\"C:\\ProgramData\\Package Cache\\{4e242cc8-5e3c-4b08-9d55-dbc62ddd1208}\\UE4PrereqSetup_x64.exe\"  /uninstall"
+  },
+  {
+    "key": "{4FBD9EBD-A228-432D-8E4A-08BDDDEE9CA3}",
+    "display": "WinFsp 2022.2",
+    "pub": "Navimatics LLC",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{4FBD9EBD-A228-432D-8E4A-08BDDDEE9CA3}"
+  },
+  {
+    "key": "{5363CE84-5F09-48A1-8B6C-6BB590FFEDF2}_is1",
+    "display": "Wondershare Helper Compact 2.6.0",
+    "pub": "Wondershare",
+    "loc": "C:\\Program Files (x86)\\Common Files\\Wondershare\\Wondershare Helper Compact\\",
+    "icon": "",
+    "un": "\"C:\\Program Files (x86)\\Common Files\\Wondershare\\Wondershare Helper Compact\\unins000.exe\""
+  },
+  {
+    "key": "{56FB5923-1A95-4D55-BE78-CD42B50E67AD}",
+    "display": "vs_CoreEditorFonts",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{56FB5923-1A95-4D55-BE78-CD42B50E67AD}"
+  },
+  {
+    "key": "{57A956AB-4BCC-45C6-9B40-957E4E125568}",
+    "display": "Epic Online Services",
+    "pub": "Epic Games, Inc.",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{57A956AB-4BCC-45C6-9B40-957E4E125568}"
+  },
+  {
+    "key": "{582BA719-E6F1-4651-A873-049E6A0DDDAF}",
+    "display": "Microsoft Visual C++ 2022 X86 Additional Runtime - 14.51.36247",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /I{582BA719-E6F1-4651-A873-049E6A0DDDAF}"
+  },
+  {
+    "key": "{69012533-AE90-48A1-B7E5-7124E81C4B40}",
+    "display": "Python Launcher",
+    "pub": "Python Software Foundation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{69012533-AE90-48A1-B7E5-7124E81C4B40}"
+  },
+  {
+    "key": "{710f4c1c-cc18-4c49-8cbf-51240c89a1a2}",
+    "display": "Microsoft Visual C++ 2005 Redistributable",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{710f4c1c-cc18-4c49-8cbf-51240c89a1a2}"
+  },
+  {
+    "key": "{8122DAB1-ED4D-3676-BB0A-CA368196543E}",
+    "display": "Microsoft Visual C++ 2013 x86 Minimum Runtime - 12.0.40664",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{8122DAB1-ED4D-3676-BB0A-CA368196543E}"
+  },
+  {
+    "key": "{85467CBC-7A39-33C9-8940-D72D9269B84F}",
+    "display": "Microsoft Visual F# 2.0 Runtime",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{85467CBC-7A39-33C9-8940-D72D9269B84F}"
+  },
+  {
+    "key": "{92950313-d844-4fea-bb8c-2557c53f13f0}",
+    "display": "Microsoft .NET Runtime - 8.0.32 (x64)",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "C:\\ProgramData\\Package Cache\\{92950313-d844-4fea-bb8c-2557c53f13f0}\\dotnet-runtime-8.0.32-win-x64.exe,0",
+    "un": "\"C:\\ProgramData\\Package Cache\\{92950313-d844-4fea-bb8c-2557c53f13f0}\\dotnet-runtime-8.0.32-win-x64.exe\"  /uninstall"
+  },
+  {
+    "key": "{98CA5A6B-4ECC-4E6D-BF18-6B20CBB6E5F4}",
+    "display": "Microsoft .NET Runtime - 6.0.10 (x86)",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{98CA5A6B-4ECC-4E6D-BF18-6B20CBB6E5F4}"
+  },
+  {
+    "key": "{9a6ce18d-11c0-4452-aa35-9f2b8437c686}",
+    "display": "Microsoft Visual C++ v14 Redistributable (x86) - 14.51.36247",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "C:\\ProgramData\\Package Cache\\{9a6ce18d-11c0-4452-aa35-9f2b8437c686}\\VC_redist.x86.exe,0",
+    "un": "\"C:\\ProgramData\\Package Cache\\{9a6ce18d-11c0-4452-aa35-9f2b8437c686}\\VC_redist.x86.exe\"  /uninstall"
+  },
+  {
+    "key": "{9BE518E6-ECC6-35A9-88E4-87755C07200F}",
+    "display": "Microsoft Visual C++ 2008 Redistributable - x86 9.0.30729.7523",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{9BE518E6-ECC6-35A9-88E4-87755C07200F}"
+  },
+  {
+    "key": "{9dd24b73-88e0-4f0f-882a-500e00d2bdef}",
+    "display": "Microsoft Windows Desktop Runtime - 6.0.10 (x86)",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "C:\\ProgramData\\Package Cache\\{9dd24b73-88e0-4f0f-882a-500e00d2bdef}\\windowsdesktop-runtime-6.0.10-win-x86.exe,0",
+    "un": "\"C:\\ProgramData\\Package Cache\\{9dd24b73-88e0-4f0f-882a-500e00d2bdef}\\windowsdesktop-runtime-6.0.10-win-x86.exe\"  /uninstall"
+  },
+  {
+    "key": "{9dff3540-fc85-4ed5-ac84-9e3c7fd8bece}",
+    "display": "Microsoft Visual C++ 2013 Redistributable (x86) - 12.0.40664",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "C:\\ProgramData\\Package Cache\\{9dff3540-fc85-4ed5-ac84-9e3c7fd8bece}\\vcredist_x86.exe,0",
+    "un": "\"C:\\ProgramData\\Package Cache\\{9dff3540-fc85-4ed5-ac84-9e3c7fd8bece}\\vcredist_x86.exe\"  /uninstall"
+  },
+  {
+    "key": "{B175520C-86A2-35A7-8619-86DC379688B9}",
+    "display": "Microsoft Visual C++ 2012 x86 Additional Runtime - 11.0.61030",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{B175520C-86A2-35A7-8619-86DC379688B9}"
+  },
+  {
+    "key": "{b3bbf46b-6ffd-4f54-8d1f-26206cfe1739}",
+    "display": "Intel® Software Installer",
+    "pub": "Intel Corporation",
+    "loc": "",
+    "icon": "C:\\ProgramData\\Package Cache\\{b3bbf46b-6ffd-4f54-8d1f-26206cfe1739}\\WirelessSetup.exe,0",
+    "un": "\"C:\\ProgramData\\Package Cache\\{b3bbf46b-6ffd-4f54-8d1f-26206cfe1739}\\WirelessSetup.exe\"  /uninstall"
+  },
+  {
+    "key": "{BD95A8CD-1D9F-35AD-981A-3E7925026EBB}",
+    "display": "Microsoft Visual C++ 2012 x86 Minimum Runtime - 11.0.61030",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{BD95A8CD-1D9F-35AD-981A-3E7925026EBB}"
+  },
+  {
+    "key": "{D401961D-3A20-3AC7-943B-6139D5BD490A}",
+    "display": "Microsoft Visual C++ 2013 x86 Additional Runtime - 12.0.40664",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{D401961D-3A20-3AC7-943B-6139D5BD490A}"
+  },
+  {
+    "key": "{D80555F6-E78B-43D0-86F4-C4B3C1E0EDA5}",
+    "display": "Epic Games Launcher",
+    "pub": "Epic Games, Inc.",
+    "loc": "D:\\software\\Epic Games\\",
+    "icon": "",
+    "un": "MsiExec.exe /X{D80555F6-E78B-43D0-86F4-C4B3C1E0EDA5}"
+  },
+  {
+    "key": "{EBD44C5E-F1AF-4955-AEDF-F15D06384A9C}",
+    "display": "Microsoft .NET Host FX Resolver - 6.0.10 (x86)",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{EBD44C5E-F1AF-4955-AEDF-F15D06384A9C}"
+  },
+  {
+    "key": "{F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}",
+    "display": "Microsoft Visual C++ 2010  x86 Redistributable - 10.0.40219",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "",
+    "un": "MsiExec.exe /X{F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}"
+  },
+  {
+    "key": "{f65db027-aff3-4070-886a-0d87064aabb1}",
+    "display": "Microsoft Visual C++ 2013 Redistributable (x86) - 12.0.30501",
+    "pub": "Microsoft Corporation",
+    "loc": "",
+    "icon": "C:\\ProgramData\\Package Cache\\{f65db027-aff3-4070-886a-0d87064aabb1}\\vcredist_x86.exe,0",
+    "un": "\"C:\\ProgramData\\Package Cache\\{f65db027-aff3-4070-886a-0d87064aabb1}\\vcredist_x86.exe\"  /uninstall"
+  },
+  {
+    "key": "企业微信",
+    "display": "企业微信",
+    "pub": "腾讯科技(深圳)有限公司",
+    "loc": "",
+    "icon": "D:\\software\\tencent\\WXWork\\WXWork.exe",
+    "un": "D:\\software\\tencent\\WXWork\\Uninstall.exe"
+  },
+  {
+    "key": "微信开发者工具",
+    "display": "微信开发者工具 1.06.2503300",
+    "pub": "腾讯科技(广州)有限公司",
+    "loc": "",
+    "icon": "D:\\develop\\software\\微信web开发者工具\\微信开发者工具.exe",
+    "un": "D:\\develop\\software\\微信web开发者工具\\卸载微信开发者工具.exe"
+  },
+  {
+    "key": "百度云管家",
+    "display": "百度网盘",
+    "pub": "北京度友科技有限公司",
+    "loc": "\"D:\\software\\cloud\\BaiduNetdisk\"",
+    "icon": "\"D:\\software\\cloud\\BaiduNetdisk\\BaiduNetdisk.exe\"",
+    "un": "\"D:\\software\\cloud\\BaiduNetdisk\\uninst.exe\""
+  },
+  {
+    "key": "网易云音乐",
+    "display": "网易云音乐",
+    "pub": "网易公司",
+    "loc": "",
+    "icon": "D:\\software\\music\\CloudMusic\\CloudMusic\\cloudmusic.exe",
+    "un": "D:\\software\\music\\CloudMusic\\CloudMusic\\UnInstall.exe"
+  },
+  {
+    "key": "英雄联盟",
+    "display": "英雄联盟",
+    "pub": "Tencent",
+    "loc": "",
+    "icon": "",
+    "un": "H:\\WeGameApps\\英雄联盟（含经典模式）\\英雄联盟卸载.exe"
+  },
+  {
+    "key": "1bf39983-50d0-5fe0-9ef4-cece76f67c5e",
+    "display": "DeepSeek Harness 0.2.0-rc.2",
+    "pub": "",
+    "loc": "C:\\Users\\querkecor\\AppData\\Local\\Programs\\DeepSeek Harness",
+    "icon": "C:\\Users\\querkecor\\AppData\\Local\\Programs\\DeepSeek Harness\\DeepSeek Harness.exe,0",
+    "un": "\"C:\\Users\\querkecor\\AppData\\Local\\Programs\\DeepSeek Harness\\Uninstall DeepSeek Harness.exe\" /currentuser"
+  },
+  {
+    "key": "268ce9e6-a30b-5890-ad18-d4b3ebba5377",
+    "display": "ZCode 3.14.4",
+    "pub": "ZCode",
+    "loc": "",
+    "icon": "D:\\software\\ZCode\\uninstallerIcon.ico",
+    "un": "\"D:\\software\\ZCode\\Uninstall ZCode.exe\" /currentuser"
+  },
+  {
+    "key": "661f0cc6-343a-59cb-a5e8-8f6324cc6998",
+    "display": "Notion 7.31.0",
+    "pub": "Notion Labs, Inc",
+    "loc": "",
+    "icon": "C:\\Users\\querkecor\\AppData\\Local\\Programs\\Notion\\Notion.exe,0",
+    "un": "\"C:\\Users\\querkecor\\AppData\\Local\\Programs\\Notion\\Uninstall Notion.exe\" /currentuser"
+  },
+  {
+    "key": "b34156d3-fe5f-5fd2-a095-3f35d6dfc923",
+    "display": "百度翻译 2.4.1",
+    "pub": "Baidu Translate",
+    "loc": "",
+    "icon": "D:\\software\\baidu-translate-client\\百度翻译.exe,0",
+    "un": "\"D:\\software\\baidu-translate-client\\Uninstall 百度翻译.exe\" /currentuser"
+  },
+  {
+    "key": "bd400747-f0c1-5638-a859-982036102edf",
+    "display": "Obsidian",
+    "pub": "Obsidian",
+    "loc": "",
+    "icon": "D:\\software\\Obsidian\\Obsidian.exe,0",
+    "un": "\"D:\\software\\Obsidian\\Uninstall Obsidian.exe\" /currentuser"
+  },
+  {
+    "key": "BFD312E9-1019-4F57-9F44-F86246833B50",
+    "display": "WorkBuddy 5.8.3",
+    "pub": "Tencent Technology (Shenzhen) Company Limited",
+    "loc": "",
+    "icon": "D:\\software\\WorkBuddy\\WorkBuddy.exe,0",
+    "un": "\"D:\\software\\WorkBuddy\\Uninstall WorkBuddy.exe\" /currentuser"
+  },
+  {
+    "key": "d0706a59-dd34-5294-b22d-608c4ab0cc10",
+    "display": "Apifox 2.5.11",
+    "pub": "Apifox Team",
+    "loc": "",
+    "icon": "D:\\develop\\software\\api\\Apifox\\uninstallerIcon.ico",
+    "un": "\"D:\\develop\\software\\api\\Apifox\\Uninstall Apifox.exe\" /currentuser"
+  },
+  {
+    "key": "Doubao",
+    "display": "豆包",
+    "pub": "Beijing Chuntian Zhiyun Technology Co., Ltd.",
+    "loc": "",
+    "icon": "\"D:\\software\\Doubao\\icon.ico\"",
+    "un": "\"D:\\software\\Doubao\\uninstall.exe\""
+  },
+  {
+    "key": "fbd30ee5-8150-549e-9aed-fd9d444364fb",
+    "display": "Xmind 26.1.3145",
+    "pub": "XMIND LTD.",
+    "loc": "",
+    "icon": "C:\\Users\\querkecor\\AppData\\Local\\Programs\\Xmind\\Xmind.exe,0",
+    "un": "\"C:\\Users\\querkecor\\AppData\\Local\\Programs\\Xmind\\Uninstall Xmind.exe\" /currentuser"
+  },
+  {
+    "key": "Kingsoft Office",
+    "display": "WPS Office (12.1.0.29161)",
+    "pub": "Kingsoft Corp.",
+    "loc": "",
+    "icon": "D:\\software\\office\\WPS Office\\ksolaunch.exe",
+    "un": "D:\\software\\office\\WPS Office\\12.1.0.29161\\utility\\uninst.exe"
+  },
+  {
+    "key": "TreeSize_is1",
+    "display": "TreeSize V9.9",
+    "pub": "JAM Software",
+    "loc": "D:\\software\\tools\\TreeSize\\",
+    "icon": "D:\\software\\tools\\TreeSize\\TreeSize.exe",
+    "un": "\"D:\\software\\tools\\TreeSize\\unins000.exe\""
+  },
+  {
+    "key": "V98Pro",
+    "display": "V98Pro",
+    "pub": "",
+    "loc": "",
+    "icon": "D:\\software\\tools\\V98Pro Driver\\V98Pro Driver.exe",
+    "un": "D:\\software\\tools\\V98Pro Driver\\uninst.exe"
+  },
+  {
+    "key": "Wondershare NativePush_is1",
+    "display": "Wondershare NativePush(Build 1.0.1.0)",
+    "pub": "Wondershare Software",
+    "loc": "C:\\Users\\querkecor\\AppData\\Local\\Wondershare\\Wondershare NativePush\\",
+    "icon": "C:\\Users\\querkecor\\AppData\\Local\\Wondershare\\Wondershare NativePush\\Uninstall.ico",
+    "un": "\"C:\\Users\\querkecor\\AppData\\Local\\Wondershare\\Wondershare NativePush\\unins000.exe\""
+  },
+  {
+    "key": "{2a612b01-6a34-408a-b31b-2fa0f048823f}",
+    "display": "Python 3.13.5 (64-bit)",
+    "pub": "Python Software Foundation",
+    "loc": "",
+    "icon": "C:\\Users\\querkecor\\AppData\\Local\\Package Cache\\{2a612b01-6a34-408a-b31b-2fa0f048823f}\\python-3.13.5-amd64.exe,0",
+    "un": "\"C:\\Users\\querkecor\\AppData\\Local\\Package Cache\\{2a612b01-6a34-408a-b31b-2fa0f048823f}\\python-3.13.5-amd64.exe\"  /uninstall"
+  },
+  {
+    "key": "{771FD6B0-FA20-440A-A002-3B3BAC16DC50}_is1",
+    "display": "Microsoft Visual Studio Code (User)",
+    "pub": "Microsoft Corporation",
+    "loc": "D:\\develop\\software\\Microsoft VS Code\\",
+    "icon": "D:\\develop\\software\\Microsoft VS Code\\Code.exe",
+    "un": "\"D:\\develop\\software\\Microsoft VS Code\\unins000.exe\""
+  },
+  {
+    "key": "{FB65B538-F812-49D2-9DD8-FFB5082D4544}_is1",
+    "display": "千问",
+    "pub": "Alibaba Group",
+    "loc": "D:\\software\\QianwenApp\\",
+    "icon": "D:\\software\\QianwenApp\\qianwen.exe,0",
+    "un": "\"D:\\software\\QianwenApp\\unins000.exe\" /LOG"
+  }
+]

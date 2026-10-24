@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # 门禁一：tkinter 缺失只在运行时暴露且构建日志不报错（W0 POC 教训，C4）
+      - name: tkinter 门禁
+        run: python -c "import tkinter; print('tkinter OK', tkinter.TkVersion)"
+
+      - name: 安装开发依赖
+        run: python -m pip install pytest
+
+      # 门禁二：单元测试
+      - name: pytest
+        run: python -m pytest
+
+      # 门禁三：内置自检（--selftest）
+      - name: selftest
+        run: python -m disk_audit --selftest
+
+      # Sprint 2 接入：
+      #   门禁四 import 白名单（运行时零第三方依赖，Q4）
+      #   门禁五 PyInstaller --onedir 构建 + 产物内 import tkinter 断言 + 产物 --selftest

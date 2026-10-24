@@ -1,0 +1,24 @@
+{
+  "frozen": true,
+  "exe": "C:\\Users\\querkecor\\WorkBuddy\\电脑磁盘清理大师\\poc\\dist\\poc2_tk\\poc2_tk.exe",
+  "python": "3.13.5",
+  "cwd": "C:\\Users\\querkecor\\WorkBuddy\\电脑磁盘清理大师\\poc",
+  "tkinter": "ok 8.6",
+  "registry": {
+    "total_keys": 284,
+    "with_displayname": 206
+  },
+  "appx": {
+    "count": 199,
+    "stderr": ""
+  },
+  "walk": {
+    "files": 173229,
+    "dirs": 26775,
+    "size_mb": 7212.2,
+    "denied": 1,
+    "reparse": 4,
+    "root": "C:\\Users\\querkecor\\AppData\\Local"
+  },
+  "elapsed_sec": 2.38
+}

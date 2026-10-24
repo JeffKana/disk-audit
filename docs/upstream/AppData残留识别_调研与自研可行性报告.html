@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AppData 残留识别：市场调研与自研可行性评估报告</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0; background: #f6f7f9; color: #1f2937;
+    font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    font-size: 15px; line-height: 1.75;
+  }
+  .page { max-width: 980px; margin: 0 auto; padding: 40px 32px 80px; }
+  header.rpt { border-bottom: 3px solid #2563eb; padding-bottom: 20px; margin-bottom: 28px; }
+  header.rpt h1 { font-size: 26px; margin: 0 0 10px; color: #111827; }
+  .meta { color: #6b7280; font-size: 13px; }
+  .meta span { margin-right: 18px; }
+  h2 { font-size: 20px; color: #1d4ed8; margin: 42px 0 14px; padding-left: 10px; border-left: 4px solid #2563eb; }
+  h3 { font-size: 16px; color: #111827; margin: 26px 0 10px; }
+  p { margin: 10px 0; }
+  .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 18px 22px; margin: 14px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+  .tldr { background: #eff6ff; border: 1px solid #bfdbfe; }
+  .tldr ol { margin: 8px 0 4px; padding-left: 22px; }
+  .tldr li { margin: 7px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; background: #fff; }
+  th { background: #f3f4f6; color: #374151; text-align: left; padding: 8px 10px; border: 1px solid #e5e7eb; font-weight: 600; white-space: nowrap; }
+  td { padding: 8px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+  .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .tag { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 10px; margin-right: 4px; white-space: nowrap; }
+  .tag-blue   { background: #dbeafe; color: #1e40af; }
+  .tag-green  { background: #dcfce7; color: #166534; }
+  .tag-red    { background: #fee2e2; color: #991b1b; }
+  .tag-amber  { background: #fef3c7; color: #92400e; }
+  .tag-gray   { background: #e5e7eb; color: #374151; }
+  .tag-purple { background: #ede9fe; color: #5b21b6; }
+  .p0 { color: #b91c1c; font-weight: 700; }
+  .p1 { color: #b45309; font-weight: 700; }
+  .p2 { color: #6d28d9; font-weight: 700; }
+  .bar-row { display: flex; align-items: center; margin: 5px 0; font-size: 13px; }
+  .bar-label { width: 190px; color: #374151; flex-shrink: 0; }
+  .bar-track { flex: 1; background: #f3f4f6; border-radius: 4px; height: 18px; position: relative; }
+  .bar-fill { height: 18px; border-radius: 4px; min-width: 2px; }
+  .bar-val { margin-left: 10px; width: 130px; color: #6b7280; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .flow { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
+  .flow .step { background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 14px; font-size: 13px; }
+  .flow .arrow { align-self: center; color: #94a3b8; font-weight: 700; }
+  .flow .step b { color: #1d4ed8; }
+  .flow .step small { display: block; color: #6b7280; font-size: 12px; }
+  .note { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 16px; font-size: 13.5px; margin: 12px 0; color: #78350f; }
+  .danger { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 10px 16px; font-size: 13.5px; margin: 12px 0; color: #7f1d1d; }
+  .src { font-size: 12px; color: #6b7280; }
+  .src li { margin: 3px 0; }
+  code { background: #f3f4f6; border-radius: 4px; padding: 1px 6px; font-size: 13px; font-family: Consolas, "Courier New", monospace; }
+  .kpi { display: flex; gap: 12px; flex-wrap: wrap; margin: 14px 0; }
+  .kpi .k { flex: 1; min-width: 150px; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 16px; text-align: center; }
+  .kpi .k .v { font-size: 22px; font-weight: 700; color: #1d4ed8; font-variant-numeric: tabular-nums; }
+  .kpi .k .l { font-size: 12.5px; color: #6b7280; margin-top: 2px; }
+  footer { margin-top: 50px; padding-top: 16px; border-top: 1px solid #e5e7eb; color: #9ca3af; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="rpt">
+  <h1>AppData 残留识别：市场调研与自研可行性评估报告</h1>
+  <div class="meta">
+    <span>日期：2026-10-23</span>
+    <span>数据对象：本机 C:\Users\querkecor\AppData（Roaming + Local）</span>
+    <span>数据来源：TreeSize 导出 CSV × 2 + 本机注册表/进程/服务实测证据</span>
+    <span>项目：电脑磁盘清理大师</span>
+  </div>
+</header>
+
+<!-- ==================== 结论速览 ==================== -->
+<div class="card tldr">
+  <b style="font-size:16px">结论速览（TL;DR）</b>
+  <ol>
+    <li><b>市面已有成熟软件。</b>"卸载残留检测"是专业卸载器的标配功能（Revo、HiBit、Geek、IObit 均内置卸载后残留扫描）；<b>事后全盘"孤儿识别"（你的场景）</b>以开源的 <b>Bulk Crap Uninstaller</b> 最完善，CleanMyPC 曾以此为核心卖点但已于 2025 年 4 月停运。</li>
+    <li><b>技术方案成熟。</b>三条路线均经商业验证：安装监控快照（最准、只管未来）、卸载后残留扫描（主流）、事后交叉识别（适用存量清理）。没有技术上的"无人区"，差距在<b>知识库规模与误判控制</b>。</li>
+    <li><b>自研可行性已被本次实测验证。</b>我用 500 行原型脚本对这台机器完成：319 个顶层条目归属判定，识别出 <b>106 项残留候选（约 1.5GB）</b>与 <b>约 11.9GB 可回收缓存</b>。MVP 单人 1~2 周可完成。</li>
+    <li><b>主要难点不是扫描，而是"判定"与"防误杀"。</b>知识库长尾（名称≠产品名）、便携软件盲区、共享组件、DPAPI 等敏感目录，任何一个处理不好都会造成不可逆损失。</li>
+    <li><b>建议：</b><span class="p0">P0</span> 先用现成工具（BCUninstaller）清理存量；<span class="p1">P1</span> 若决定自研，定位"只读分析器 + 置信度报告"，删除永远交给人；<span class="p2">P2</span> 产品化需长期知识库运营，可参考 BCU 源码（Apache 2.0 可商用）。</li>
+  </ol>
+</div>
+
+<!-- ==================== 一、数据画像 ==================== -->
+<h2>一、你的现状：数据画像</h2>
+
+<div class="kpi">
+  <div class="k"><div class="v">165.8 / 184.6 GB</div><div class="l">C 盘已用 / 总容量（剩 18.8GB，空间紧张）</div></div>
+  <div class="k"><div class="v">53.5 GB</div><div class="l">AppData 两目录合计（占已用空间约 32%）</div></div>
+  <div class="k"><div class="v">319 + 181</div><div class="l">顶层目录数 + 下钻子项（Programs/Packages）</div></div>
+  <div class="k"><div class="v">106 项 / 1.5 GB</div><div class="l">残留候选（高 16 / 中 35 / 低 55）</div></div>
+</div>
+
+<p>Roaming 152 项约 21.5GB，Local 167 项约 32.0GB。按"归属判定 + 处置建议"分类后（仅顶层口径）：</p>
+
+<div class="card">
+  <h3 style="margin-top:4px">AppData 顶层 319 项空间分布（合计 53.5GB）</h3>
+  <!-- 条形图：宽度按 MB 占比（总 54802MB） -->
+  <div class="bar-row"><div class="bar-label">已安装应用（85 项）</div><div class="bar-track"><div class="bar-fill" style="width:60.8%;background:#3b82f6"></div></div><div class="bar-val">33.3 GB</div></div>
+  <div class="bar-row"><div class="bar-label">开发缓存（35 项）</div><div class="bar-track"><div class="bar-fill" style="width:12.6%;background:#8b5cf6"></div></div><div class="bar-val">6.9 GB</div></div>
+  <div class="bar-row"><div class="bar-label">容器：Programs/Packages</div><div class="bar-track"><div class="bar-fill" style="width:6.5%;background:#94a3b8"></div></div><div class="bar-val">3.5 GB</div></div>
+  <div class="bar-row"><div class="bar-label">更新缓存（15 项）</div><div class="bar-track"><div class="bar-fill" style="width:5.8%;background:#f59e0b"></div></div><div class="bar-val">3.1 GB</div></div>
+  <div class="bar-row"><div class="bar-label">系统组件（32 项）</div><div class="bar-track"><div class="bar-fill" style="width:4.7%;background:#64748b"></div></div><div class="bar-val">2.6 GB</div></div>
+  <div class="bar-row"><div class="bar-label">缓存/转储（13 项）</div><div class="bar-track"><div class="bar-fill" style="width:3.3%;background:#fbbf24"></div></div><div class="bar-val">1.8 GB</div></div>
+  <div class="bar-row"><div class="bar-label">游戏数据（20 项）</div><div class="bar-track"><div class="bar-fill" style="width:2.3%;background:#10b981"></div></div><div class="bar-val">1.3 GB</div></div>
+  <div class="bar-row"><div class="bar-label">残留候选·低置信（55 项）</div><div class="bar-track"><div class="bar-fill" style="width:2.3%;background:#f87171"></div></div><div class="bar-val">1.26 GB</div></div>
+  <div class="bar-row"><div class="bar-label">使用中·无安装记录（8 项）</div><div class="bar-track"><div class="bar-fill" style="width:1.1%;background:#34d399"></div></div><div class="bar-val">0.6 GB</div></div>
+  <div class="bar-row"><div class="bar-label">残留候选·中/高置信（51 项）</div><div class="bar-track"><div class="bar-fill" style="width:0.5%;background:#ef4444"></div></div><div class="bar-val">0.24 GB</div></div>
+</div>
+
+<h3>几个值得注意的发现</h3>
+<table>
+  <tr><th style="width:200px">发现</th><th>证据</th><th>含义</th></tr>
+  <tr><td><b>2023-04-08 "全家桶"植入事件</b></td><td>Roaming 下 <code>360safe、Ludashi（鲁大师）、chat_pp、dzip_pp、tabx_pp、lds、DrvMgr</code> 共 7 个目录创建/修改时间完全相同，业主均为 Administrators，现均无对应卸载记录</td><td>典型捆绑推广残留族——同日期+同业主+无卸载记录，是机器可提取的强信号</td></tr>
+  <tr><td><b>已下线/停更软件残留</b></td><td><code>qq_guild</code>（QQ频道，腾讯已停止该服务）107.9MB；<code>alixby</code>（小白羊云盘，开源项目 2023 年停更）8.1MB；<code>Sun</code>（旧版 Sun Java）等</td><td>"产品已死"类残留判定需要外部知识（服务状态），纯本机证据不够</td></tr>
+  <tr><td><b>Electron 更新缓存成灾</b></td><td>15 个 <code>*-updater</code> 目录合计 3.1GB（obsidian/xmind/apifox/notion/deepseek 等，单个最大 590MB）</td><td>这是当前最"值钱"的可回收空间：可再生、与卸载无关，通用清理规则即可命中</td></tr>
+  <tr><td><b>未知大目录</b></td><td><code>b1</code> 601MB、<code>tidalab</code> 293MB、<code>Yii.Guxing</code>、哈希/GUID 命名目录 10+ 个</td><td>知识库覆盖不到的长尾，只能人工排查——这正是"个人判定费劲"的原因，也是工具的价值上限所在</td></tr>
+  <tr><td><b>真正的大头不是残留</b></td><td>残留候选合计仅 1.5GB；可回收空间主体是更新缓存 3.1GB + 崩溃转储/临时 1.8GB + 开发缓存 6.9GB（npm/yarn/pip/uv 等）</td><td>期望管理：清残留解决"脏乱"，清缓存解决"空间"</td></tr>
+</table>
+
+<!-- ==================== 二、市场调研 ==================== -->
+<h2>二、市面已有软件调研</h2>
+
+<h3>2.1 工具横评（残留识别能力视角）</h3>
+<table>
+  <tr><th>工具</th><th>获取/价格</th><th>残留识别能力</th><th>技术路线</th><th>主要局限</th><th>结论</th></tr>
+  <tr>
+    <td><b>Bulk Crap Uninstaller</b><br><span class="src">GitHub 17k+ stars</span></td>
+    <td>免费开源<br><span class="tag tag-green">Apache 2.0</span></td>
+    <td><b>最全面</b>：卸载后残留清理（文件+注册表+计划任务）、<b>孤儿应用检测</b>、商店应用/Steam/Oculus/Chocolatey、置信度评级、静默批量卸载</td>
+    <td>事后交叉识别 + 卸载后扫描</td>
+    <td>界面信息密度高，对新手不友好；<b>项目正在招募维护者</b>（长期维护存在风险）</td>
+    <td><span class="tag tag-blue">首选</span></td>
+  </tr>
+  <tr>
+    <td><b>Revo Uninstaller</b></td>
+    <td>免费版 + Pro 付费</td>
+    <td>卸载管家：先跑自带卸载器，再深度扫描注册表/文件残留（三档强度）；强制卸载可对<b>已卸载残留</b>做手动补扫；实时安装监控（Pro）</td>
+    <td>卸载后扫描 + 安装监控</td>
+    <td>官方手册明言：安全机制会<b>故意漏报部分残留</b>以避免误删；共装多版本时可能误报他版本组件；Pro 才有监控/批量</td>
+    <td><span class="tag tag-blue">付费档标杆</span></td>
+  </tr>
+  <tr>
+    <td><b>HiBit Uninstaller</b></td>
+    <td>免费</td>
+    <td>强制卸载 + 深度残留扫描（级别可选）+ 安装监控 + 批量；中文社区评价"功能接近 Revo"</td>
+    <td>卸载后扫描 + 安装监控</td>
+    <td>扫描偏激进，需人工复核；界面功能堆叠</td>
+    <td><span class="tag tag-blue">免费档推荐</span></td>
+  </tr>
+  <tr>
+    <td><b>Geek Uninstaller</b></td>
+    <td>免费（2MB 便携）</td>
+    <td>卸载后扫描注册表+文件残留（基础级）；强制卸载</td>
+    <td>卸载后扫描</td>
+    <td>无安装监控、免费版无批量；覆盖面一般</td>
+    <td><span class="tag tag-gray">轻量日常用</span></td>
+  </tr>
+  <tr>
+    <td><b>IObit Uninstaller</b></td>
+    <td>免费+广告</td>
+    <td>残留扫描、批量卸载、浏览器插件清理、捆绑软件识别</td>
+    <td>卸载后扫描 + 云库</td>
+    <td><b>安装时默认勾选推广软件</b>（中文社区普遍吐槽——本机的推广组件族很可能正来自此类来源）</td>
+    <td><span class="tag tag-amber">谨慎</span></td>
+  </tr>
+  <tr>
+    <td><b>Total Uninstall</b></td>
+    <td>付费（$29.95+）</td>
+    <td>安装前/后两次<b>全系统快照对比</b>，变更树精确回滚；"已安装程序"模块可逆向分析现装软件生成卸载日志</td>
+    <td>快照 diff（最准）</td>
+    <td>只覆盖监控期间安装的软件；偏重、付费</td>
+    <td><span class="tag tag-purple">技术天花板</span></td>
+  </tr>
+  <tr>
+    <td><b>CleanMyPC</b>（MacPaw）</td>
+    <td>曾付费</td>
+    <td>Leftovers 模块专查历史卸载残留 + Safety Database 安全库</td>
+    <td>事后识别 + 安全库</td>
+    <td><b>2025-04-22 官方宣布停运</b>，不再更新与分发——"纯 Windows 清理"赛道商业退潮的信号</td>
+    <td><span class="tag tag-red">已停运</span></td>
+  </tr>
+  <tr>
+    <td><b>360安全卫士 / 腾讯电脑管家</b></td>
+    <td>免费</td>
+    <td>C 盘清理/垃圾清理基于云端规则库，中文软件覆盖广</td>
+    <td>云规则库</td>
+    <td>不做"孤儿归属判定"；自身即全家桶来源（本机 2023-04-08 植入事件即实证）</td>
+    <td><span class="tag tag-amber">不解决本需求</span></td>
+  </tr>
+  <tr>
+    <td><b>Windows 自带</b>（设置-存储/存储感知）</td>
+    <td>系统内置</td>
+    <td>临时文件/回收站清理，应用大小展示</td>
+    <td>系统策略</td>
+    <td>无归属识别、无残留概念</td>
+    <td><span class="tag tag-gray">仅清临时</span></td>
+  </tr>
+  <tr>
+    <td><b>TreeSize / WizTree</b>（你正在用）</td>
+    <td>免费/付费</td>
+    <td>空间分析与可视化（WizTree 直读 NTFS MFT，秒级扫全盘）</td>
+    <td>空间分析</td>
+    <td>只回答"哪里大"，不回答"属于谁、能不能删"</td>
+    <td><span class="tag tag-gray">互补定位</span></td>
+  </tr>
+</table>
+
+<h3>2.2 社区/开源方案（自研可参考的先例）</h3>
+<table>
+  <tr><th>项目</th><th>做法</th><th>对自研的启示</th></tr>
+  <tr><td>koki7o/MS-Scripts · Find-AppLeftovers</td><td>PowerShell 扫 AppData 目录 → 与已安装程序名比对 → 报大小 → 强制人工复核</td><td>最小可行实现，约等于本次原型的简化版；证明路线门槛低</td></tr>
+  <tr><td>PowerShell Gallery · msix 模块</td><td><code>Get-MsixOrphanedAppData</code>：Roaming 目录与 Get-AppxPackage 注册包交叉，未命中即孤儿</td><td>UWP/商店包比对的官方姿势，可直接借鉴</td></tr>
+  <tr><td>Windows-Orphan-Cleanup-Audit（社区脚本）</td><td><b>审计优先</b>：默认只读出报告；删除需显式开关 + 二次确认</td><td>交互设计范本："只读分析器"定位有先例可循</td></tr>
+  <tr><td>Bulk Crap Uninstaller 源码</td><td>C#/.NET 8，孤儿检测、残留扫描、置信评级全链路开源</td><td><b>最完整的参考实现</b>；Apache 2.0 允许商用二开</td></tr>
+</table>
+
+<!-- ==================== 三、技术方案 ==================== -->
+<h2>三、技术方案剖析：三条成熟路线</h2>
+
+<table>
+  <tr><th>路线</th><th>原理</th><th>精度</th><th>适用时机</th><th>成本与代表产品</th></tr>
+  <tr>
+    <td><b>A. 安装监控/快照 diff</b></td>
+    <td>安装前拍一次全系统快照（注册表+文件系统），装完再拍一次，diff 得到精确变更集；卸载时按集回滚</td>
+    <td>最高（有 ground truth）</td>
+    <td><b>只管未来</b>：监控期间装的软件；对已存在软件无追溯力</td>
+    <td>IO 开销大、需常驻；Total Uninstall、Ashampoo、Revo Pro、HiBit</td>
+  </tr>
+  <tr>
+    <td><b>B. 卸载后残留扫描</b></td>
+    <td>跑完官方卸载器后，按程序名/厂商/安装路径启发式扫注册表、AppData、Program Files、计划任务</td>
+    <td>中高（名称匹配+安全漏报策略）</td>
+    <td><b>卸载动作发生时</b>触发；对"历史上没管住"的存量无能为力</td>
+    <td>实现成本低；Revo、Geek、IObit、BCU</td>
+  </tr>
+  <tr>
+    <td><b>C. 事后孤儿识别</b><br><span class="tag tag-blue">＝你的场景</span></td>
+    <td>全盘扫 AppData/ProgramData → 与<b>当前证据集</b>交叉（注册表卸载项、商店包注册、运行进程、服务、自启动）→ 知识库匹配 → 哈希/GUID/陈旧度等启发式兜底 → 置信度分级输出</td>
+    <td>取决于<b>知识库覆盖率</b>（本次实测约 89%）</td>
+    <td>存量清理、接手二手电脑、定期体检</td>
+    <td>中等；BCU（Orphan 查找）、CleanMyPC Leftovers（停运）、社区脚本</td>
+  </tr>
+</table>
+
+<div class="note"><b>结论：</b>三条路线不是互斥而是互补——商用产品普遍 A+B+C 混合（如 Revo Pro）。自研时 C 是必做核心，B 可后置（接入卸载时机），A 是高成本增值项。</div>
+
+<!-- ==================== 四、自研可行性 ==================== -->
+<h2>四、自研可行性：本次原型实证</h2>
+
+<p>为回答"技术上做不做得到"，我在本机跑通了一条完整管线（原型代码见交付物）：</p>
+
+<div class="flow">
+  <div class="step"><b>证据采集</b><small>PowerShell 读注册表 206 项卸载记录、164 个商店包、107 条活动路径（54 进程/303 服务/10 自启动）</small></div>
+  <div class="arrow">→</div>
+  <div class="step"><b>数据接入</b><small>解析你导出的 2 份 TreeSize CSV（319 个顶层条目）</small></div>
+  <div class="arrow">→</div>
+  <div class="step"><b>归属引擎</b><small>硬保护规则 → 知识库(~260 条) → 注册表匹配 → 进程/服务 → 商店包 → 启发式兜底</small></div>
+  <div class="arrow">→</div>
+  <div class="step"><b>分级输出</b><small>12 类分类 × 3 档置信度 × 处置建议 → CSV 清单</small></div>
+</div>
+
+<h3>实测结果（500 个判定单元 = 319 顶层 + 181 下钻子项）</h3>
+<table>
+  <tr><th>判定来源</th><th class="num">命中数</th><th class="num">占比</th><th>说明</th></tr>
+  <tr><td>知识库（人工维护的名称→归属映射）</td><td class="num">283</td><td class="num">56.6%</td><td>覆盖系统组件、游戏、国产软件、开发缓存等常见名</td></tr>
+  <tr><td>商店包比对（Get-AppxPackage）</td><td class="num">152</td><td class="num">30.4%</td><td>主要是 Local\Packages 下钻子项</td></tr>
+  <tr><td>硬保护规则</td><td class="num">5</td><td class="num">1.0%</td><td>Microsoft 系、兼容 Junction 等强制保护</td></tr>
+  <tr><td>注册表卸载项匹配</td><td class="num">3</td><td class="num">0.6%</td><td>多数已知名称被知识库先行命中（注册表证据主要起兜底与佐证作用）</td></tr>
+  <tr><td>启发式兜底（哈希/GUID/陈旧度）</td><td class="num">55</td><td class="num">11.0%</td><td><b>未知归属长尾</b>——人工仍需介入的部分</td></tr>
+</table>
+
+<p>产出物：<b>106 项残留候选</b>（高置信 16 / 中 35 / 低 55，合计 1.5GB）、<b>约 11.9GB 可回收缓存</b>（更新缓存 3.1 + 转储/临时 1.8 + 开发缓存 6.9GB，后两者按需）、每项附证据链与处置建议，详见交付的 CSV。</p>
+
+<h3>可行性评估结论</h3>
+<table>
+  <tr><th>层级</th><th>工作量</th><th>技术风险</th><th>说明</th></tr>
+  <tr><td><b>MVP（分析器）</b></td><td>单人 1~2 周</td><td>低</td><td>证据采集 + 归属引擎 + 报告输出，本次原型已验证（约 500 行 Python）</td></tr>
+  <tr><td><b>可用工具</b></td><td>单人 1~2 月</td><td>中</td><td>加 GUI、目录树递归、删除走回收站（IFileOperation）、误报反馈回流</td></tr>
+  <tr><td><b>产品级</b></td><td>团队 3~6 个月起，长期运营</td><td>中高</td><td>知识库规模化（覆盖数万软件名）、置信度模型、云规则、安装监控模块——核心竞争力从"技术"转为"数据"</td></tr>
+</table>
+
+<!-- ==================== 五、难点 ==================== -->
+<h2>五、主要难点（按优先级分级，附本机实证）</h2>
+
+<h3><span class="p0">P0 误杀防护——做错就是不可逆事故</span></h3>
+<table>
+  <tr><th>风险点</th><th>后果</th><th>本机实证</th><th>对策</th></tr>
+  <tr><td><b>DPAPI 密钥</b>（Roaming\Microsoft\Protect、Crypto）</td><td>删除 = 用户所有加密数据（浏览器保存的密码、证书、Wi-Fi 凭据）<b>永久无法解密</b></td><td>Roaming\Microsoft 真实存在（46.1MB，含 Protect/Crypto）</td><td>永不将 Microsoft 系目录列为可删；删除操作必须走白名单</td></tr>
+  <tr><td><b>XP 兼容 Junction</b></td><td>删除后旧程序路径解析故障</td><td>Local 下实测存在 <code>Application Data / History / Temporary Internet Files</code> 三个 0 字节链接</td><td>硬编码黑名单</td></tr>
+  <tr><td><b>UWP Packages 误删</b></td><td>商店应用数据损坏、系统组件触发重装修复循环</td><td>Local\Packages 1.3GB，下钻发现未注册目录（如 DesktopSpotlight）——可能是 staged 而非孤儿</td><td>Packages 内部按包名精确比对，低置信默认保留</td></tr>
+  <tr><td><b>共享组件目录</b></td><td>删一家殃及全家</td><td>本机 <code>Electron、CEF、AgoraAudio、VoipNNModel、WNS、Cache</code> 等被多个应用共用</td><td>归属引擎必须支持"多主归属"标记</td></tr>
+  <tr><td><b>删除动作本身</b></td><td>误删无法挽回</td><td>—</td><td>只走回收站（IFileOperation + FOF_ALLOWUNDO）+ 还原点 + 永远人审确认</td></tr>
+</table>
+
+<h3><span class="p1">P1 判定准确率——核心竞争力所在</span></h3>
+<table>
+  <tr><th>难点</th><th>本机实证</th><th>应对思路</th></tr>
+  <tr><td><b>名称 ≠ 产品名</b></td><td>Tencent≠QQ/微信、kingsoft=WPS、Sun=Java、Netease=网易系；<code>_pp</code> 后缀推广族、<code>fastpdf_*</code> 族需按命名规律归族</td><td>知识库 + 厂商别名表 + 命名模式规则（正则族匹配）</td></tr>
+  <tr><td><b>匹配算法误判</b></td><td>原型首版曾把 Roaming\Code（VS Code）误判为 OpenAI Codex 商店包——"code" 是 "openaicodex" 的子串；修复后正确</td><td>包含匹配必须限定语境（如仅限含点号的包名式命名）；<b>误判案例应沉淀为回归测试集</b></td></tr>
+  <tr><td><b>便携/绿色软件盲区</b></td><td>Geek Uninstaller、Clash Plus、TreeSize 均在用但<b>无卸载记录</b>——"无注册≠残留"</td><td>运行进程/最近修改时间/目录内 exe 签名（Authenticode 证书里的公司名）三重佐证</td></tr>
+  <tr><td><b>产品生命周期知识</b></td><td>QQ频道（服务下线）、小白羊云盘（项目停更）——本机证据无法判定"已死"</td><td>外部数据源（服务状态库）或人工知识库标注</td></tr>
+  <tr><td><b>长尾未知</b></td><td>500 个判定单元中 55 个（11%）无法自动归属，含 b1(601MB)、tidalab(293MB) 等大目录</td><td>工具只能压缩人工工作量（本次约 89% 自动判定），不能归零——<b>这决定产品预期管理</b></td></tr>
+</table>
+
+<h3><span class="p2">P2 工程化——规模化才遇到</span></h3>
+<table>
+  <tr><th>课题</th><th>说明</th><th>业界参照</th></tr>
+  <tr><td>扫描性能</td><td>全盘百万级文件枚举，常规 API 需数分钟</td><td>WizTree 直读 NTFS MFT 实现秒级；BCU 用 .NET 枚举+并行</td></tr>
+  <tr><td>长路径/权限/占用</td><td>&gt;260 路径、TrustedInstaller 属主、运行中文件</td><td>\\?\ 前缀、跳过并报告、占用检测</td></tr>
+  <tr><td>多用户/远程机器</td><td>证据采集必须在<b>目标机</b>执行（本机原型即如此）；多用户需 HKCU 蜂巢加载</td><td>BCU 支持命令行/JSON 导出可远程驱动</td></tr>
+  <tr><td>信任与合规</td><td>删除类工具天然被警惕（捆绑、误删黑历史多）</td><td>开源（可审计）+ 只读默认 + 明示证据链，是差异化卖点</td></tr>
+</table>
+
+<!-- ==================== 六、结论建议 ==================== -->
+<h2>六、结论性建议</h2>
+
+<div class="card">
+<h3 style="margin-top:2px">总体结论</h3>
+<ol>
+  <li><b>需求真实且已有成熟解</b>：这是"卸载器"赛道的标准能力，不是未被开垦的需求；开源 BCU 已把事后孤儿识别做到可用且免费。</li>
+  <li><b>自研技术上完全可行</b>：本次以约 500 行原型完成 89% 自动归属判定即为实证；MVP 门槛低。</li>
+  <li><b>护城河不在代码在数据</b>：判定准确率 = 知识库覆盖率 × 防误判工程。中文软件生态（推广组件族、国产软件命名习惯）恰是国外工具的盲区，也是潜在差异化空间。</li>
+  <li><b>商业警示</b>：CleanMyPC 停运说明纯 Windows 清理工具商业化艰难；BCU 找不到维护者说明开源维护同样有成本。个人自用/学习价值高，创业需谨慎。</li>
+</ol>
+</div>
+
+<table>
+  <tr><th style="width:90px">优先级</th><th>行动</th><th>预期收益</th></tr>
+  <tr>
+    <td><span class="p0">P0</span><br><span class="src">立即 · 零成本</span></td>
+    <td>
+      ① 下载 <b>BCUninstaller 便携版</b>（免安装）做一轮全盘扫描，对照其"孤儿/残留"列表与本报告 CSV 交叉验证；<br>
+      ② 按 <b>高置信残留清单</b>（16 项：QQ频道 107.9MB、小白羊云盘、2023-04-08 推广族 7 项、Sun Java 等）人工确认后删除；<br>
+      ③ 清理确定安全的再生缓存：更新缓存 3.1GB、崩溃转储/Temp 1.8GB——比"残留"更能释放空间；<br>
+      ④ 养成习惯：今后卸载一律用 BCU/Geek 的"卸载后残留扫描"，从源头杜绝新增残留。
+    </td>
+    <td>预计释放 <b>5~8GB</b>（不动开发缓存）；C 盘可用空间紧张显著缓解</td>
+  </tr>
+  <tr>
+    <td><span class="p1">P1</span><br><span class="src">若决定自研 · 1~2 周</span></td>
+    <td>
+      MVP 范围：<b>只读分析器 + 置信度报告</b>（本仓库 prototype 已搭好骨架：证据采集 PS 脚本 + 归属引擎 + KB）；<br>
+      原则：① 永不自动删除，删除动作永远人工确认+回收站；② 每个判定必须出示证据链；③ 知识库从本机 320 项长尾开始沉淀，规则用正则族（<code>*-updater</code>、<code>*_pp</code>、哈希/GUID）批量覆盖同类。
+    </td>
+    <td>得到一个可复用、可演进的自用工具；为项目"电脑磁盘清理大师"验证核心引擎</td>
+  </tr>
+  <tr>
+    <td><span class="p2">P2</span><br><span class="src">产品化 · 3~6 个月起</span></td>
+    <td>
+      置信度模型（多证据加权）、GUI（WinUI/WPF）、误报反馈回流、云规则库；<br>
+      可研读 BCU 源码（C#/.NET 8，<b>Apache 2.0 允许商用二次开发</b>）避免重复造轮子；安装监控（路线 A）作为高阶模块后置。
+    </td>
+    <td>从工具到产品的路径；差异化主打"中文软件生态知识库 + 全程只读可审计"</td>
+  </tr>
+</table>
+
+<div class="danger">
+<b>安全声明：</b>本报告及附带清单均为<b>只读分析结果</b>，未删除、未修改任何文件。"残留候选"不等于"可安全删除"——任何删除请务必：先核对证据列 → 关闭相关应用 → 经回收站删除（可还原）→ 大规模操作前创建系统还原点。Roaming\Microsoft\Protect（DPAPI 密钥）在任何情况下都不得删除。
+</div>
+
+<!-- ==================== 附录 ==================== -->
+<h2>附录</h2>
+<h3>交付物清单</h3>
+<table>
+  <tr><th>文件</th><th>内容</th></tr>
+  <tr><td><code>output\AppData残留候选分析_2026-10-23.csv</code></td><td>500 个判定单元逐项清单：位置/大小/分类/归属/建议/置信度/证据/判定来源</td></tr>
+  <tr><td><code>prototype/analyze_appdata.py</code></td><td>归属判定引擎原型（含 ~260 条知识库与分级判定流水线）</td></tr>
+  <tr><td><code>prototype/evidence.json</code></td><td>本机证据采集结果（注册表卸载项/商店包/进程/服务/自启动）</td></tr>
+  <tr><td><code>prototype/summary.json、run_log.txt</code></td><td>运行汇总与日志（统计口径见 category_agg_toplevel）</td></tr>
+</table>
+
+<h3>调研来源</h3>
+<ol class="src">
+  <li>Bulk Crap Uninstaller GitHub README（Apache 2.0、功能列表、维护者招募 discussion #289）及官网 bulkcrapuninstaller.com</li>
+  <li>FossHub / 第三方评测（BCU v6.3，2026-09-07 发布，.NET 8，Windows 10+）</li>
+  <li>Revo Uninstaller Pro 5 官方用户手册（残留扫描三档模式、安全漏报机制、备份策略）</li>
+  <li>MacPaw 官方公告：CleanMyPC 于 2025-04-22 停止开发与分发（macpaw.com/news/cleanmypc-sunset）</li>
+  <li>Total Uninstall 官方文档（安装前/后系统快照对比原理）</li>
+  <li>中文社区横向评测（qwbw.cn、CSDN、科技新知 2026 榜单：Geek/HiBit/Revo/IObit/BCU/Total Uninstall 对比）</li>
+  <li>GitHub koki7o/MS-Scripts（Find-AppLeftovers）、PowerShell Gallery msix 模块（Get-MsixOrphanedAppData）</li>
+  <li>本机实测数据（2026-10-23 原型运行：TreeSize CSV + 注册表/进程/服务证据交叉）</li>
+</ol>
+
+<footer>
+  AppData 残留识别调研与可行性评估 · 电脑磁盘清理大师项目 · 2026-10-23 · 本报告由只读原型分析生成，未对系统做任何更改
+</footer>
+
+</div>
+</body>
+</html>

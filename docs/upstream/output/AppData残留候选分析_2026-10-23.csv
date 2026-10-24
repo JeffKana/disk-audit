@@ -1,0 +1,501 @@
+﻿位置,名称,大小MB,文件数,最后修改,分类,归属判定,建议,置信度,证据/备注,判定来源
+Roaming,Microsoft,46.1,1013,2026-10-23,系统组件,微软系统组件,保留(勿动),高,"Roaming\Microsoft 含 DPAPI 密钥(Protect/Crypto)与证书,删除将导致加密数据不可恢复",硬保护规则
+Roaming,asus_framework,0.0,1,2026-04-11,系统组件,华硕主板/奥创组件,保留(勿动),中,驱动框架,知识库
+Roaming,VoipNNModel,0.0,0,2025-12-06,系统组件,通话降噪 AI 模型,保留(勿动),中,"钉钉/会议类应用共用组件,建议保留",知识库
+Roaming,Tencent,9113.6,32967,2026-10-23,已安装应用,腾讯系(QQ/微信聊天数据),保留,高,"含聊天记录,删除前务必确认",知识库
+Roaming,kingsoft,3584.0,38719,2026-10-23,已安装应用,金山 WPS,保留,高,WPS 配置与缓存,知识库
+Roaming,Code,2764.8,3522,2026-10-21,已安装应用,Visual Studio Code 用户数据,保留,高,VS Code 配置/工作区缓存;程序本体在 Local\Programs,知识库
+Roaming,Notion,1433.6,20217,2026-10-23,已安装应用,Notion,保留,高,,知识库
+Roaming,JetBrains,398.3,333,2026-09-21,已安装应用,JetBrains 全家桶,保留,高,IDE 配置/索引,知识库
+Roaming,Adobe,378.3,2759,2026-10-13,已安装应用,Adobe 系,保留,中,含 Acrobat/AIGD 组件,知识库
+Roaming,QQ,325.2,1210,2025-07-13,已安装应用,QQ,保留,高,,知识库
+Roaming,leigod,283.0,4579,2026-10-23,已安装应用,雷神加速器,保留,中,,知识库
+Roaming,baidunetdisk,227.1,1010,2026-10-11,已安装应用,百度网盘,保留,高,,知识库
+Roaming,obsidian,214.7,360,2026-09-05,已安装应用,Obsidian,保留,高,,知识库
+Roaming,BdTranslateClient,202.5,282,2026-09-23,已安装应用,百度翻译客户端,保留,高,,知识库
+Roaming,PixCake-qt_pro,158.7,420,2026-10-10,已安装应用,PixCake 修图软件,保留,中,,知识库
+Roaming,NutstoreClient,156.7,379,2026-09-02,已安装应用,坚果云,保留,高,,知识库
+Roaming,com.adobe.dunamis,150.1,35,2026-10-09,已安装应用,Adobe Dunamis 遥测,保留,中,Adobe 遥测组件,知识库
+Roaming,Mozilla,106.3,1287,2026-06-14,已安装应用,Firefox(Mozilla),保留,中,含浏览器配置/书签,知识库
+Roaming,Telegram A,75.3,842,2024-03-09,已安装应用,Telegram(变体客户端),保留,中,Telegram A 为第三方改版,知识库
+Roaming,DSH Desktop,63.5,310,2026-10-14,已安装应用,WorkBuddy/DSH 桌面端,保留,中,腾讯系桌面应用(当前生态),知识库
+Roaming,Typora,59.3,516,2026-10-23,已安装应用,Typora,保留,高,Markdown 编辑器,知识库
+Roaming,WXDrive,41.0,55,2026-10-15,已安装应用,微信文件/网盘组件,保留,中,WXDrive=微信盘,知识库
+Roaming,NVIDIA,35.1,1669,2026-10-07,已安装应用,NVIDIA Nsight Systems 2022.4.2,保留,高,注册表卸载项: NVIDIA Nsight Systems 2022.4.2; CUBLAS Runtime; CUBLAS Development,注册表
+Roaming,XMind,28.9,291,2025-11-09,已安装应用,XMind,保留,高,思维导图,知识库
+Roaming,Nutstore,25.8,270,2026-10-23,已安装应用,坚果云,保留,高,,知识库
+Roaming,apifox,23.1,248,2026-05-22,已安装应用,Apifox,保留,高,API 调试,知识库
+Roaming,leigod-bac20ba4,20.2,32,2025-10-07,已安装应用,雷神加速器(实例),保留,中,,知识库
+Roaming,Wondershare,20.2,164,2026-04-08,已安装应用,万兴科技,保留,中,,知识库
+Roaming,SQLyog,13.6,28,2026-09-16,已安装应用,SQLyog,保留,高,,知识库
+Roaming,Google,9.5,63,2026-09-05,已安装应用,Google(Chrome 等),保留,中,Chrome 相关数据,知识库
+Roaming,HBuilder X,8.3,27,2025-07-20,已安装应用,HBuilderX(DCloud),保留,中,前端 IDE,知识库
+Roaming,Oray,5.7,79,2026-10-23,已安装应用,贝锐(向日葵远程),保留,中,,知识库
+Roaming,Stardock,3.3,19,2026-10-23,已安装应用,Stardock,保留,中,,知识库
+Roaming,Netease,1.8,6,2025-01-16,已安装应用,网易系,保留,中,,知识库
+Roaming,BaiduYunKernel,1.1,7,2026-10-11,已安装应用,百度网盘内核,保留,中,,知识库
+Roaming,another-redis-desktop-manager,0.5,25,2025-06-28,已安装应用,Another Redis Desktop Manager,保留,中,Redis 可视化工具,知识库
+Roaming,Docker,0.5,11,2026-10-22,已安装应用,Docker Desktop,保留,高,,知识库
+Roaming,Everything,0.2,5,2026-10-22,已安装应用,Everything,保留,高,,知识库
+Roaming,baidu,0.1,1,2023-02-22,已安装应用,百度系组件,保留,中,,知识库
+Roaming,WNS,0.1,2,2026-03-16,已安装应用,腾讯 WNS 推送通道,保留,中,腾讯系应用共用,知识库
+Roaming,xmagic,0.0,4,2026-08-01,已安装应用,剪映/字节特效引擎(xmagic),保留,中,抖音系引擎组件,知识库
+Roaming,DingTalk,0.0,1,2026-06-01,已安装应用,钉钉,保留,高,,知识库
+Roaming,Apowersoft,0.0,5,2024-01-08,已安装应用,Apowersoft,保留,中,录屏等工具,知识库
+Roaming,dinglive,0.0,2,2025-12-07,已安装应用,钉钉直播组件,保留,中,随钉钉重建,知识库
+Roaming,Doubao,0.0,1,2026-10-09,已安装应用,豆包(字节 AI 助手),保留,中,,知识库
+Roaming,Visual Studio Setup,0.0,1,2023-12-09,已安装应用,Visual Studio 安装器,保留,高,VS 安装状态目录,知识库
+Roaming,Claude,0.0,1,2026-08-01,已安装应用,Claude 桌面端,保留,中,,知识库
+Roaming,WinRAR,0.0,1,2023-02-22,已安装应用,WinRAR,保留,高,压缩软件配置;若已卸载则为残留,知识库
+Roaming,FortiClient,0.0,0,2025-11-08,已安装应用,FortiClient VPN,保留,中,若已卸载则为残留,知识库
+Roaming,QuarkCloudDrive,0.0,0,2026-06-21,已安装应用,夸克网盘,保留,高,,知识库
+Roaming,WeMeetApp,0.0,0,2026-07-20,已安装应用,腾讯会议,保留,高,,知识库
+Roaming,Clash Plus,83.4,12,2026-10-18,使用中(无安装记录),Clash Plus 代理客户端,保留,中,,知识库
+Roaming,JAM Software,0.5,8,2026-10-22,使用中(无安装记录),TreeSize(JAM Software),保留,高,用户正在使用的磁盘分析工具,知识库
+Roaming,Geek Uninstaller,0.0,2,2026-05-22,使用中(无安装记录),Geek Uninstaller(便携工具),保留,中,"绿色软件,注册表无卸载记录——体现""便携应用盲区""",知识库
+Roaming,Claude-3p,0.0,1,2026-08-01,使用中(无安装记录),Claude 第三方客户端,保留,中,,知识库
+Roaming,WorkBuddy,0.0,0,2026-09-17,使用中(无安装记录),WorkBuddy(AI 工作台),保留,高,当前正在使用,知识库
+Roaming,RenPy,24.9,116,2025-07-13,游戏数据,RenPy 引擎游戏存档,视游戏去留人工确认,中,视觉小说类游戏,知识库
+Roaming,Sekiro,22.8,3,2024-07-02,游戏数据,《只狼》游戏数据,视游戏去留人工确认,中,存档/配置,知识库
+Roaming,FiraxisLive,0.0,2,2023-04-09,游戏数据,《文明》系列(FiraxisLive),视游戏去留人工确认,中, Firaxis 游戏在线组件,知识库
+Roaming,Paradox Interactive,0.0,4,2025-06-14,游戏数据,P社游戏(城市天际线等),视游戏去留人工确认,中,,知识库
+Roaming,paradox-launcher-v2,0.0,0,2025-06-14,游戏数据,Paradox 启动器 v2,视游戏去留人工确认,中,P社游戏通用启动器,知识库
+Roaming,npm-cache,981.3,28365,2025-06-28,开发缓存,npm 下载缓存,可清理(按需重建),高,可用 npm cache clean 清理,知识库
+Roaming,uv,130.4,7788,2026-10-21,开发缓存,uv(Python 包管理)缓存,可清理(按需重建),高,Astral 出品,知识库
+Roaming,npm,60.3,13311,2025-02-25,开发缓存,npm 配置/全局包,可清理(按需重建),高,,知识库
+Roaming,RabbitMQ,3.9,44,2025-12-27,开发缓存,RabbitMQ,可清理(按需重建),高,,知识库
+Roaming,IntelliJIdea,0.1,8,2024-10-27,开发缓存,IntelliJ IDEA 配置,可清理(按需重建),高,JetBrains IDE,知识库
+Roaming,GitHub CLI,0.0,2,2026-04-04,开发缓存,GitHub CLI(gh),可清理(按需重建),高,命令行工具,知识库
+Roaming,NuGet,0.0,1,2023-09-03,开发缓存,NuGet(Visual Studio)包缓存,可清理(按需重建),高,,知识库
+Roaming,nextjs-nodejs,0.0,1,2026-07-12,开发缓存,Next.js 编译缓存,可清理(按需重建),高,,知识库
+Roaming,pip,0.0,2,2025-06-28,开发缓存,pip 下载缓存,可清理(按需重建),高,可用 pip cache purge 清理,知识库
+Roaming,jupyter,0.0,0,2026-05-21,开发缓存,Jupyter 配置,可清理(按需重建),高,,知识库
+Roaming,Electron,0.0,0,2023-07-23,缓存/转储,Electron 框架运行缓存,可清理,中,由各 Electron 应用运行时生成,知识库
+Roaming,qq_guild,107.9,1594,2023-12-28,残留候选·高置信,QQ频道,人工确认后删除,高,腾讯 QQ频道服务已下线,知识库
+Roaming,alixby,8.1,70,2023-09-29,残留候选·高置信,小白羊云盘(开源阿里云盘客户端),人工确认后删除,高,项目 2023 年已停止维护,知识库
+Roaming,DrvMgr,0.4,3,2023-04-08,残留候选·高置信,捆绑推广组件(驱动管理类),人工确认后删除,高,"同上,2023-04-08 批量植入",知识库
+Roaming,360safe,0.0,3,2023-04-08,残留候选·高置信,360安全卫士,人工确认后删除,高,"2023-04-08 植入,现已无安装记录",知识库
+Roaming,D3D5D3C0-0F3D-40c1-9973-CEB7C072AE32.ini,0.0,1,2025-03-29,残留候选·高置信,GUID 配置残留,人工确认后删除,高,组件 GUID 命名的 ini,知识库
+Roaming,lds,0.0,1,2023-04-08,残留候选·高置信,捆绑推广组件,人工确认后删除,高,同日植入的推广族,知识库
+Roaming,tabx_pp,0.0,1,2023-04-08,残留候选·高置信,捆绑推广组件,人工确认后删除,高,"同上,2023-04-08 批量植入",知识库
+Roaming,CoreAVC.ini,0.0,1,2023-08-16,残留候选·高置信,CoreAVC 解码器配置,人工确认后删除,高,解码器配置文件残留,知识库
+Roaming,chat_pp,0.0,1,2023-04-08,残留候选·高置信,捆绑推广组件,人工确认后删除,高,"与 360safe/鲁大师/Ludashi/lds/dzip_pp/tabx_pp/DrvMgr 同日(2023-04-08)植入,典型全家桶痕迹",知识库
+Roaming,dzip_pp,0.0,1,2023-04-08,残留候选·高置信,捆绑推广组件,人工确认后删除,高,"同上,2023-04-08 批量植入",知识库
+Roaming,Sun,0.0,0,2023-02-22,残留候选·高置信,旧版 Sun Java(JRE/JDK),人工确认后删除,高,"Sun 品牌早已并入 Oracle,目录名 Sun 常为多年前 Java 残留",知识库
+Roaming,Ludashi,0.0,0,2023-04-08,残留候选·高置信,鲁大师,人工确认后删除,高,2023-04-08 植入,知识库
+Roaming,OpenArk,22.4,10,2024-07-14,残留候选·中置信,OpenArk(安全工具),人工确认后删除,中,若仍在使用请保留,知识库
+Roaming,thunder,20.0,477,2026-05-12,残留候选·中置信,迅雷,人工确认后删除,中,迅雷下载器数据,知识库
+Roaming,LolAICoach,17.4,71,2026-10-12,残留候选·中置信,LOL AI 教练,人工确认后删除,中,,知识库
+Roaming,third_wpsdc,16.0,2,2024-01-08,残留候选·中置信,WPS 第三方组件,人工确认后删除,中,wpsdc=WPS 数据组件,知识库
+Roaming,icreate-pc-lol,10.1,79,2026-10-12,残留候选·中置信,iCreate 英雄联盟辅助,人工确认后删除,中,LOL 教练/辅助类,知识库
+Roaming,thunderx,6.1,12,2023-08-11,残留候选·中置信,迅雷X,人工确认后删除,中,迅雷旧版本数据,知识库
+Roaming,xmp,5.9,11,2023-08-27,残留候选·中置信,迅雷影音(XMP),人工确认后删除,中,迅雷播放器,知识库
+Roaming,xlgame,4.8,24,2026-05-11,残留候选·中置信,迅雷游戏,人工确认后删除,中,,知识库
+Roaming,BaiduYunGuanjia,4.3,35,2026-10-11,残留候选·中置信,百度网盘管家,人工确认后删除,中,,知识库
+Roaming,antdownload,1.8,34,2023-02-25,残留候选·中置信,未知,人工确认后删除,中,"无安装记录、无运行进程,且 1336 天未修改",启发式
+Roaming,IObit,0.7,108,2025-08-07,残留候选·中置信,IObit 组件,人工确认后删除,中,若 IObit 系已卸载则为残留,知识库
+Roaming,LGHUB_BKP,0.1,1,2026-07-12,残留候选·中置信,罗技 G HUB 备份,人工确认后删除,中,LGHUB 配置备份,知识库
+Roaming,com.example,0.0,2,2025-08-05,残留候选·中置信,示例包名(调试残留),人工确认后删除,中,com.example 为默认包名,知识库
+Roaming,kwallpaper_sogou,0.0,6,2026-05-23,残留候选·中置信,搜狗壁纸(推广组件),人工确认后删除,中,搜狗输入法系推广,知识库
+Roaming,yxqxunyou,0.0,1,2023-08-13,残留候选·中置信,迅游系加速器推广组件,人工确认后删除,中,2023-08 出现,知识库
+Roaming,TPDownloadProxy,0.0,1,2023-02-28,残留候选·中置信,下载组件(疑似迅雷系),人工确认后删除,中,TP=ThunderPlatform 相关代理组件,知识库
+Roaming,NutstoreInstaller,0.0,2,2026-09-02,残留候选·中置信,坚果云安装器,人工确认后删除,中,安装完成后即为残留,知识库
+Roaming,AweSun,0.0,2,2026-10-21,残留候选·中置信,AweSun 远程控制,人工确认后删除,中,AweRay 出品,知识库
+Roaming,The QuarkCloudDrive Authors,0.0,1,2026-06-22,残留候选·中置信,夸克网盘(签名目录),人工确认后删除,中,更新校验数据,知识库
+Roaming,000000000000,0.0,1,2024-07-25,残留候选·中置信,未知,人工确认后删除,中,"无安装记录、无运行进程,且 820 天未修改",启发式
+Roaming,yylive,0.0,2,2025-11-02,残留候选·中置信,YY直播,人工确认后删除,中,欢聚时代,知识库
+Roaming,eCloudUpgrade,0.0,1,2024-02-21,残留候选·中置信,天翼云盘升级组件,人工确认后删除,中,eCloud=天翼云,知识库
+Roaming,SystemBeautify,0.0,1,2026-10-13,残留候选·中置信,系统美化工具,人工确认后删除,中,,知识库
+Roaming,Goldberg SteamEmu Saves,0.0,4,2023-04-11,残留候选·中置信,Goldberg Steam 模拟器存档,人工确认后删除,中,学习版游戏联机模拟器存档,知识库
+Roaming,ip_royal_paws,0.0,1,2023-12-12,残留候选·中置信,IPRoyal Pawns(闲置带宽共享),人工确认后删除,中,带宽变现应用,知识库
+Roaming,RtSubscribe,0.0,0,2023-11-07,残留候选·中置信,Realtek 订阅组件,人工确认后删除,中,驱动相关,知识库
+Roaming,Daum,0.0,0,2024-06-24,残留候选·中置信,Daum(PotPlayer/Kakao),人工确认后删除,中,韩国 Daum 系软件,知识库
+Roaming,BtLog,0.0,0,2025-01-16,残留候选·中置信,BT 下载日志,人工确认后删除,中,疑似比特彗星/迅雷 BT 日志,知识库
+Roaming,TDM,0.0,0,2025-03-22,残留候选·中置信,迅雷下载管理(TDM),人工确认后删除,中,归属不确切,知识库
+Roaming,tidalab,292.6,604,2026-07-11,残留候选·低置信,归属不明,先查明归属再决定,低,"292MB!604 个文件,建议人工排查",知识库
+Roaming,ACLOS,46.3,125,2025-07-08,残留候选·低置信,归属不明,先查明归属再决定,低,"46MB,125 个文件,建议人工排查内容",知识库
+Roaming,ZCode,44.5,529,2026-10-13,残留候选·低置信,归属不明(疑似 AI 编程工具),先查明归属再决定,低,,知识库
+Roaming,utForpc,21.0,9,2026-10-23,残留候选·低置信,归属不明(疑似加速器),先查明归属再决定,低,,知识库
+Roaming,com.qytapp.clients.apex,19.6,8,2026-10-22,残留候选·低置信,qyt 客户端,先查明归属再决定,低,包名式命名,知识库
+Roaming,ichat,17.0,252,2026-10-05,残留候选·低置信,归属不明(疑似 IM 类),先查明归属再决定,低,,知识库
+Roaming,@deepseek-ai,11.2,150,2026-10-23,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Roaming,com.bilingify.readest,8.1,63,2026-10-23,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Roaming,diagnostic-assistant,7.9,76,2025-10-12,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Roaming,cilizhai_pc,1.4,30,2026-08-29,残留候选·低置信,归属不明(次梨宅?),先查明归属再决定,低,,知识库
+Roaming,ContextMenuManager,0.2,5,2026-07-26,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Roaming,CC,0.1,3,2024-01-02,残留候选·低置信,归属不明(疑似网易CC/Adobe CC),先查明归属再决定,低,"名称过于简短,需人工确认",知识库
+Roaming,Updater,0.0,1,2025-06-28,残留候选·低置信,泛用更新器(归属不明),先查明归属再决定,低,需人工确认,知识库
+Roaming,isgpet,0.0,2,2026-10-09,残留候选·低置信,归属不明,先查明归属再决定,低,,知识库
+Roaming,luna_pc,0.0,3,2026-07-05,残留候选·低置信,归属不明,先查明归属再决定,低,疑似壁纸/直播类,知识库
+Roaming,pc,0.0,6,2026-06-21,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Roaming,PLogs,0.0,1,2026-10-11,残留候选·低置信,日志,先查明归属再决定,低,,知识库
+Roaming,ab1167698b5a0e43cad0077b328e905d,0.0,1,2024-06-22,残留候选·低置信,未知(哈希/GUID 命名),先查明归属再决定,低,"哈希或 GUID 命名目录,常见于推广 SDK/DRM,无法从名称推断归属",启发式
+Roaming,cd286e9d758e9908fcef21a99052388c,0.0,1,2024-06-22,残留候选·低置信,未知(哈希/GUID 命名),先查明归属再决定,低,"哈希或 GUID 命名目录,常见于推广 SDK/DRM,无法从名称推断归属",启发式
+Roaming,4b226738e4ecf2f6807b849c9ca659d4,0.0,1,2024-09-29,残留候选·低置信,未知(哈希/GUID 命名),先查明归属再决定,低,"哈希或 GUID 命名目录,常见于推广 SDK/DRM,无法从名称推断归属",启发式
+Roaming,5e8b5bdadb3cb67ff115c6a34c689c28,0.0,1,2024-09-29,残留候选·低置信,未知(哈希/GUID 命名),先查明归属再决定,低,"哈希或 GUID 命名目录,常见于推广 SDK/DRM,无法从名称推断归属",启发式
+Roaming,6b05a9704ebfd25747f93b8e3dde462a,0.0,1,2024-09-29,残留候选·低置信,未知(哈希/GUID 命名),先查明归属再决定,低,"哈希或 GUID 命名目录,常见于推广 SDK/DRM,无法从名称推断归属",启发式
+Roaming,4ccb1b62d1d17b70b5f55e9dd63ea232,0.0,1,2025-08-08,残留候选·低置信,未知(哈希/GUID 命名),先查明归属再决定,低,"哈希或 GUID 命名目录,常见于推广 SDK/DRM,无法从名称推断归属",启发式
+Roaming,3a3f26b9392c30189991e793bc30624e,0.0,1,2025-08-08,残留候选·低置信,未知(哈希/GUID 命名),先查明归属再决定,低,"哈希或 GUID 命名目录,常见于推广 SDK/DRM,无法从名称推断归属",启发式
+Roaming,3e1396376aefaf3fb3aefc14355c5d6c,0.0,1,2025-08-08,残留候选·低置信,未知(哈希/GUID 命名),先查明归属再决定,低,"哈希或 GUID 命名目录,常见于推广 SDK/DRM,无法从名称推断归属",启发式
+Roaming,0672bfebfbff,0.0,1,2025-08-08,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Roaming,894b972c9d156ce1d59eb1ce02efb3e7,0.0,1,2025-08-08,残留候选·低置信,未知(哈希/GUID 命名),先查明归属再决定,低,"哈希或 GUID 命名目录,常见于推广 SDK/DRM,无法从名称推断归属",启发式
+Roaming,b50eaa9e68f3a600239694e661278676,0.0,1,2025-08-08,残留候选·低置信,未知(哈希/GUID 命名),先查明归属再决定,低,"哈希或 GUID 命名目录,常见于推广 SDK/DRM,无法从名称推断归属",启发式
+Roaming,kdesk,0.0,3,2026-05-23,残留候选·低置信,K桌面(归属不明),先查明归属再决定,低,,知识库
+Roaming,mssdk,0.0,10,2026-10-09,残留候选·低置信,归属不明(疑似微软/MSDK),先查明归属再决定,低,,知识库
+Roaming,tdcoresk,0.0,6,2026-09-11,残留候选·低置信,归属不明(疑似迅雷系),先查明归属再决定,低,,知识库
+Roaming,com.ccswitch.desktop,0.0,2,2026-08-26,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Roaming,aDrive,0.0,1,2026-10-13,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Roaming,setting.json,0.0,1,2026-10-15,残留候选·低置信,游离配置文件,先查明归属再决定,低,根目录散落配置,知识库
+Roaming,SystemKeys,0.0,1,2025-10-12,残留候选·低置信,归属不明,先查明归属再决定,低,,知识库
+Roaming,D3D5D3C0-0F3D-40c1-9973-CEB7C072AE31.ini,0.0,1,2025-08-08,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Roaming,004D5649544E41696E66,0.0,1,2024-06-22,残留候选·低置信,未知(哈希/GUID 命名),先查明归属再决定,低,"哈希或 GUID 命名目录,常见于推广 SDK/DRM,无法从名称推断归属",启发式
+Roaming,{73A5C467-AD53-4C86-A16D-BE24B7A74E9C},0.0,0,2024-06-20,残留候选·低置信,未知(哈希/GUID 命名),先查明归属再决定,低,"哈希或 GUID 命名目录,常见于推广 SDK/DRM,无法从名称推断归属",启发式
+Roaming,BitComet,0.0,0,2026-10-07,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Local,Application Data,0.0,0,2025-02-19,兼容链接·严禁删除,Windows XP 兼容性 Junction,严禁删除,高,"系统兼容链接,删除引发目录解析故障",硬保护规则
+Local,History,0.0,0,2025-02-19,兼容链接·严禁删除,Windows XP 兼容性 Junction,严禁删除,高,"系统兼容链接,删除引发目录解析故障",硬保护规则
+Local,Temporary Internet Files,0.0,0,2025-02-19,兼容链接·严禁删除,Windows XP 兼容性 Junction,严禁删除,高,"系统兼容链接,删除引发目录解析故障",硬保护规则
+Local,Microsoft,2048.0,32891,2026-10-23,系统组件,微软系统组件,保留(勿动),高,"含 Edge/OneDrive/系统令牌缓存,只可细分清理,严禁整删",硬保护规则
+Local,NVIDIA Corporation,277.7,2631,2026-10-23,系统组件,NVIDIA 驱动组件,保留(勿动),高,含 Ansel/帧率组件,知识库
+Local,flutter_webview_windows,90.5,802,2026-10-21,系统组件,Flutter WebView 组件,保留(勿动),中,某 Flutter 应用共用,知识库
+Local,ConnectedDevicesPlatform,90.3,9,2026-10-23,系统组件,系统设备平台,保留(勿动),高,,知识库
+Local,Comms,21.5,9,2026-10-23,系统组件,系统通信组件,保留(勿动),高,,知识库
+Local,CEF,17.5,8,2026-10-22,系统组件,CEF/Chromium 嵌入式框架缓存,保留(勿动),中,多应用共用,知识库
+Local,VirtualStore,5.3,32,2024-10-19,系统组件,UAC 文件虚拟化(系统),保留(勿动),高,重定向旧程序写入,知识库
+Local,fontconfig,1.9,3,2026-10-16,系统组件,字体配置缓存(跨平台库),保留(勿动),中,,知识库
+Local,Publishers,0.6,17,2026-10-23,系统组件,系统 COM 事件发布,保留(勿动),高,,知识库
+Local,SaRALogs,0.5,8,2024-01-21,系统组件,微软支持恢复助手日志,保留(勿动),高,,知识库
+Local,IconCache.db,0.2,1,2026-10-17,系统组件,系统图标缓存,保留(勿动),高,,知识库
+Local,V98Pro,0.1,10,2025-11-02,系统组件,V98Pro 键盘驱动(VGN),保留(勿动),中,,知识库
+Local,PlaceholderTileLogoFolder,0.0,5,2026-08-01,系统组件,系统磁贴缓存,保留(勿动),高,,知识库
+Local,TuringShield,0.0,11,2026-10-23,系统组件,图灵盾(反诈组件),保留(勿动),低,归属存疑,知识库
+Local,.IdentityService,0.0,6,2023-12-09,系统组件,系统账户服务数据,保留(勿动),高,微软账户令牌,知识库
+Local,resmon.resmoncfg,0.0,1,2023-03-04,系统组件,资源监视器配置(系统),保留(勿动),高,,知识库
+Local,ToastNotificationManagerCompat,0.0,2,2026-10-23,系统组件,系统通知组件,保留(勿动),高,,知识库
+Local,speech,0.0,5,2026-03-28,系统组件,系统/输入法语音数据,保留(勿动),中,,知识库
+Local,IsolatedStorage,0.0,7,2023-06-02,系统组件,.NET 隔离存储(系统),保留(勿动),高,,知识库
+Local,SaraResults,0.0,2,2024-01-21,系统组件,微软支持恢复助手(SARA)结果,保留(勿动),高,Support and Recovery Assistant,知识库
+Local,oobelibMkey.log,0.0,1,2023-11-09,系统组件,系统 OOBE 库日志,保留(勿动),高,,知识库
+Local,Intel Corporation,0.0,2,2026-06-01,系统组件,Intel 驱动组件,保留(勿动),高,,知识库
+Local,Backup,0.0,1,2026-10-23,系统组件,系统备份,保留(勿动),高,,知识库
+Local,xweb_webview,0.0,0,2023-02-22,系统组件,微信内置浏览器(XWeb)内核,保留(勿动),中,微信运行依赖,知识库
+Local,Diagnostics,0.0,0,2023-12-09,系统组件,系统诊断,保留(勿动),高,,知识库
+Local,Apps,0.0,0,2023-12-30,系统组件,系统应用数据容器,保留(勿动),中,,知识库
+Local,ElevatedDiagnostics,0.0,0,2024-01-31,系统组件,系统提权诊断,保留(勿动),高,,知识库
+Local,INetHistory,0.0,0,2024-04-15,系统组件,系统 IE 历史(兼容),保留(勿动),高,,知识库
+Local,wsl,0.0,0,2026-06-02,系统组件,WSL 子系统数据,保留(勿动),高,,知识库
+Local,Programs,2252.8,26354,2026-10-14,容器(已下钻),每用户安装应用容器,见下钻明细,高,见下钻明细,容器下钻
+Local,Packages,1331.2,10632,2026-10-23,容器(已下钻),UWP/商店应用数据容器,见下钻明细,高,见下钻明细(按包名与已注册应用比对),容器下钻
+Local,Qianwen,3686.4,66518,2026-10-23,已安装应用,通义千问,保留,中,,知识库
+Local,Adobe,2252.8,1944,2026-10-08,已安装应用,Adobe 系,保留,中,含 Acrobat/AIGD 组件,知识库
+Local,Doubao,2252.8,21903,2026-10-09,已安装应用,豆包(字节 AI),保留,中,,知识库
+Local,JetBrains,1843.2,5254,2026-09-21,已安装应用,JetBrains 全家桶,保留,高,IDE 配置/索引,知识库
+Local\Programs,DeepSeek Harness,1660.2,30937,2026-10-14,已安装应用,DeepSeek Harness 0.2.0-rc.2,保留,高,注册表卸载项: DeepSeek Harness 0.2.0-rc.2,注册表
+Local,OpenAI,661.8,2391,2026-10-23,已安装应用,OpenAI/ChatGPT 桌面端,保留,中,,知识库
+Local,DingTalk_133,552.2,3851,2025-12-08,已安装应用,钉钉,保留,高,,知识库
+Local\Programs,Xmind,497.7,3516,2025-11-09,已安装应用,XMind,保留,高,思维导图,知识库
+Local,NetEase,485.9,2872,2026-10-11,已安装应用,网易系(云音乐等),保留,中,,知识库
+Local\Packages,MicrosoftWindows.Client.CBS_cw5n1h2txyewy,470.4,3453,2025-02-19,已安装应用,已注册商店应用: MicrosoftWindows.Client.CBS,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,Tencent,440.6,201,2025-07-06,已安装应用,腾讯系(QQ/微信聊天数据),保留,高,"含聊天记录,删除前务必确认",知识库
+Local\Packages,OpenAI.Codex_2p2nqsd0c76g0,389.3,1593,2026-08-01,已安装应用,已注册商店应用: OpenAI.Codex,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Programs,Notion,367.0,85,2026-08-19,已安装应用,Notion,保留,高,,知识库
+Local,QuarkCloudDriveMini,300.4,1,2026-06-21,已安装应用,夸克网盘迷你版,保留,中,,知识库
+Local\Packages,MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy,189.7,2273,2025-02-19,已安装应用,已注册商店应用: MicrosoftWindows.Client.WebExperience,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,com.bilingify.readest,180.7,1314,2026-10-23,已安装应用,Readest 阅读器,保留,中,跨平台电子书阅读器,知识库
+Local,Everything,176.2,2,2026-10-22,已安装应用,Everything 搜索索引,保留,高,176MB 为文件索引数据库,知识库
+Local,QuarkCloudDrive,108.6,1921,2026-06-22,已安装应用,夸克网盘,保留,高,,知识库
+Local,BitComet_x64,106.7,469,2026-10-20,已安装应用,比特彗星 BT 下载,保留,中,,知识库
+Local,Mindjet,99.8,6819,2023-07-18,已安装应用,MindManager(Mindjet),保留,中,思维导图,知识库
+Local\Packages,B9ECED6F.ASUSPCAssistant_qmba6cd70vzyy,69.1,383,2025-12-27,已安装应用,已注册商店应用: B9ECED6F.ASUSPCAssistant,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,Docker,63.9,111,2026-10-14,已安装应用,Docker Desktop,保留,高,,知识库
+Local\Packages,AppUp.IntelGraphicsExperience_8j3eq9eme6ctt,56.6,932,2025-02-19,已安装应用,已注册商店应用: AppUp.IntelGraphicsExperience,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,WeGame,44.6,29,2026-06-06,已安装应用,腾讯 WeGame,保留,中,,知识库
+Local,Cisco Packet Tracer,41.1,260,2023-06-10,已安装应用,Cisco Packet Tracer,保留,中,思科网络模拟器,知识库
+Local,QianwenUpdater,22.0,19,2026-10-23,已安装应用,通义千问更新器,保留,中,,知识库
+Local\Packages,Microsoft.WindowsStore_8wekyb3d8bbwe,18.8,472,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsStore,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe,16.4,51,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsFeedbackHub,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.Photos_8wekyb3d8bbwe,15.8,201,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.Photos,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.ZuneVideo_8wekyb3d8bbwe,13.7,31,2025-02-19,已安装应用,已注册商店应用: Microsoft.ZuneVideo,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy,12.1,399,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.ContentDeliveryManager,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.ZuneMusic_8wekyb3d8bbwe,12.0,19,2025-02-19,已安装应用,已注册商店应用: Microsoft.ZuneMusic,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,BitComet,11.4,173,2024-01-18,已安装应用,比特彗星 BT 下载,保留,中,,知识库
+Local,Yodao,10.0,88,2023-02-27,已安装应用,网易有道词典/云笔记,保留,中,,知识库
+Local,Wondershare,8.1,11,2026-10-23,已安装应用,万兴科技,保留,中,,知识库
+Local,.lingma,8.0,10,2026-06-28,已安装应用,通义灵码(阿里 AI 编程),保留,中,,知识库
+Local,Stardock,7.2,1,2026-10-23,已安装应用,Stardock 软件,保留,中,,知识库
+Local\Packages,microsoft.windowscommunicationsapps_8wekyb3d8bbwe,6.5,37,2025-02-19,已安装应用,已注册商店应用: microsoft.windowscommunicationsapps,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,FortiClient,4.6,6,2025-11-08,已安装应用,FortiClient VPN,保留,中,若已卸载则为残留,知识库
+Local\Packages,windows.immersivecontrolpanel_cw5n1h2txyewy,3.0,11,2025-02-19,已安装应用,已注册商店应用: windows.immersivecontrolpanel,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,wxworkweb,2.0,4,2026-10-15,已安装应用,企业微信 Web 组件,保留,中,,知识库
+Local\Packages,Microsoft.StartExperiencesApp_8wekyb3d8bbwe,1.9,15,2025-08-10,已安装应用,已注册商店应用: Microsoft.StartExperiencesApp,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.CloudExperienceHost_cw5n1h2txyewy,1.8,37,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.CloudExperienceHost,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.XboxGamingOverlay_8wekyb3d8bbwe,1.7,41,2025-02-19,已安装应用,已注册商店应用: Microsoft.XboxGamingOverlay,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,PixCake-qt_pro,1.2,23,2026-10-09,已安装应用,PixCake 修图软件,保留,中,,知识库
+Local\Packages,Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy,1.2,25,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.StartMenuExperienceHost,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,HBuilder X,1.1,112,2025-07-19,已安装应用,HBuilderX(DCloud),保留,中,前端 IDE,知识库
+Local\Packages,Microsoft.WidgetsPlatformRuntime_8wekyb3d8bbwe,0.8,12,2025-02-19,已安装应用,已注册商店应用: Microsoft.WidgetsPlatformRuntime,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.YourPhone_8wekyb3d8bbwe,0.6,15,2025-02-19,已安装应用,已注册商店应用: Microsoft.YourPhone,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.DesktopAppInstaller_8wekyb3d8bbwe,0.6,48,2025-02-19,已安装应用,已注册商店应用: Microsoft.DesktopAppInstaller,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsNotepad_8wekyb3d8bbwe,0.3,17,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsNotepad,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,kingsoft,0.3,30,2026-10-23,已安装应用,金山 WPS,保留,高,WPS 配置与缓存,知识库
+Local\Packages,MicrosoftWindows.CrossDevice_cw5n1h2txyewy,0.2,12,2025-02-19,已安装应用,已注册商店应用: MicrosoftWindows.CrossDevice,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.StorePurchaseApp_8wekyb3d8bbwe,0.2,14,2025-02-19,已安装应用,已注册商店应用: Microsoft.StorePurchaseApp,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsTerminal_8wekyb3d8bbwe,0.2,14,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsTerminal,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,MicrosoftCorporationII.WinAppRuntime.Singleton_8wekyb3d8bbwe,0.2,10,2025-02-19,已安装应用,已注册商店应用: MicrosoftCorporationII.WinAppRuntime.Singleton,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.ShellExperienceHost_cw5n1h2txyewy,0.1,19,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.ShellExperienceHost,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.ScreenSketch_8wekyb3d8bbwe,0.1,10,2025-02-19,已安装应用,已注册商店应用: Microsoft.ScreenSketch,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Clipchamp.Clipchamp_yxz26nhyzhsrt,0.1,10,2025-02-19,已安装应用,已注册商店应用: Clipchamp.Clipchamp,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsAlarms_8wekyb3d8bbwe,0.1,6,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsAlarms,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Paint_8wekyb3d8bbwe,0.1,12,2025-02-19,已安装应用,已注册商店应用: Microsoft.Paint,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,NVIDIACorp.NVIDIAControlPanel_56jybvy8sckqj,0.1,10,2025-02-19,已安装应用,已注册商店应用: NVIDIACorp.NVIDIAControlPanel,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Kaspersky.ShellEx_b81m8cbssw9gt,0.1,8,2025-02-19,已安装应用,已注册商店应用: Kaspersky.ShellEx,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.LockApp_cw5n1h2txyewy,0.1,20,2025-02-19,已安装应用,已注册商店应用: Microsoft.LockApp,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,RapooGameDev,0.1,13,2025-07-06,已安装应用,RapooGameDev 1.6.12,保留,高,注册表卸载项: RapooGameDev 1.6.12,注册表
+Local\Packages,Microsoft.GetHelp_8wekyb3d8bbwe,0.1,14,2025-02-19,已安装应用,已注册商店应用: Microsoft.GetHelp,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,3AD8A913.49937325EFC59_j4r74wbqry4cc,0.1,12,2025-02-19,已安装应用,已注册商店应用: 3AD8A913.49937325EFC59,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WinAppRuntime.DDLM.4000.1049.117.0-x6_8wekyb3d8bbwe,0.1,8,2025-12-16,已安装应用,已注册商店应用: Microsoft.WinAppRuntime.DDLM.4000.1049.117.0-x6,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,CodeBuddyExtension,0.0,7,2026-10-23,已安装应用,CodeBuddy 扩展(腾讯),保留,中,AI 编程助手,知识库
+Local\Packages,Microsoft.WindowsCalculator_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsCalculator,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,WeixinShare_fv0hcek9q9tbw,0.0,10,2026-03-21,已安装应用,已注册商店应用: WeixinShare,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WinAppRuntime.DDLM.5001.311.2039.0-x8_8wekyb3d8bbwe,0.0,8,2025-02-19,已安装应用,已注册商店应用: Microsoft.WinAppRuntime.DDLM.5001.311.2039.0-x8,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,QQExtension_mgek679tqnc4e,0.0,8,2025-07-13,已安装应用,已注册商店应用: QQExtension,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,.qoder-cn,0.0,11,2026-09-21,已安装应用,通义 Qoder IDE(中文版),保留,中,阿里 AI IDE,知识库
+Local\Packages,MicrosoftWindows.Client.OOBE_cw5n1h2txyewy,0.0,16,2025-06-12,已安装应用,已注册商店应用: MicrosoftWindows.Client.OOBE,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.AAD.BrokerPlugin_cw5n1h2txyewy,0.0,5,2025-02-19,已安装应用,已注册商店应用: Microsoft.AAD.BrokerPlugin,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.XboxIdentityProvider_8wekyb3d8bbwe,0.0,5,2025-02-19,已安装应用,已注册商店应用: Microsoft.XboxIdentityProvider,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.BingWeather_8wekyb3d8bbwe,0.0,6,2025-02-19,已安装应用,已注册商店应用: Microsoft.BingWeather,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Edge.GameAssist_8wekyb3d8bbwe,0.0,4,2025-05-31,已安装应用,已注册商店应用: Microsoft.Edge.GameAssist,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.MicrosoftEdge.Stable_8wekyb3d8bbwe,0.0,6,2025-02-19,已安装应用,已注册商店应用: Microsoft.MicrosoftEdge.Stable,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.OutlookForWindows_8wekyb3d8bbwe,0.0,8,2025-02-19,已安装应用,已注册商店应用: Microsoft.OutlookForWindows,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.XboxGameOverlay_8wekyb3d8bbwe,0.0,6,2025-02-19,已安装应用,已注册商店应用: Microsoft.XboxGameOverlay,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,1527c705-839a-4832-9118-54d4Bd6a0c89_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: 1527c705-839a-4832-9118-54d4Bd6a0c89,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,BaiduNetdisk.DesktopSyncClient_r5kxaep58dem0,0.0,4,2025-02-19,已安装应用,已注册商店应用: BaiduNetdisk.DesktopSyncClient,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,E2A4F912-2574-4A75-9BB0-0D023378592B_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: E2A4F912-2574-4A75-9BB0-0D023378592B,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,F46D4000-FD22-4DB4-AC8E-4E1DDDE828FE_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: F46D4000-FD22-4DB4-AC8E-4E1DDDE828FE,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.AV1VideoExtension_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.AV1VideoExtension,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.AVCEncoderVideoExtension_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.AVCEncoderVideoExtension,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.AccountsControl_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.AccountsControl,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.ApplicationCompatibilityEnhancements_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.ApplicationCompatibilityEnhancements,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.AsyncTextService_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.AsyncTextService,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.BingNews_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.BingNews,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.BingSearch_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.BingSearch,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.BioEnrollment_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.BioEnrollment,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.CredDialogHost_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.CredDialogHost,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.ECApp_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.ECApp,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.HEIFImageExtension_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.HEIFImageExtension,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.HEVCVideoExtensions_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.HEVCVideoExtensions,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Ink.Handwriting.Main.zh-Hans.1.0_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Ink.Handwriting.Main.zh-Hans.1.0,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.LanguageExperiencePackzh-CN_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.LanguageExperiencePackzh-CN,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.MPEG2VideoExtension_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.MPEG2VideoExtension,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.MSPaint_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.MSPaint,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Microsoft3DViewer_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Microsoft3DViewer,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.MicrosoftEdgeDevToolsClient_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.MicrosoftEdgeDevToolsClient,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.MicrosoftPCManager_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.MicrosoftPCManager,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.MicrosoftSolitaireCollection_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.MicrosoftSolitaireCollection,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.MicrosoftStickyNotes,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.MixedReality.Portal_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.MixedReality.Portal,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.People_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.People,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.PowerAutomateDesktop,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.RawImageExtension_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.RawImageExtension,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.SecHealthUI_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.SecHealthUI,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Todos_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Todos,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.VP9VideoExtensions_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.VP9VideoExtensions,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WebMediaExtensions_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.WebMediaExtensions,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WebpImageExtension_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.WebpImageExtension,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Win32WebViewHost_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Win32WebViewHost,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.Apprep.ChxApp_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.Apprep.ChxApp,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.CapturePicker_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.CapturePicker,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.NarratorQuickStart_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.NarratorQuickStart,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.OOBENetworkCaptivePortal_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.OOBENetworkCaptivePortal,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.OOBENetworkConnectionFlow_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.OOBENetworkConnectionFlow,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.ParentalControls_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.ParentalControls,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.PeopleExperienceHost_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.PeopleExperienceHost,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.PinningConfirmationDialog_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.PinningConfirmationDialog,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.XGpuEjectDialog_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.XGpuEjectDialog,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsCamera_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsCamera,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsMaps_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsMaps,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsSoundRecorder,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Winget.Source_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Winget.Source,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Xbox.TCUI_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.Xbox.TCUI,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.XboxApp_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.XboxApp,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.XboxGameCallableUI_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.XboxGameCallableUI,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.XboxSpeechToTextOverlay_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: Microsoft.XboxSpeechToTextOverlay,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,MicrosoftCorporationII.MicrosoftFamily_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: MicrosoftCorporationII.MicrosoftFamily,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,MicrosoftCorporationII.QuickAssist_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: MicrosoftCorporationII.QuickAssist,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,MicrosoftCorporationII.WinAppRuntime.Main.1.4_8wekyb3d8bbwe,0.0,4,2025-12-16,已安装应用,已注册商店应用: MicrosoftCorporationII.WinAppRuntime.Main.1.4,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,MicrosoftCorporationII.WinAppRuntime.Main.1.5_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: MicrosoftCorporationII.WinAppRuntime.Main.1.5,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,MicrosoftCorporationII.WinAppRuntime.Main.1.8_8wekyb3d8bbwe,0.0,4,2026-03-15,已安装应用,已注册商店应用: MicrosoftCorporationII.WinAppRuntime.Main.1.8,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,MicrosoftCorporationII.WindowsSubsystemForLinux_8wekyb3d8bbwe,0.0,4,2025-02-19,已安装应用,已注册商店应用: MicrosoftCorporationII.WindowsSubsystemForLinux,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,MicrosoftWindows.Client.CoreAI_cw5n1h2txyewy,0.0,4,2025-05-16,已安装应用,已注册商店应用: MicrosoftWindows.Client.CoreAI,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,MicrosoftWindows.Client.Core_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: MicrosoftWindows.Client.Core,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,MicrosoftWindows.UndockedDevKit_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: MicrosoftWindows.UndockedDevKit,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Windows.CBSPreview_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Windows.CBSPreview,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Windows.PrintDialog_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: Windows.PrintDialog,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,WorkBuddyShareTarget_fv0hcek9q9tbw,0.0,4,2026-09-24,已安装应用,已注册商店应用: WorkBuddyShareTarget,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,c5e2524a-ea46-4f67-841f-6a9465d9d515_cw5n1h2txyewy,0.0,4,2025-02-19,已安装应用,已注册商店应用: c5e2524a-ea46-4f67-841f-6a9465d9d515,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,MicrosoftCorporationII.WindowsHDRCalibration_8wekyb3d8bbwe,0.0,3,2025-04-27,已安装应用,已注册商店应用: MicrosoftCorporationII.WindowsHDRCalibration,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,JAMSoftware.TreeSizeContextMenu_w54gjky5rxhza,0.0,2,2026-10-13,已安装应用,已注册商店应用: JAMSoftware.TreeSizeContextMenu,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,MSTeams_8wekyb3d8bbwe,0.0,2,2025-02-19,已安装应用,已注册商店应用: MSTeams,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.VisualStudioCode_8wekyb3d8bbwe,0.0,2,2026-10-21,已安装应用,已注册商店应用: Microsoft.VisualStudioCode,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WinAppRuntime.DDLM.5001.311.2039.0-x6_8wekyb3d8bbwe,0.0,2,2025-02-19,已安装应用,已注册商店应用: Microsoft.WinAppRuntime.DDLM.5001.311.2039.0-x6,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.DevHome_8wekyb3d8bbwe,0.0,2,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.DevHome,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Windows.PrintQueueActionCenter_cw5n1h2txyewy,0.0,2,2025-02-19,已安装应用,已注册商店应用: Microsoft.Windows.PrintQueueActionCenter,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,MicrosoftTeams_8wekyb3d8bbwe,0.0,2,2025-02-19,已安装应用,已注册商店应用: MicrosoftTeams,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Nutstore.Sync.DesktopClient_8cbew8s75sr8g,0.0,2,2026-09-02,已安装应用,已注册商店应用: Nutstore.Sync.DesktopClient,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,ksystemsharehostzhCN_km9wtz8rh8me0,0.0,2,2026-10-22,已安装应用,已注册商店应用: ksystemsharehostzhCN,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,wpsappext1_km9wtz8rh8me0,0.0,2,2026-10-17,已安装应用,已注册商店应用: wpsappext1,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,wpsappext2_km9wtz8rh8me0,0.0,2,2026-10-17,已安装应用,已注册商店应用: wpsappext2,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,wpsappext3_km9wtz8rh8me0,0.0,2,2026-10-17,已安装应用,已注册商店应用: wpsappext3,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,VMware,0.0,3,2023-09-13,已安装应用,VMware,保留,高,,知识库
+Local,Claude,0.0,1,2026-08-01,已安装应用,Claude 桌面端,保留,中,,知识库
+Local,Google,0.0,0,2023-02-22,已安装应用,Google(Chrome 等),保留,中,Chrome 相关数据,知识库
+Local,QuarkUpdater,0.0,0,2025-01-16,已安装应用,夸克网盘更新器,保留,中,,知识库
+Local,微信开发者工具,0.0,0,2025-09-20,已安装应用,微信开发者工具,保留,高,,知识库
+Local,QuarkCloudDriveUpdater,0.0,0,2026-07-12,已安装应用,夸克网盘更新器,保留,中,,知识库
+Local\Packages,Microsoft.Ink.Handwriting.zh-Hans.1.0_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.Ink.Handwriting.zh-Hans.1.0,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.NET.Native.Framework.1.7_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.NET.Native.Framework.1.7,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.NET.Native.Framework.2.1_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.NET.Native.Framework.2.1,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.NET.Native.Framework.2.2_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.NET.Native.Framework.2.2,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.NET.Native.Runtime.1.7_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.NET.Native.Runtime.1.7,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.NET.Native.Runtime.2.1_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.NET.Native.Runtime.2.1,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.NET.Native.Runtime.2.2_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.NET.Native.Runtime.2.2,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.Services.Store.Engagement_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.Services.Store.Engagement,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.UI.Xaml.2.0_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.UI.Xaml.2.0,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.UI.Xaml.2.1_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.UI.Xaml.2.1,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.UI.Xaml.2.3_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.UI.Xaml.2.3,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.UI.Xaml.2.4_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.UI.Xaml.2.4,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.UI.Xaml.2.6_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.UI.Xaml.2.6,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.UI.Xaml.2.7_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.UI.Xaml.2.7,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.UI.Xaml.2.8_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.UI.Xaml.2.8,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.VCLibs.140.00.UWPDesktop_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.VCLibs.140.00.UWPDesktop,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.VCLibs.140.00_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.VCLibs.140.00,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsAppRuntime.1.1_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsAppRuntime.1.1,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsAppRuntime.1.2_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsAppRuntime.1.2,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsAppRuntime.1.3_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsAppRuntime.1.3,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsAppRuntime.1.4_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsAppRuntime.1.4,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsAppRuntime.1.5_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsAppRuntime.1.5,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsAppRuntime.1.6_8wekyb3d8bbwe,0.0,0,2025-02-19,已安装应用,已注册商店应用: Microsoft.WindowsAppRuntime.1.6,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsAppRuntime.1.7_8wekyb3d8bbwe,0.0,0,2025-04-10,已安装应用,已注册商店应用: Microsoft.WindowsAppRuntime.1.7,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsAppRuntime.1.8_8wekyb3d8bbwe,0.0,0,2025-09-13,已安装应用,已注册商店应用: Microsoft.WindowsAppRuntime.1.8,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local\Packages,Microsoft.WindowsAppRuntime.2_8wekyb3d8bbwe,0.0,0,2026-05-30,已安装应用,已注册商店应用: Microsoft.WindowsAppRuntime.2,保留,高,包名与 Get-AppxPackage 注册记录匹配,商店包
+Local,Claude-3p,540.5,377,2026-10-13,使用中(无安装记录),Claude 第三方客户端,保留,中,541MB,知识库
+Local,claude-cli-nodejs,0.1,52,2026-10-13,使用中(无安装记录),Claude Code CLI,保留,中,命令行 AI 工具,知识库
+Local,Clash Plus,0.0,0,2026-09-26,使用中(无安装记录),Clash 代理客户端,保留,中,,知识库
+Local,TslGame,634.3,5124,2026-07-17,游戏数据,《绝地求生》PUBG,视游戏去留人工确认,中,TslGame 配置/缓存,知识库
+Local,Steam,337.9,2685,2026-10-23,游戏数据,Steam 平台,视游戏去留人工确认,高,,知识库
+Local,EpicGamesLauncher,112.0,422,2026-04-30,游戏数据,Epic 启动器缓存,视游戏去留人工确认,高,,知识库
+Local,Firaxis Games,94.3,83,2023-04-09,游戏数据,《文明》系列(Firaxis),视游戏去留人工确认,中,,知识库
+Local,RailCrashReport,16.4,11,2026-09-24,游戏数据,腾讯 RailSDK 崩溃报告,视游戏去留人工确认,中,WeGame 账号体系,知识库
+Local,Colossal Order,14.7,8,2025-06-14,游戏数据,城市:天际线(Colossal Order),视游戏去留人工确认,中,,知识库
+Local,Epic Games,8.7,52,2025-05-10,游戏数据,Epic 平台数据,视游戏去留人工确认,高,,知识库
+Local,DunDiEmu,6.8,13,2023-05-18,游戏数据,蹲地模拟器(GBA 模拟器),视游戏去留人工确认,中,,知识库
+Local,Sports Interactive,5.9,174,2024-10-31,游戏数据,足球经理(FM),视游戏去留人工确认,中,,知识库
+Local,WELLBIA,4.9,2,2024-06-22,游戏数据,XIGNCODE3 反作弊(WELLBIA),视游戏去留人工确认,中,韩国反作弊,知识库
+Local,rail,0.0,21,2026-10-12,游戏数据,腾讯 RailSDK,视游戏去留人工确认,中,,知识库
+Local,Riot Games,0.0,39,2026-10-12,游戏数据,英雄联盟(Riot),视游戏去留人工确认,中,,知识库
+Local,UnrealEngine,0.0,5,2026-10-22,游戏数据,虚幻引擎数据,视游戏去留人工确认,中,,知识库
+Local,Rockstar Games,0.0,2,2026-05-02,游戏数据,Rockstar(R星)数据,视游戏去留人工确认,中,,知识库
+Local,BattlEye,0.0,1,2024-06-21,游戏数据,BattlEye 反作弊,视游戏去留人工确认,中,游戏反作弊组件,知识库
+Local,@guanjia-openclawelectron-updater,590.2,3,2026-05-02,更新缓存,"""管家""系应用更新缓存",可清理(会自动重建),中,Electron 更新包,知识库
+Local,@genieworkbuddy-desktop-updater,420.7,1,2026-10-16,更新缓存,WorkBuddy 更新缓存,可清理(会自动重建),高,当前在用的 AI 工作台,知识库
+Local,@zcodedesktop-updater,340.7,5,2026-09-30,更新缓存,ZCode 桌面更新缓存,可清理(会自动重建),中,,知识库
+Local,obsidian-updater,281.8,1,2026-04-13,更新缓存,Obsidian 更新缓存,可清理(会自动重建),高,,知识库
+Local,@deepseek-aidsh-desktop-updater,275.9,1,2026-10-14,更新缓存,DeepSeek DSH 桌面更新缓存,可清理(会自动重建),高,,知识库
+Local,baidu-translate-client-updater,255.3,3,2026-05-16,更新缓存,百度翻译更新缓存,可清理(会自动重建),高,,知识库
+Local,xmind-updater,175.4,1,2025-11-09,更新缓存,XMind 更新缓存,可清理(会自动重建),高,,知识库
+Local,adrive-desktop-updater,139.1,2,2026-04-25,更新缓存,阿里云盘更新缓存,可清理(会自动重建),高,,知识库
+Local,apifox-updater,132.1,1,2024-03-15,更新缓存,Apifox 更新缓存,可清理(会自动重建),高,,知识库
+Local,dsh-plugin-desktop-updater,128.7,1,2026-09-10,更新缓存,DSH 桌面插件更新缓存,可清理(会自动重建),高,WorkBuddy 生态,知识库
+Local,qq-chat-updater,107.7,1,2023-12-23,更新缓存,QQ 更新缓存,可清理(会自动重建),高,,知识库
+Local,notion-updater,101.6,1,2026-10-22,更新缓存,Notion 更新缓存,可清理(会自动重建),高,,知识库
+Local,xmind-vana-updater,96.0,1,2023-05-02,更新缓存,XMind 更新缓存,可清理(会自动重建),高,Electron 更新下载包,知识库
+Local,xbyyunpan-updater,72.4,1,2023-04-13,更新缓存,小白羊云盘更新缓存,可清理(会自动重建),高,已停更项目的更新包,知识库
+Local,another-redis-desktop-manager-updater,59.0,1,2025-02-23,更新缓存,Another Redis Desktop Manager 更新缓存,可清理(会自动重建),高,,知识库
+Local,npm-cache,2048.0,45266,2026-10-23,开发缓存,npm 下载缓存,可清理(按需重建),高,可用 npm cache clean 清理,知识库
+Local,Yarn,1126.4,71658,2023-09-12,开发缓存,Yarn 包缓存,可清理(按需重建),高,1.1GB,知识库
+Local,uv,1126.4,36839,2026-10-23,开发缓存,uv(Python 包管理)缓存,可清理(按需重建),高,Astral 出品,知识库
+Local,pip,749.9,1575,2026-10-21,开发缓存,pip 下载缓存,可清理(按需重建),高,可用 pip cache purge 清理,知识库
+Local,AzureFunctionsTools,603.4,2031,2023-06-02,开发缓存,VS Azure Functions 工具缓存,可清理(按需重建),高,"603MB,VS 扩展缓存",知识库
+Local,Package Cache,27.6,11,2025-06-28,开发缓存,安装器缓存(VS 等),可清理(按需重建),高,,知识库
+Local,node-gyp,24.9,517,2023-12-01,开发缓存,node-gyp 编译缓存,可清理(按需重建),高,,知识库
+Local,pypa,22.0,1576,2023-12-27,开发缓存,Python 打包机构(pypa)缓存,可清理(按需重建),高,,知识库
+Local,pnpm,8.2,792,2026-10-14,开发缓存,pnpm 包管理缓存,可清理(按需重建),高,,知识库
+Local,scikit-image,7.3,30,2023-12-27,开发缓存,scikit-image 示例数据,可清理(按需重建),高,,知识库
+Local,com.github.wasilibs,2.4,2,2026-09-19,开发缓存,wasilibs(wasm SDK)缓存,可清理(按需重建),高,,知识库
+Local,pnpm-cache,1.2,6,2026-10-14,开发缓存,pnpm 缓存,可清理(按需重建),高,,知识库
+Local,node-addon-native-custom-loader,1.0,3,2026-10-14,开发缓存,Node 原生加载器缓存,可清理(按需重建),高,,知识库
+Local,checkpoint-nodejs,0.0,2,2026-07-12,开发缓存,Node 检查点缓存,可清理(按需重建),高,,知识库
+Local,frida,0.0,1,2026-10-14,开发缓存,Frida 逆向框架,可清理(按需重建),高,,知识库
+Local,copilot,0.0,2,2026-10-21,开发缓存,GitHub Copilot,可清理(按需重建),高,,知识库
+Local,pnpm-state,0.0,1,2026-10-14,开发缓存,pnpm 状态,可清理(按需重建),高,,知识库
+Local,prisma-nodejs,0.0,1,2026-07-12,开发缓存,Prisma 引擎缓存,可清理(按需重建),高,,知识库
+Local,main.kts.compiled.cache,0.0,0,2023-02-22,开发缓存,Kotlin 脚本编译缓存,可清理(按需重建),高,,知识库
+Local,Microsoft SDKs,0.0,0,2023-06-02,开发缓存,Microsoft SDK 缓存,可清理(按需重建),高,,知识库
+Local,conda,0.0,1,2026-04-05,开发缓存,Anaconda/Conda,可清理(按需重建),高,,知识库
+Local,Android,0.0,0,2026-08-15,开发缓存,Android SDK/模拟器,可清理(按需重建),高,,知识库
+Local,docker-secrets-engine,0.0,0,2026-09-18,开发缓存,Docker 密钥引擎,可清理(按需重建),高,,知识库
+Local,kotlin,0.0,0,2026-09-19,开发缓存,Kotlin 编译缓存,可清理(按需重建),高,,知识库
+Local,pnpm-store-operation-locks,0.0,2,2026-10-14,开发缓存,pnpm 存储锁,可清理(按需重建),高,,知识库
+Local,NVIDIA,1126.4,437,2026-10-23,缓存/转储,NVIDIA 着色器/驱动缓存,可清理,高,"DXCache 类,可清理",知识库
+Local,Temp,473.8,217,2026-10-23,缓存/转储,系统临时文件,可清理,高,可清理(跳过占用中的),知识库
+Local,CrashDumps,201.1,10,2026-10-10,缓存/转储,系统崩溃转储,可清理,高,"201MB,程序崩溃 dump,可清理",知识库
+Local,draco_d79f909d.json,0.6,1,2025-11-02,缓存/转储,Draco 3D 解码缓存,可清理,中,web 3D 压缩库,知识库
+Local,AcSdkInsLog,0.4,12,2026-04-11,缓存/转储,声网 Agora SDK 日志,可清理,中,音视频 SDK,知识库
+Local,ChromeExtensionCache,0.3,1,2026-05-11,缓存/转储,Chrome 扩展缓存,可清理,高,,知识库
+Local,D3DSCache,0.1,2,2026-10-23,缓存/转储,DirectX 着色器缓存,可清理,高,"可清理,会重建",知识库
+Local,AgoraAudio,0.0,2,2026-07-17,缓存/转储,声网 Agora 音频 SDK,可清理,中,直播/会议类共用,知识库
+Local,cgslb_jodns.json,0.0,1,2025-11-02,缓存/转储,腾讯 CDN 调度缓存,可清理,中,,知识库
+Local,cgslb_transvod.json,0.0,1,2024-07-02,缓存/转储,腾讯 CDN 调度缓存,可清理,中,直播/视频 SDK 拉流调度,知识库
+Local,CrashRpt,0.0,0,2023-03-06,缓存/转储,CrashRpt 崩溃报告库,可清理,中,崩溃转储通用组件,知识库
+Local,DBG,0.0,0,2026-06-14,缓存/转储,调试转储,可清理,中,,知识库
+Local,fastpdf_sogou,0.3,25,2026-10-13,残留候选·高置信,搜狗系 PDF 推广组件,人工确认后删除,高,fastpdf 推广族,知识库
+Local,Windows Master Store,0.0,15,2025-10-31,残留候选·高置信,Windows 优化大师商店组件,人工确认后删除,高,推广软件族,知识库
+Local,fastpdf_duba,0.0,1,2026-06-10,残留候选·高置信,毒霸系 PDF 推广组件,人工确认后删除,高,fastpdf 推广族,知识库
+Local,sogoupdf,0.0,0,2026-10-13,残留候选·高置信,搜狗 PDF 推广组件,人工确认后删除,高,fastpdf 推广族,知识库
+Local,icreate-sdk,13.6,15,2026-10-12,残留候选·中置信,iCreate SDK(LOL 辅助),人工确认后删除,中,,知识库
+Local\Packages,DesktopSpotlight,0.9,1,2025-02-19,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local,kwallpaper_sogou,0.7,8,2026-05-23,残留候选·中置信,搜狗壁纸(推广组件),人工确认后删除,中,,知识库
+Local\Packages,cr.sb.odm3E4D1A088C1F6D498C84F3C86DE73CE49F82A104,0.2,6,2025-02-19,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.odmf5200eafd3ad904629cbb0f87a78a3c7211081fe,0.1,6,2025-05-07,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local,UniCompactView,0.0,4,2023-12-25,残留候选·中置信,Uni 系组件(疑似联想软件),人工确认后删除,中,,知识库
+Local,UniSDK,0.0,1,2024-01-14,残留候选·中置信,Uni SDK(疑似联想软件),人工确认后删除,中,,知识库
+Local,FLiNGTrainer,0.0,1,2023-04-09,残留候选·中置信,FLiNG 游戏修改器,人工确认后删除,中,单机游戏修改器,知识库
+Local,PixDownloader,0.0,0,2026-09-16,残留候选·中置信,Pix 下载器,人工确认后删除,中,,知识库
+Local\Packages,ActiveSync,0.0,0,2025-02-19,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.cdm01c8e9ae16433df8388dac619c169d1a7b206051,0.0,0,2025-11-17,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.cdm3acc492d3aad4f4378784242a9bd55ad9521f769,0.0,0,2025-10-12,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.cdm3e4d1a088c1f6d498c84f3c86de73ce49f82a104,0.0,0,2025-02-19,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.cdm48c5086e11f02c82975b0218d46de2a5a747283e,0.0,0,2025-09-29,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.cdm6937BE86E9B075B46AE6DCDD3F0F8B160CB22FAD,0.0,0,2025-02-19,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.cdmbcd35731f7a19c6a993c34b80ca9fc96681f7b1d,0.0,0,2025-09-17,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.cdmf5200eafd3ad904629cbb0f87a78a3c7211081fe,0.0,0,2025-02-19,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.net3E4D1A088C1F6D498C84F3C86DE73CE49F82A104,0.0,0,2025-12-19,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.odm0047B4363B68769734464208BE974B83280506B4,0.0,0,2026-10-16,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.odm06C2067BD5AB7678197BFA62D893B1454F0AC560,0.0,0,2026-08-20,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.odm1EAA9578AC8B17E6653F01E1DBB255CC583B5AB9,0.0,0,2026-06-19,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.odm325A56956B40CF203877D20B841195B756C130EF,0.0,0,2026-08-01,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.odm37D95A62E0CF42E55A69146F841AFA93B91BA205,0.0,0,2026-08-01,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.odm649364EA05F104411E799C1E7966B4FB06A6B0E3,0.0,0,2026-08-16,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.odm9416CBB63DB82796ACC40C7FC9A8A65F2BBD1486,0.0,0,2026-09-05,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.odmB738C040A7C66215EB5C89BD1E77024CB063093D,0.0,0,2026-08-09,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.odmF3DED6FAC5AB2DE7726930E7F8715F10FE6D56AF,0.0,0,2026-10-13,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.xr1123b8318135566516fbaad9851467e784586894,0.0,0,2025-02-19,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.xr3E4D1A088C1F6D498C84F3C86DE73CE49F82A104,0.0,0,2026-05-24,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,cr.sb.xrf5200eafd3ad904629cbb0f87a78a3c7211081fe,0.0,0,2025-02-19,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local\Packages,windows_ie_ac_001,0.0,0,2025-02-19,残留候选·中置信,未注册 UWP 应用数据,人工确认后删除,中,商店应用已卸载或仅为其他账户暂存(staged),商店包比对
+Local,b1,601.2,39,2024-10-31,残留候选·低置信,归属不明,先查明归属再决定,低,"601MB!39 个文件,建议人工排查",知识库
+Local,ua.net.qytclient.app.apex,72.5,299,2026-10-22,残留候选·低置信,qyt 客户端,先查明归属再决定,低,,知识库
+Local,com.ccswitch.desktop,65.9,411,2026-08-26,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Local,Paradox Interactive,26.0,67,2026-04-30,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Local,cilizhai_pc,17.2,41,2026-08-29,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Local\Programs,Common,9.7,11,2026-07-12,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Local,DoubaoLinkRouter,2.8,4,2026-10-09,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Local,aha_doctor,0.9,39,2026-10-09,残留候选·低置信,归属不明(疑似健康类应用),先查明归属再决定,低,,知识库
+Local,pix-worker,0.5,5,2026-07-14,残留候选·低置信,归属不明(疑似 Pix 下载),先查明归属再决定,低,,知识库
+Local,Yii.Guxing,0.2,345,2025-06-20,残留候选·低置信,归属不明,先查明归属再决定,低,"345 个文件,建议人工排查",知识库
+Local,HideAndSeek,0.1,29,2026-10-22,残留候选·低置信,归属不明,先查明归属再决定,低,,知识库
+Local,cache,0.1,12,2026-08-29,残留候选·低置信,通用缓存(归属不明),先查明归属再决定,低,,知识库
+Local,Shanghai_YiJing_Network_L,0.0,1,2026-09-25,残留候选·低置信,上海弈鲸网络(未知厂商),先查明归属再决定,低,,知识库
+Local,UnrealEngineLauncher,0.0,2,2025-05-10,残留候选·低置信,未知,先查明归属再决定,低,"无安装记录与运行证据,近期有改动,可能为便携/绿色软件数据",启发式
+Local,fenv,0.0,1,2023-12-01,残留候选·低置信,归属不明,先查明归属再决定,低,,知识库
+Local,IdentityNexusIntegration,0.0,1,2023-06-02,残留候选·低置信,归属不明,先查明归属再决定,低,,知识库
+Local,acc_kernel,0.0,1,2026-06-14,残留候选·低置信,归属不明,先查明归属再决定,低,,知识库

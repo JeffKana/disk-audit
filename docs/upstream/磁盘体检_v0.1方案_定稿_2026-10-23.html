@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>磁盘体检 · v0.1 方案（定稿）</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:0; background:#f6f7f9; color:#1f2937;
+    font-family:"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif; font-size:15px; line-height:1.75; }
+  .page { max-width:1100px; margin:0 auto; padding:40px 32px 80px; }
+  header.rpt { border-bottom:3px solid #2563eb; padding-bottom:20px; margin-bottom:26px; }
+  header.rpt h1 { font-size:26px; margin:0 0 10px; color:#111827; }
+  .meta { color:#6b7280; font-size:13px; } .meta span { margin-right:18px; }
+  h2 { font-size:20px; color:#1d4ed8; margin:40px 0 14px; padding-left:10px; border-left:4px solid #2563eb; }
+  h3 { font-size:16px; color:#111827; margin:24px 0 10px; }
+  h4 { font-size:14.5px; color:#374151; margin:18px 0 8px; }
+  p { margin:10px 0; }
+  .card { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:18px 22px; margin:14px 0; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+  .tldr { background:#eff6ff; border:1px solid #bfdbfe; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:13.5px; background:#fff; }
+  th { background:#f3f4f6; color:#374151; text-align:left; padding:8px 10px; border:1px solid #e5e7eb; font-weight:600; }
+  td { padding:8px 10px; border:1px solid #e5e7eb; vertical-align:top; }
+  tr:nth-child(even) td { background:#fafafa; }
+  .scroll { overflow-x:auto; }
+  .tag { display:inline-block; font-size:11.5px; padding:1px 8px; border-radius:10px; white-space:nowrap; }
+  .tg { background:#dcfce7; color:#166534; } .ta { background:#fef3c7; color:#92400e; }
+  .tb { background:#dbeafe; color:#1e40af; } .tr2 { background:#fee2e2; color:#991b1b; }
+  .tp { background:#ede9fe; color:#5b21b6; } .tn { background:#e5e7eb; color:#374151; }
+  .num { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .note { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 16px; font-size:13.5px; margin:12px 0; color:#78350f; }
+  .danger { background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:10px 16px; font-size:13.5px; margin:12px 0; color:#7f1d1d; }
+  .okbox { background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px 16px; font-size:13.5px; margin:12px 0; color:#14532d; }
+  .src { font-size:12px; color:#6b7280; }
+  code { background:#f3f4f6; border-radius:4px; padding:1px 6px; font-size:12.8px; font-family:Consolas,"Courier New",monospace; }
+  .ears { font-family:Consolas,"Courier New",monospace; font-size:12.8px; background:#f8fafc; border-left:3px solid #94a3b8; padding:6px 12px; margin:7px 0; display:block; }
+  .flow { display:flex; gap:8px; flex-wrap:wrap; margin:14px 0; }
+  .flow .step { background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:8px 13px; font-size:12.8px; flex:1; min-width:140px; }
+  .flow .step b { color:#1d4ed8; display:block; }
+  .flow .step small { color:#6b7280; font-size:11.8px; }
+  .two { display:flex; gap:14px; flex-wrap:wrap; }
+  .two > div { flex:1; min-width:290px; }
+  ul.tight { margin:8px 0; padding-left:20px; } ul.tight li { margin:5px 0; }
+  ol.tight { margin:8px 0; padding-left:22px; } ol.tight li { margin:5px 0; }
+  footer { margin-top:50px; padding-top:16px; border-top:1px solid #e5e7eb; color:#9ca3af; font-size:12.5px; }
+  @media print { body{background:#fff} .page{padding:0} }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="rpt">
+  <h1>磁盘体检 · v0.1 方案（定稿）</h1>
+  <div class="meta">
+    <span>日期：2026-10-23</span>
+    <span>版本：定稿 F1</span>
+    <span>周期：12 周</span>
+    <span>人力：单人 + AI 辅助</span>
+  </div>
+  <div class="meta" style="margin-top:6px">
+    <span>形态：Windows 11 x64 · 纯本地 · 只读</span>
+    <span>许可：Apache-2.0</span>
+    <span>状态：<b style="color:#166534">无待决策项</b></span>
+  </div>
+</header>
+
+<div class="card tldr">
+  <b style="font-size:16px">文档状态</b>
+  <p style="margin:8px 0">本版为<b>定稿</b>。此前《磁盘残留体检 v0.1 落地方案》冻结为历史版本，不再维护；本版取代其全部内容。</p>
+  <p style="margin:4px 0"><b>本版不含"建议/可选/待定"类措辞</b>——所有条目均为已定口径，可直接进入开发与评审。全部决策来源：10 项前置问答（1~10）、决策点 D1~D4、争议点 Q1~Q7、技术口径 P1~P10，逐条对照见第十三节变更记录。</p>
+  <p style="margin:4px 0">W0 的四项 POC 已实测完成并回填：全盘 15.23s、AppData 4.79s、峰值内存 25.5MB、包体 24.9MB、报告 5000 行首屏 613ms、本地 Defender 无告警。</p>
+</div>
+
+<h2>一、项目定义</h2>
+<table>
+  <tr><th style="width:150px">项</th><th>定稿值</th><th>说明</th></tr>
+  <tr><td>产品名</td><td><b>磁盘体检</b></td><td>诊断类命名。副标题固定为"只诊断，不动手"，出现在 README 首行、安装包欢迎页、报告页眉三处</td></tr>
+  <tr><td>英文标识</td><td><code>disk-audit</code></td><td>GitHub 仓库名、发布包名均用此标识</td></tr>
+  <tr><td>可执行文件名</td><td><code>DiskAudit.exe</code></td><td>打包产物主程序</td></tr>
+  <tr><td>本地数据目录</td><td><code>%LOCALAPPDATA%\DiskAudit\</code></td><td>唯一写入位置，下分 <code>reports\</code>（报告）、<code>records\</code>（体检记录）、<code>tmp\</code>（临时规格文件）</td></tr>
+  <tr><td>一句话定位</td><td>扫描本机磁盘，判定每个大目录"属于谁、是不是残留、凭什么这么判"，输出一份可审计、可分享的离线报告，<b>不执行任何删除</b></td><td>—</td></tr>
+  <tr><td>目标用户</td><td>普通 Windows 11 用户（公开发布）；开发者作为进阶用户</td><td>—</td></tr>
+  <tr><td>使用频率假设</td><td>月度/季度体检</td><td>不做常驻、不做实时监控</td></tr>
+  <tr><td>支持矩阵</td><td>Windows 11 x64，<b>22H2（build 22621）及以上</b>；<b>仅固定本地盘</b></td><td>启动时检测 build；可移动盘/网络盘/光驱在选择界面置灰并说明原因。不支持 Win10 / Server / ARM64</td></tr>
+  <tr><td>语言</td><td>界面与报告<b>仅中文</b>；README 提供英文简版</td><td>文案集中在一份资源表内，预留 i18n 键名但不实现切换</td></tr>
+  <tr><td>许可</td><td><b>Apache-2.0</b></td><td>含专利授权；与 BCU 同协议，便于未来复用</td></tr>
+  <tr><td>分发</td><td>portable zip 为主 + Inno Setup 安装包；<b>不签名</b>；自动更新仅做版本提示</td><td>每个 Release 附 <code>SHA256SUMS</code></td></tr>
+</table>
+
+<h2>二、范围</h2>
+<div class="two">
+  <div class="card" style="border-top:3px solid #16a34a">
+    <h4 style="margin-top:0;color:#166534">v0.1 做（In Scope）</h4>
+    <ul class="tight">
+      <li>选择扫描范围：整盘（固定本地盘）或任意文件夹</li>
+      <li>AppData / ProgramData / 用户目录的<b>归属判定 + 残留分级</b>（高/中/低置信/受保护）</li>
+      <li>Program Files 区域只做 <code>InstallLocation</code> 反查，并标注"需人工确认"</li>
+      <li>可再生空间分两档呈现（<b>可再生</b> / <b>可再生但需确认</b>）</li>
+      <li>离线 HTML 报告：概览 / 明细 / 证据链 / 建议动作</li>
+      <li>体检记录与两次对比（新增/减少/不变 + 净变化）</li>
+      <li>CSV 导出（默认脱敏）</li>
+      <li><b>权限不足时提供"以管理员身份重扫"</b></li>
+      <li>portable + 安装包两种分发；Apache-2.0 开源</li>
+    </ul>
+  </div>
+  <div class="card" style="border-top:3px solid #b91c1c">
+    <h4 style="margin-top:0;color:#991b1b">v0.1 不做（Out of Scope）</h4>
+    <ul class="tight">
+      <li><b>任何删除 / 移动 / 重命名 / 改属性操作</b>（永久不做）</li>
+      <li>执行卸载（<code>UninstallString</code> 一律不调用）</li>
+      <li>安装监控 / 安装快照 diff</li>
+      <li>服务端、账号、云规则库、遥测、匿名统计</li>
+      <li>Win10 / Server / ARM64 / 可移动盘 / 网络盘</li>
+      <li>常驻托盘 / 实时监控 / 定时任务</li>
+      <li>自动下载并安装更新</li>
+      <li>多用户、远程机器扫描（加载他人 HKCU 蜂巢）</li>
+      <li>界面与报告多语言切换</li>
+    </ul>
+  </div>
+</div>
+
+<h2>三、需求条目（EARS）</h2>
+<p class="src" style="margin-top:0">每条可独立验收。U＝始终成立，E＝事件触发，S＝状态驱动，X＝异常处理。</p>
+
+<h3>只读与边界</h3>
+<span class="ears"><b>[U-1]</b> The system shall 在未获得用户显式选择的扫描范围前，不读取任何文件系统路径。</span>
+<span class="ears"><b>[U-2]</b> The system shall 使<b>本程序自身</b>仅在 <code>%LOCALAPPDATA%\DiskAudit\</code> 内发起写操作；对被扫描对象、注册表、文件属性不产生任何写操作。</span>
+<span class="ears"><b>[U-3]</b> The system shall 在未获得用户显式点击的情况下，不发起任何提权请求。</span>
+<span class="ears"><b>[U-4]</b> The system shall 仅通过白名单方式与系统交互：<code>explorer.exe /select,</code>（定位文件）、<code>ms-settings:appsfeatures</code>（打开系统应用列表）、写剪贴板；<b>不调用任何安装/卸载可执行文件</b>。</span>
+
+<h3>扫描与报告</h3>
+<span class="ears"><b>[E-1]</b> When 用户确认扫描范围，the system shall 展示实时进度（已扫描条目数、当前路径、已用时），刷新间隔不超过 500ms。</span>
+<span class="ears"><b>[E-2]</b> When 扫描完成，the system shall 生成离线可打开的 HTML 报告，每条候选输出：路径、逻辑大小、占用空间、置信度、判定来源、证据链、建议动作。</span>
+<span class="ears"><b>[E-3]</b> When 本次扫描与上一次体检记录存在差异，the system shall 给出"新增/减少/不变"三态对比与净变化量。</span>
+<span class="ears"><b>[E-4]</b> When 扫描完成且存在因权限被跳过的条目，the system shall 在报告与启动器同时展示"未扫描条目数"，并提供"以管理员身份重扫"入口。</span>
+<span class="ears"><b>[E-5]</b> When 用户在 UAC 中取消提权，the system shall 保留原报告、不重试、不弹出错误框，仅提示"已取消，结果未变更"。</span>
+
+<h3>判定</h3>
+<span class="ears"><b>[S-1]</b> While 目标命中硬保护名单（<code>Roaming\Microsoft\Protect</code>、<code>Crypto</code>、XP 兼容 Junction、系统组件），the system shall 强制标记"受保护·不可处理"，该标记不可被任何配置覆盖。</span>
+<span class="ears"><b>[S-2]</b> While 判定依据仅来自启发式兜底（哈希/GUID 命名、陈旧度），the system shall 将置信度上限锁定为"低"，并提示"需人工确认"。</span>
+<span class="ears"><b>[S-3]</b> While 以管理员模式扫描，the system shall 在报告显著位置标注"管理员模式"，并将结果保存为<b>独立体检记录</b>，不与普通记录自动对比。</span>
+
+<h3>异常</h3>
+<span class="ears"><b>[X-1]</b> If 枚举遇到权限不足、路径超长（&gt;260）、文件被占用或 reparse point，then the system shall 跳过该项、计入"未扫描/跳过"统计、继续完成其余扫描。</span>
+<span class="ears"><b>[X-2]</b> If 扫描被用户中止或异常退出，then the system shall 保留已采集的部分结果并标记"不完整报告"，不输出任何汇总结论。</span>
+<span class="ears"><b>[X-3]</b> If 用户点击"检查更新"且请求失败或无网络，then the system shall 静默降级、不阻塞、不重试超过 1 次。</span>
+<span class="ears"><b>[X-4]</b> If 提权进程异常退出，then the system shall 保留普通模式的既有报告，提示"管理员重扫失败，已保留上次结果"。</span>
+
+<h2>四、技术架构与选型</h2>
+<div class="flow">
+  <div class="step"><b>① 范围与预检</b><small>选盘/选目录 · build 检测 · 权限预判</small></div>
+  <div class="step"><b>② 证据采集</b><small>文件枚举 · 注册表卸载项 · Appx 包 · 进程/服务/自启动</small></div>
+  <div class="step"><b>③ 归属引擎</b><small>硬保护 → 知识库 → 注册表 → 进程/服务 → Appx → 启发式</small></div>
+  <div class="step"><b>④ 分级与记录</b><small>置信度打标 · 体检记录 · diff</small></div>
+  <div class="step"><b>⑤ 报告渲染</b><small>静态 HTML + CSV · 默认浏览器打开</small></div>
+</div>
+
+<table>
+  <tr><th style="width:110px">层</th><th style="width:210px">定稿选择</th><th>依据</th></tr>
+  <tr><td>引擎语言</td><td><b>CPython 3.13.x</b>，构建机 3.13.5</td><td>现有原型可直接演进；构建机 3.13.5 已实测（含 Tcl/Tk 8.6）</td></tr>
+  <tr><td><b>依赖约束</b></td><td><b>运行时零第三方依赖</b>（仅 CPython 标准库）；开发期仅 <code>pytest</code></td><td>降低贡献门槛、SBOM 可人工核对、包体可控。CI 校验 <code>import</code> 白名单，打包产物中不得出现 site-packages 第三方包</td></tr>
+  <tr><td>文件枚举</td><td><code>os.scandir</code> + 前沿切分并行 <b>8 线程</b> + <code>\\?\</code> 长路径 + 跳过 reparse point</td><td>实测：全盘 137 万项 15.23s；16 线程无增益。并行必须"浅层切分 + 叶级单线程递归"，禁止线程池内嵌套 submit（实测死锁）</td></tr>
+  <tr><td>容量口径</td><td><b>逻辑大小与占用空间双列</b>；汇总一律用<b>占用空间</b></td><td>硬链接/稀疏/压缩/簇对齐差异可达 10%+；单口径无法满足"偏差 &lt;1%"验收</td></tr>
+  <tr><td>注册表</td><td><code>winreg</code>，<code>KEY_READ</code></td><td>标准库只读访问，无写风险</td></tr>
+  <tr><td>UWP/商店包</td><td><code>%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive -Command Get-AppxPackage</code></td><td>官方姿势；<b>必须绝对路径调用</b>（实测裁剪 PATH 时静默失败），失败降级为"该证据源不可用"并在报告披露</td></tr>
+  <tr><td>UI 形态</td><td>Tkinter 启动器（范围选择 + 进度 + 结果入口）+ 离线静态 HTML 报告，默认浏览器打开</td><td>零框架依赖、不监听端口（杀软友好）、包体小；实测 5000 行报告首屏 613ms、筛选 52ms</td></tr>
+  <tr><td>提权</td><td>ctypes 调 <code>ShellExecuteW(..., "runas", ...)</code> 重启自身，扫描规格经 <code>tmp\spec.json</code> 传递</td><td>零依赖；<code>ERROR_CANCELLED</code> 时按 E-5 处理</td></tr>
+  <tr><td>打包</td><td>PyInstaller <code>--onedir</code>；<b>构建解释器必须带 Tcl/Tk</b></td><td>实测：带 Tcl/Tk → 982 文件 / 24.9MB / 冷启动 0.4~0.5s；缺 Tcl/Tk → 产物启动即 <code>ModuleNotFoundError: tkinter</code> 且构建日志不报错</td></tr>
+  <tr><td>安装包</td><td>Inno Setup，不签名</td><td>免费、脚本化、可生成卸载程序</td></tr>
+  <tr><td>更新</td><td>仅"检查更新"按钮触发，请求 GitHub Releases 取版本号；<b>默认不联网</b></td><td>零联网叙事成立；不自动下载、不自动执行</td></tr>
+  <tr><td>测试</td><td>pytest + 脱敏回归集（判定样例 JSON）+ VM 矩阵</td><td>判定逻辑为纯函数；VM 可造已知残留作 ground truth</td></tr>
+  <tr><td>CI</td><td>GitHub Actions <code>windows-latest</code>：<code>import tkinter</code> 断言 → pytest → 构建 → <code>--selftest</code> 门禁</td><td>POC 教训：tkinter 缺失只在运行时暴露，必须做构建门禁</td></tr>
+</table>
+
+<h2>五、判定模型</h2>
+
+<h3>5.1 置信度四档</h3>
+<table>
+  <tr><th style="width:86px">档位</th><th style="width:44%">触发条件</th><th>输出措辞</th></tr>
+  <tr><td><span class="tag tr2">高</span></td><td>同时成立：注册表无卸载记录 + 无匹配进程/服务 + 无自启动 + 目录陈旧（&gt;180 天未改）+ 知识库标注"已停止/不存在"</td><td>"高度可能为残留"＋"删除前请确认"</td></tr>
+  <tr><td><span class="tag ta">中</span></td><td>2 项证据成立；或知识库命中但缺生命周期信息</td><td>"疑似残留，建议核对证据"</td></tr>
+  <tr><td><span class="tag tn">低</span></td><td>仅启发式兜底命中（哈希/GUID 命名、陈旧度、无 exe/无版本信息）</td><td>"归属未知，需人工判断"，不给任何倾向性表述</td></tr>
+  <tr><td><span class="tag tp">受保护</span></td><td>硬保护名单命中（Microsoft 系、DPAPI、Junction、系统组件）</td><td>"受保护，不可处理"，不提供任何"下一步"按钮</td></tr>
+</table>
+
+<h3>5.2 可再生空间两档（不使用"可回收"一词）</h3>
+<table>
+  <tr><th style="width:150px">档位</th><th style="width:40%">覆盖范围</th><th>报告表述</th></tr>
+  <tr><td><b>可再生</b></td><td><code>%TEMP%</code>、Windows 更新缓存、崩溃转储、应用更新缓存（<code>*-updater</code>）、浏览器与应用缓存</td><td>"可再生：应用会自行重建"</td></tr>
+  <tr><td><b>可再生但需确认</b></td><td>开发缓存（npm / pip / uv / yarn / pnpm / gradle / maven / 模型缓存）、下载缓存</td><td>"可再生但需确认：清理后需重新下载，可能影响离线构建"</td></tr>
+</table>
+<div class="danger" style="margin-top:10px">
+<b>硬规则：报告不出现"可回收"字样，也不给"可释放 X GB"的合并总量。</b>两档分别列示各自小计，总量仅呈现"磁盘占用"。理由：开发缓存对普通用户可能是在用项目的唯一依赖副本，给出合并数字即构成行为建议，与"只诊断"定位冲突。
+</div>
+
+<h3>5.3 建议动作枚举（固定 5 种，不新增）</h3>
+<table>
+  <tr><th style="width:56px">编号</th><th style="width:210px">动作</th><th>实现方式</th></tr>
+  <tr><td>A1</td><td>复制路径</td><td>写剪贴板</td></tr>
+  <tr><td>A2</td><td>打开所在文件夹</td><td><code>explorer.exe /select,</code>（只定位，不打开文件）</td></tr>
+  <tr><td>A3</td><td>打开系统应用列表</td><td><code>ms-settings:appsfeatures</code></td></tr>
+  <tr><td>A4</td><td>查看证据链</td><td>报告内展开，无外部调用</td></tr>
+  <tr><td>A5</td><td>无建议</td><td>受保护项与低置信项固定使用此项</td></tr>
+</table>
+
+<h2>六、性能与数据预算</h2>
+<table>
+  <tr><th style="width:180px">指标</th><th style="width:96px">v0.1 目标</th><th style="width:104px">实测</th><th>说明</th></tr>
+  <tr><td>AppData 全量扫描</td><td>≤ 6s</td><td><b style="color:#166534">4.79s</b></td><td>64.3 万项 / 53.9GB</td></tr>
+  <tr><td>全盘扫描（固定本地盘 SSD）</td><td>≤ 30s</td><td><b style="color:#166534">15.23s</b></td><td>137 万项；8 线程</td></tr>
+  <tr><td>HDD / 大容量盘</td><td>不承诺</td><td>未测</td><td>选择界面按盘符类型提示预估耗时，超过 120s 预估时建议改用目录级</td></tr>
+  <tr><td>峰值内存</td><td>≤ 150MB</td><td><b style="color:#166534">25.5MB</b></td><td>前提：流式聚合，不缓存全量条目</td></tr>
+  <tr><td>报告体积</td><td>≤ 5MB</td><td><b style="color:#166534">1.39MB</b></td><td>5000 行，内联 CSS，无 CDN</td></tr>
+  <tr><td>报告首屏（5000 行）</td><td>≤ 1.0s</td><td><b style="color:#166534">613ms</b></td><td>DOMContentLoaded 中位数</td></tr>
+  <tr><td>报告筛选响应</td><td>≤ 150ms</td><td><b style="color:#166534">52ms</b></td><td>5000 行全量 display 切换</td></tr>
+  <tr><td>冷启动</td><td>≤ 1.5s</td><td><b style="color:#166534">0.4~0.5s</b></td><td>打包产物实测</td></tr>
+  <tr><td>包体（onedir 解压后）</td><td>≤ 40MB</td><td><b style="color:#166534">24.9MB</b></td><td>982 文件（含 Python 运行时 + Tcl/Tk）</td></tr>
+  <tr><td>本地占用上限</td><td>≤ 50MB</td><td>—</td><td>报告 + 体检记录，保留最近 12 次，超出按时间淘汰</td></tr>
+  <tr><td><b>容量口径偏差</b></td><td><b>&lt; 1%</b></td><td>待 M1 验收</td><td>与资源管理器"占用空间"对比；W0 已发现并列切分漏算根级文件（少 14.76GB），M1 必修</td></tr>
+  <tr><td><b>自动归属率</b></td><td><b>≥ 75%</b></td><td>待 M4 验收</td><td>口径见 9.2，分母为全部判定单元</td></tr>
+  <tr><td><b>高置信档误判</b></td><td><b>0</b></td><td>待 M4 验收</td><td>对在用软件；出现任一即 P0</td></tr>
+</table>
+
+<h2>七、里程碑与验收</h2>
+<table>
+  <tr><th style="width:70px">阶段</th><th style="width:80px">时间</th><th>交付物</th><th style="width:36%">验收口径</th></tr>
+  <tr>
+    <td><b>M0</b><br><span class="src">风险前置</span><br><span class="tag tg">已完成</span></td><td>W0</td>
+    <td>4 项 POC 实测记录（<code>poc\W0_POC实测报告_2026-10-23.html</code>）</td>
+    <td><b>已通过</b>：全盘 15.23s / AppData 4.79s / 内存 25.5MB / 包体 24.9MB / 报告 613ms / 本地 Defender 无告警。<b>遗留动作</b>：VirusTotal 多引擎、干净机 SmartScreen（在 M5 前完成）</td>
+  </tr>
+  <tr>
+    <td><b>M1</b><br><span class="src">引擎</span></td><td>W1~W2</td>
+    <td>三项前置修正（C3 切分口径 / C4 构建环境 / C5 绝对路径）+ 采集层 + 归属引擎 v1 + 知识库 500 条 + 报告 JSON Schema（含 <code>schema_version</code>）+ VM 矩阵基线 2 台</td>
+    <td>① 容量偏差 &lt;1%（占用空间口径）；② 自动归属率 ≥70%（VM ground truth）；③ 硬保护规则 pytest 覆盖 100%；④ 引擎层可独立 CLI 调用，零 UI 依赖；⑤ CI 的 <code>import tkinter</code> 断言与 <code>--selftest</code> 门禁生效</td>
+  </tr>
+  <tr>
+    <td><b>M2</b><br><span class="src">可用</span></td><td>W3~W4</td>
+    <td>启动器（范围选择 + 进度 + 结果入口）+ HTML 报告渲染 + CSV 导出（默认脱敏）+ 5 种建议动作 + <b>以管理员身份重扫</b></td>
+    <td>① 双击到看到报告 ≤3 步；② 断网环境下报告样式与功能完整；③ 中止扫描不留半成品结论；④ 提权全流程在 VM 验证：出现入口 → UAC → 重扫 → 报告标注"管理员模式"；⑤ UAC 取消后结果不变且无错误弹窗</td>
+  </tr>
+  <tr>
+    <td><b>M3</b><br><span class="src">体检闭环</span></td><td>W5~W6</td>
+    <td>体检记录（候选条目 + 聚合统计，JSON + <code>schema_version</code>）+ 两次对比视图 + 证据链展开 + 受保护项标记</td>
+    <td>① 连续两次扫描正确输出"新增/减少/不变"；② 对比结果与两次报告可交叉核对一致；③ 人为写入旧版 <code>schema_version</code> 时提示"旧记录不可比"而非崩溃；④ 管理员模式记录不与普通记录自动对比</td>
+  </tr>
+  <tr>
+    <td><b>M4</b><br><span class="src">准发布</span></td><td>W7~W9</td>
+    <td>知识库 800~1000 条 + 正则族（<code>*-updater</code> / <code>*_pp</code> / 哈希 / GUID）+ 回归集 30 例 + VM 矩阵扩至 8 台完成验收</td>
+    <td>① 回归集通过率 100%；② 高置信档对在用软件误判 = 0；③ 8 台 VM 上自动归属率 ≥75%；④ 无 P0 级缺陷</td>
+  </tr>
+  <tr>
+    <td><b>M5</b><br><span class="src">开源发布</span></td><td>W10~W12</td>
+    <td>安装包 + portable zip + <code>SHA256SUMS</code> + 检查更新 + 文档（README 中英 / 使用说明 / 隐私说明 / CONTRIBUTING）+ LICENSE(Apache-2.0) + NOTICE + THIRD_PARTY_NOTICES</td>
+    <td>① 干净 Win11 VM（无 Python）安装后可用；② README 3 分钟跑通；③ VirusTotal 记录与干净机 SmartScreen 记录均留档；④ Release 页含"已知限制"清单</td>
+  </tr>
+</table>
+
+<div class="note"><b>排期唯一变量是知识库。</b>M4 占 3 周且不可压缩。若 W9 自动归属率仍 &lt; 70%，执行动作是：范围收缩到 AppData、发布延后，不带低准确率上线。一次误判的信任损失大于晚三周发布。</div>
+
+<h2>八、安全与合规</h2>
+<table>
+  <tr><th style="width:150px">事项</th><th>定稿做法</th></tr>
+  <tr><td><b>只读边界（精确表述）</b></td><td>本程序自身仅在 <code>%LOCALAPPDATA%\DiskAudit\</code> 内写文件（U-2）。README 与报告注明：<b>打开报告使用系统默认浏览器，浏览器自身的缓存写入不属于本程序</b>。验证方法：Procmon 过滤 <code>DiskAudit.exe</code> 的 WriteFile/CreateFile 事件，交付前留档一次</td></tr>
+  <tr><td><b>提权说明</b></td><td>提权仅用于"读取原本无权读取的目录"，提权后进程同样不写报告目录之外的位置，同样不联网、不执行卸载。UI 与 README 明确写"提权只为了看，不为了改"</td></tr>
+  <tr><td>系统交互白名单</td><td>仅 A1~A3 三种（U-4）。<code>UninstallString</code> 永不调用；报告中"卸载相关"只以文字说明"请到 设置→应用 中卸载"</td></tr>
+  <tr><td>隐私</td><td>不收集、不上传、默认不联网。检查更新为用户手动触发，请求只带当前版本号</td></tr>
+  <tr><td>脱敏</td><td>覆盖四类：当前用户名、计算机名、用户 SID、其他用户目录名。CSV 导出<b>默认脱敏</b>，报告分享前提示"报告含本机路径"并可一键生成脱敏副本</td></tr>
+  <tr><td>License 与归属</td><td>项目 Apache-2.0。<b>知识库全部自行整理</b>（本机 320 项长尾 + 公开软件名），不复制 BCU 数据；NOTICE 仅致谢思路来源，若后续实际复制代码须补版权头与声明</td></tr>
+  <tr><td>依赖清单</td><td><code>THIRD_PARTY_NOTICES.md</code> + <code>pip freeze</code> 快照。因零第三方运行时依赖，仅需列 PyInstaller（打包期）与 Python/Tcl-Tk（运行时）许可</td></tr>
+  <tr><td>免责</td><td>README + 报告页脚固定声明："本工具不执行任何删除；判定仅供参考，处置后果由用户自行承担"</td></tr>
+  <tr><td>无签名告知</td><td>README 首屏 + 安装包欢迎页说明会出现"未知发布者"提示，并给出 <code>SHA256SUMS</code> 校验命令</td></tr>
+</table>
+
+<h2>九、质量保证</h2>
+<h3>9.1 三条不可协商的底线</h3>
+<ol class="tight">
+  <li><b>硬保护先于一切判定：</b>保护规则在流水线最前面短路返回，不参与打分、不可被配置覆盖（S-1）。</li>
+  <li><b>误判当天进回归集：</b>任何真实误判（如原型首版把 <code>Roaming\Code</code> 判成 <code>openaicodex</code> 的子串误匹配）当日转为测试用例。</li>
+  <li><b>宁可漏报不可误报：</b>README 诚实披露"可能漏掉 10~20%，但不冤枉在用软件"。</li>
+</ol>
+
+<h3>9.2 验收指标口径（消除歧义）</h3>
+<table>
+  <tr><th style="width:170px">指标</th><th>定义</th></tr>
+  <tr><td>判定单元</td><td>扫描范围内每一个被判定的大目录（顶层目录及其下钻子项）；文件级不单独计入</td></tr>
+  <tr><td>自动归属率</td><td>（判为"已安装/系统组件/可再生/高置信残留/中置信残留"的单元数）÷（全部判定单元数）。"低置信"与"归属未知"计入分母、不计入分子</td></tr>
+  <tr><td>高置信误判</td><td>被判为"高置信残留"但该软件实际仍在用（存在匹配进程、自启动项或最近 30 天内有修改）的单元数，目标为 0</td></tr>
+  <tr><td>Ground truth 来源</td><td>VM 矩阵：在快照中批量安装 N 个软件 → 用官方卸载器卸载其中 M 个 → 由此产生的残留即为已知答案。可复现、可回归</td></tr>
+  <tr><td>容量偏差</td><td>|报告汇总占用空间 − 资源管理器同范围占用空间| ÷ 资源管理器占用空间</td></tr>
+</table>
+
+<h3>9.3 验收环境（VM 矩阵）</h3>
+<p>机器多样性由虚拟机提供，不使用真机。基准镜像：Windows 11 22H2 与 24H2 各一台，快照可回滚。</p>
+<table>
+  <tr><th style="width:130px">阶段</th><th style="width:120px">VM 数量</th><th>用途</th></tr>
+  <tr><td>M1</td><td>2 台（22H2 / 24H2 基线）</td><td>容量偏差、引擎可运行性、tkinter 打包验证</td></tr>
+  <tr><td>M2</td><td>2 台（复用）</td><td>提权流程、UAC 取消、断网可用性</td></tr>
+  <tr><td>M4</td><td>8 台（不同软件组合：办公 / 游戏 / 开发 / 国产全家桶 / 精简系统 等）</td><td>自动归属率与误判率验收；每台先标注 ground truth 再评分</td></tr>
+  <tr><td>M5</td><td>1 台全新快照（从未运行过本程序）</td><td>SmartScreen 首次运行提示留档、安装包与 portable 双形态验证</td></tr>
+</table>
+<div class="note"><b>VM 方案的已知局限（记入 R10）：</b>VM 无法替代"真人可用性测试"。因此报告文案执行<b>零假设原则</b>——任何可能被非开发者误解的措辞一律改保守，宁可少说。发布后通过 GitHub Issue 收集真实用户困惑，作为 v0.2 文案迭代输入。</div>
+
+<h2>十、风险登记册</h2>
+<table>
+  <tr><th style="width:44px">#</th><th style="width:180px">风险</th><th style="width:70px">概率/影响</th><th>缓解措施</th><th style="width:170px">止损信号</th></tr>
+  <tr><td><b>R1</b></td><td>枚举性能不达标（用户等不了）</td><td><span class="tag tg">低</span> / <span class="tag ta">中</span></td><td>已实测达标 8 倍余量；流式聚合；按盘类型预估耗时</td><td>任一目标机上全盘 &gt; 60s → 默认降级为目录级并提示</td></tr>
+  <tr><td><b>R2</b></td><td>未签名被杀软误报 / SmartScreen 拦截</td><td><span class="tag ta">中高</span> / <span class="tag tr2">高</span></td><td>portable 优先、onedir 打包、SHA256、VirusTotal 自查、误报申诉、源码可自建</td><td>≥3 家主流杀软持续拦截且申诉无果 → 主推源码运行，安装包标为实验性</td></tr>
+  <tr><td><b>R3</b></td><td>用户期待"一键清理"，只读导致差评</td><td><span class="tag tr2">高</span> / <span class="tag ta">中</span></td><td>诊断类命名 + 副标题"只诊断，不动手" + 报告给 A1~A3 具体动作 + 零假设文案</td><td>Issue 中"看完不知道做什么"占比 &gt; 40% → v0.2 增加"可执行清单导出"（脚本只生成不执行）</td></tr>
+  <tr><td><b>R4</b></td><td>知识库覆盖不足，报告价值低</td><td><span class="tag ta">中</span> / <span class="tag tr2">高</span></td><td>正则族放大覆盖、别名表、厂商归一、VM 反馈回流</td><td>W9 自动归属率 &lt; 70% → 范围收缩到 AppData + 发布延后</td></tr>
+  <tr><td><b>R5</b></td><td>误判诱导用户手动删错（本工具不删，但给了暗示）</td><td><span class="tag ta">中</span> / <span class="tag tr2">极高</span></td><td>四档置信度、证据链、受保护项硬标记、不给合并"可释放"数字、免责声明</td><td>任一高置信误判 → 立即降级该规则并全量复核同类规则</td></tr>
+  <tr><td><b>R6</b></td><td>单人 + AI 辅助导致代码腐化</td><td><span class="tag ta">中</span> / <span class="tag ta">中</span></td><td>引擎与 UI 解耦、判定纯函数化、回归集守卫、CI 强制 pytest、类型标注</td><td>回归集频繁红 → 暂停加功能，先偿还结构债</td></tr>
+  <tr><td><b>R7</b></td><td>无签名下做自动更新引入投毒面</td><td><span class="tag tg">极低</span> / <span class="tag tr2">极高</span></td><td>仅手动检查更新、不自动下载执行、SHA256</td><td>—（已在方案层规避）</td></tr>
+  <tr><td><b>R8</b></td><td>权限差异导致扫描不完整</td><td><span class="tag ta">中</span> / <span class="tag ta">中</span></td><td>默认当前用户范围；提供"以管理员身份重扫"；跳过项一律披露</td><td>任一台 VM 跳过率 &gt; 15% 且提权后仍 &gt; 5% → 排查是否为判定逻辑缺陷而非权限问题</td></tr>
+  <tr><td><b>R9</b></td><td><b>"自我提权 + 重启自身"被杀软判为可疑行为</b><br><span class="src">（因 Q6 新增）</span></td><td><span class="tag ta">中</span> / <span class="tag tr2">高</span></td><td>提权仅由用户点击触发（U-3）；提权后不联网、不执行任何外部程序；UI 与 README 明确解释用途；发布前在 VM 上针对提权路径单独跑 VirusTotal</td><td>VirusTotal 上提权版本比普通版本多出 ≥2 家拦截 → Q6 功能改为"仅提示以管理员身份手动重启程序"，撤回自动提权</td></tr>
+  <tr><td><b>R10</b></td><td>VM 矩阵无法覆盖真实用户环境与真人认知</td><td><span class="tag ta">中</span> / <span class="tag ta">中</span></td><td>VM 覆盖软件组合多样性；文案执行零假设原则；发布后靠 Issue 收集困惑</td><td>Issue 中同一处措辞被误解 ≥3 次 → 该处文案重写并进文档回归</td></tr>
+</table>
+
+<h2>十一、协作流转</h2>
+<table>
+  <tr><th style="width:120px">环节</th><th>动作</th></tr>
+  <tr><td>资料归档</td><td>本定稿与上游三份文档（调研报告、技术选型决策表、W0 POC 实测报告）一并上传项目资料库，形成统一上下文</td></tr>
+  <tr><td>评审事项</td><td>创建"v0.1 范围与文案评审"事项，分配给设计（报告视觉与文案）与技术负责人（架构与验收口径），本方案为唯一评审基线</td></tr>
+  <tr><td>关注人</td><td>发布与文档同学关注 R2（杀软误报）与 R9（提权误判）两条风险</td></tr>
+  <tr><td>上游废弃声明</td><td>《磁盘残留体检 v0.1 落地方案》冻结，后续以本定稿为准；差异见第十三节</td></tr>
+</table>
+
+<h2>十二、遗留动作（非决策，M5 前完成）</h2>
+<table>
+  <tr><th style="width:44px">#</th><th style="width:240px">动作</th><th>说明</th></tr>
+  <tr><td><b>U1</b></td><td>POC 产物上传 VirusTotal</td><td>需账号且上传即公开样本，由项目负责人执行。文件：<code>poc\dist\poc2_tk\poc2_tk.exe</code></td></tr>
+  <tr><td><b>U2</b></td><td>从未运行过本程序的干净 Win11 上首次双击</td><td>由 M5 的全新 VM 快照完成，记录 SmartScreen 实际提示文案</td></tr>
+  <tr><td><b>U3</b></td><td>提权版本单独 VirusTotal 复测</td><td>Q6 新增功能带来的新增风险，见 R9</td></tr>
+  <tr><td><b>U4</b></td><td>Procmon 只读验证留档</td><td>过滤 <code>DiskAudit.exe</code> 写事件，作为"只读"承诺的证据</td></tr>
+</table>
+
+<h2>十三、变更记录（本定稿 vs 历史版本）</h2>
+<p class="src" style="margin-top:0">本表为评审入口：左侧为历史版本中的含糊/矛盾/待定项，右侧为本定稿的执行口径。</p>
+<table>
+  <tr><th style="width:52px">编号</th><th style="width:200px">历史版本问题</th><th>本定稿口径</th></tr>
+  <tr><td><b>X1</b></td><td>版本检查"启动时可选关闭"与"零联网（除你主动点）"矛盾</td><td>默认不联网；仅"检查更新"按钮触发（X-3）</td></tr>
+  <tr><td><b>X2</b></td><td>"跳转应用卸载页"与"所有建议动作只是文字建议"矛盾</td><td>白名单三动作 A1~A3（U-4）；<code>UninstallString</code> 永不调用</td></tr>
+  <tr><td><b>X3</b></td><td>选型表写 Python 3.12，实测用 3.13.5</td><td>统一 CPython 3.13.x，构建机 3.13.5</td></tr>
+  <tr><td><b>X4</b></td><td>R1 止损阈值"全盘 &gt; 4 分钟"已失真</td><td>改为"全盘 &gt; 60s → 降级目录级"</td></tr>
+  <tr><td><b>X5</b></td><td>"快照"一词同时指体检记录与安装快照</td><td>前者统一为<b>体检记录</b>，后者保留<b>安装快照</b>（且列为不做）</td></tr>
+  <tr><td><b>X6</b></td><td>U-2"任何位置不得产生写操作"按字面不可实现</td><td>改为"本程序自身"仅写数据目录；浏览器行为明确排除；Procmon 留档验证（U4）</td></tr>
+  <tr><td><b>Q1</b></td><td>三个产品名并存，存储路径硬编码 DiskCheck</td><td>产品名<b>磁盘体检</b>；标识 <code>disk-audit</code>；目录 <code>%LOCALAPPDATA%\DiskAudit\</code></td></tr>
+  <tr><td><b>Q2</b></td><td>License 未定（Apache-2.0 与 MIT 并列）</td><td><b>Apache-2.0</b></td></tr>
+  <tr><td><b>Q3</b></td><td>"可回收空间"无判定规则，构成行为建议</td><td>改两档「可再生 / 可再生但需确认」；<b>禁用"可回收"与合并"可释放 X GB"</b></td></tr>
+  <tr><td><b>Q4</b></td><td>"标准库为主"含糊</td><td><b>运行时零第三方依赖</b>，开发期仅 pytest，CI 校验 import 白名单</td></tr>
+  <tr><td><b>Q5</b></td><td>报告语言未定</td><td>界面与报告仅中文；README 英文简版；预留 i18n 键名不实现切换</td></tr>
+  <tr><td><b>Q6</b></td><td>权限不足时的出口不明确</td><td><b>v0.1 实现"以管理员身份重扫"</b>：用户点击触发 → <code>runas</code> 重启自身 → 独立体检记录并标注"管理员模式"；新增 R9 风险与 U3 验证</td></tr>
+  <tr><td><b>Q7</b></td><td>体检记录存什么、旧版本兼容未知</td><td>只存候选条目 + 聚合统计（JSON + <code>schema_version</code>）；版本不匹配提示"旧记录不可比"</td></tr>
+  <tr><td><b>P1</b></td><td>大小口径未定，与"偏差 &lt;1%"冲突</td><td>逻辑大小与占用空间双列；汇总用<b>占用空间</b></td></tr>
+  <tr><td><b>P2</b></td><td>自动归属率无分母、无 ground truth，不可验收</td><td>口径见 9.2；ground truth 由 VM 矩阵制造（装 N 卸 M）</td></tr>
+  <tr><td><b>P3</b></td><td>"建议动作"未枚举</td><td>固定 5 种 A1~A5</td></tr>
+  <tr><td><b>P4</b></td><td>"常用目录"未定义</td><td>预设四项：<code>%APPDATA%</code>、<code>%LOCALAPPDATA%</code>、<code>%PROGRAMDATA%</code>、<code>C:\Program Files</code></td></tr>
+  <tr><td><b>P5</b></td><td>Win11 最低版本未定</td><td>22H2（build 22621）及以上，启动时检测</td></tr>
+  <tr><td><b>P6</b></td><td>可移动盘/网络盘处理未定</td><td>仅固定本地盘；其余在选择界面置灰并说明原因</td></tr>
+  <tr><td><b>P7</b></td><td>脱敏只覆盖用户名</td><td>覆盖用户名、计算机名、用户 SID、其他用户目录名；CSV 默认脱敏</td></tr>
+  <tr><td><b>P8</b></td><td>内测 10 人 / 2 台非开发机来源不明</td><td><b>改用 VM 矩阵</b>（M1 两台 → M4 八台 → M5 全新快照）；局限记入 R10，文案执行零假设原则</td></tr>
+  <tr><td><b>P9</b></td><td>版本号规范未定</td><td>从 <code>0.1.0</code> 起，语义化版本；预发布用 <code>-beta.N</code></td></tr>
+  <tr><td><b>P10</b></td><td>知识库数据来源与许可边界不清</td><td><b>全部自行整理</b>，不复制 BCU 数据；NOTICE 仅致谢思路</td></tr>
+</table>
+
+<div class="danger">
+<b>安全边界（不因任何阶段放宽）：</b>本程序不含任何删除能力。<code>Roaming\Microsoft\Protect</code>（DPAPI 密钥）与 <code>Crypto</code> 永久标记"受保护"；README 明确写出：删除它们会导致浏览器密码、证书、Wi-Fi 凭据<b>永久无法解密</b>。XP 兼容 Junction（<code>Application Data / History / Temporary Internet Files</code>）同样硬黑名单。提权进程同样只读、不联网、不执行任何外部程序。
+</div>
+
+<footer>
+  磁盘体检 · v0.1 方案（定稿 F1） · 2026-10-23<br>
+  本版不含待决策项。性能数据为本机实测（Windows 11 / SSD / 1,371,543 项 / 156.66GB）；自动归属率 ≥75% 与高置信零误判为验收目标，须在 M4 由 VM 矩阵回填后方可作为对外承诺。
+</footer>
+
+</div>
+</body>
+</html>

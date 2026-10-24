@@ -1,0 +1,17 @@
+[project]
+name = "disk-audit"
+version = "0.1.0.dev0"
+description = "磁盘体检：只读的磁盘残留体检与归属判定报告工具（只诊断，不动手）"
+readme = "README.md"
+requires-python = ">=3.13"
+license = { text = "Apache-2.0" }
+authors = [{ name = "disk-audit" }]
+dependencies = []  # 运行时零第三方依赖（方案第四节 Q4）；CI 校验 import 白名单
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]  # 开发期唯一第三方依赖
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]  # 平铺布局：保证 `pytest` 直接运行时也能导入 disk_audit
+addopts = "-q"

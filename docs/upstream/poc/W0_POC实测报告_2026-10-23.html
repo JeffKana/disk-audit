@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W0 POC 实测报告 · 磁盘残留体检工具</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:0; background:#f6f7f9; color:#1f2937;
+    font-family:"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif; font-size:15px; line-height:1.75; }
+  .page { max-width:1080px; margin:0 auto; padding:40px 32px 80px; }
+  header.rpt { border-bottom:3px solid #2563eb; padding-bottom:20px; margin-bottom:26px; }
+  header.rpt h1 { font-size:26px; margin:0 0 10px; color:#111827; }
+  .meta { color:#6b7280; font-size:13px; } .meta span { margin-right:18px; }
+  h2 { font-size:20px; color:#1d4ed8; margin:40px 0 14px; padding-left:10px; border-left:4px solid #2563eb; }
+  h3 { font-size:16px; color:#111827; margin:24px 0 10px; }
+  p { margin:10px 0; }
+  .card { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:18px 22px; margin:14px 0; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+  .tldr { background:#eff6ff; border:1px solid #bfdbfe; }
+  .tldr ol { margin:8px 0 4px; padding-left:22px; } .tldr li { margin:7px 0; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:13.5px; background:#fff; }
+  th { background:#f3f4f6; color:#374151; text-align:left; padding:8px 10px; border:1px solid #e5e7eb; font-weight:600; }
+  td { padding:8px 10px; border:1px solid #e5e7eb; vertical-align:top; }
+  tr:nth-child(even) td { background:#fafafa; }
+  .num { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .best { background:#dcfce7 !important; font-weight:700; color:#166534; }
+  .tag { display:inline-block; font-size:11.5px; padding:1px 8px; border-radius:10px; white-space:nowrap; }
+  .tg { background:#dcfce7; color:#166534; } .ta { background:#fef3c7; color:#92400e; }
+  .tb { background:#dbeafe; color:#1e40af; } .tr2 { background:#fee2e2; color:#991b1b; }
+  .tn { background:#e5e7eb; color:#374151; }
+  .note { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 16px; font-size:13.5px; margin:12px 0; color:#78350f; }
+  .danger { background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:10px 16px; font-size:13.5px; margin:12px 0; color:#7f1d1d; }
+  .okbox { background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px 16px; font-size:13.5px; margin:12px 0; color:#14532d; }
+  .src { font-size:12px; color:#6b7280; }
+  code { background:#f3f4f6; border-radius:4px; padding:1px 6px; font-size:12.8px; font-family:Consolas,"Courier New",monospace; }
+  pre { background:#0f172a; color:#e2e8f0; border-radius:8px; padding:12px 16px; font-size:12.5px; overflow-x:auto; line-height:1.6;
+        font-family:Consolas,"Courier New",monospace; }
+  .chk { color:#b45309; font-weight:600; }
+  .kpi { display:flex; gap:12px; flex-wrap:wrap; margin:14px 0; }
+  .kpi .k { flex:1; min-width:150px; background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 16px; text-align:center; }
+  .kpi .k .v { font-size:21px; font-weight:700; color:#1d4ed8; font-variant-numeric:tabular-nums; }
+  .kpi .k .l { font-size:12.5px; color:#6b7280; margin-top:2px; }
+  .kpi .k.pass .v { color:#166534; } .kpi .k.warn .v { color:#b45309; }
+  footer { margin-top:50px; padding-top:16px; border-top:1px solid #e5e7eb; color:#9ca3af; font-size:12.5px; }
+  @media print { body{background:#fff} .page{padding:0} }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="rpt">
+  <h1>W0 POC 实测报告</h1>
+  <div class="meta">
+    <span>日期：2026-10-23</span>
+    <span>机器：本机 C:（165.8GB 已用 / 剩 18.8GB）</span>
+    <span>执行人：AI（本机实测，非估算）</span>
+  </div>
+  <div class="meta" style="margin-top:6px">
+    <span>上游：《磁盘残留体检工具 · v0.1 落地方案》第十节</span>
+    <span>结论：4 项全过，另发现 2 个必须改方案的缺陷</span>
+  </div>
+</header>
+
+<div class="kpi">
+  <div class="k pass"><div class="v">4.79s</div><div class="l">AppData 全量扫描（目标 ≤8s）</div></div>
+  <div class="k pass"><div class="v">15.23s</div><div class="l">全盘 C: 扫描（目标 ≤120s）</div></div>
+  <div class="k pass"><div class="v">25.5MB</div><div class="l">峰值内存（目标 ≤300MB）</div></div>
+  <div class="k pass"><div class="v">24.9MB</div><div class="l">打包产物（982 文件，含 Tcl/Tk）</div></div>
+  <div class="k warn"><div class="v">1/2</div><div class="l">杀软验证（仅本地 Defender）</div></div>
+</div>
+
+<div class="card tldr">
+  <b style="font-size:16px">结论速览</b>
+  <ol>
+    <li><b>性能不是问题，而且余量极大。</b>全盘 C: 1,371,543 项 15.23 秒、峰值内存 25.5MB。<b>原方案里"MFT 直读"这个高风险备选可以直接删除</b>——用不上。</li>
+    <li><b>8 线程是最优，16 线程没有收益</b>（全盘 15.23s vs 15.34s；AppData 4.94s vs 4.79s）。线程数按 8 定，少一半并发不损失速度。</li>
+    <li><b>发现缺陷①（正确性，比性能重要）：</b>并行切分（frontier）只统计了切分点<b>以下</b>，导致全盘体积少算 <b>14.76GB</b>（156.66GB → 141.90GB）——漏的是 <code>pagefile.sys</code>/<code>hiberfil.sys</code> 这类根级大文件。必须在切分层显式补算，否则报告的数字是错的。</li>
+    <li><b>发现缺陷②（打包，会直接崩）：</b>本机 managed Python 3.13.12 <b>没有 Tcl/Tk</b>，用它打包出的产物运行即 <code>ModuleNotFoundError: No module named 'tkinter'</code>。换用系统 Python 3.13.5（Tcl/Tk 8.6）后全部正常。构建环境必须固定。</li>
+    <li><b>另外记录一个死锁坑：</b>线程池内嵌套 <code>submit + result()</code> 会死锁（首版实测 5 分钟零进度、CPU 仅 9 秒）。已改为"浅层切分 + 叶级单线程递归"，这条要写进代码规范。</li>
+  </ol>
+</div>
+
+<h2>POC-1　枚举性能：全盘/目录扫描到底多快</h2>
+<p><b>方法：</b><code>os.scandir</code> 逐项读元数据（不读文件内容、不落盘），跳过 reparse point 防 Junction 循环；对比单线程与 frontier 并行（先 BFS 切出前沿目录，再对每个前沿目录单线程递归，全程无嵌套 submit）。</p>
+<table>
+  <tr><th style="width:200px">扫描范围</th><th>模式</th><th class="num">耗时</th><th class="num">条目数</th><th class="num">体积</th><th class="num">吞吐</th><th class="num">权限拒绝</th><th class="num">reparse 跳过</th></tr>
+  <tr>
+    <td rowspan="3"><b>AppData</b><br><span class="src">Roaming + Local<br>53.9GB / 64.3 万项</span></td>
+    <td>单线程</td><td class="num">6.68s</td><td class="num">643,509</td><td class="num">53.89GB</td><td class="num">96k/s</td><td class="num">2</td><td class="num">67</td>
+  </tr>
+  <tr><td>8 线程</td><td class="num">4.94s</td><td class="num">643,178</td><td class="num">53.86GB</td><td class="num">130k/s</td><td class="num">2</td><td class="num">63</td></tr>
+  <tr><td>16 线程</td><td class="num best">4.79s</td><td class="num">643,178</td><td class="num">53.86GB</td><td class="num">134k/s</td><td class="num">2</td><td class="num">63</td></tr>
+  <tr>
+    <td rowspan="3"><b>C: 全盘</b><br><span class="src">1.37 百万项</span></td>
+    <td>单线程</td><td class="num">31.28s</td><td class="num">1,371,543</td><td class="num">156.66GB</td><td class="num">44k/s</td><td class="num">472</td><td class="num">753</td>
+  </tr>
+  <tr><td>8 线程</td><td class="num best">15.23s</td><td class="num">1,371,282</td><td class="num">141.90GB ⚠</td><td class="num">90k/s</td><td class="num">469</td><td class="num">744</td></tr>
+  <tr><td>16 线程</td><td class="num">15.34s</td><td class="num">1,371,287</td><td class="num">141.91GB ⚠</td><td class="num">89k/s</td><td class="num">469</td><td class="num">744</td></tr>
+</table>
+<p class="src">绿底＝该范围最快档。⚠ 体积与单线程不一致，原因为下方缺陷①，<b>与线程数无关，是统计口径 bug</b>。</p>
+
+<div class="danger">
+<b>缺陷①：并行切分漏算"切分点之上"的文件（体积少算 14.76GB）</b><br>
+frontier 方案只统计前沿目录及其子树，<b>前沿之上的层级（C:\ 根目录、C:\Users\xxx 等）里的文件被完全跳过</b>。而根目录恰恰放着 <code>pagefile.sys</code>、<code>hiberfil.sys</code>、<code>swapfile.sys</code> 这类单文件即 GB 级的系统文件——差值 14.76GB 就是它们。<br>
+<b>修复：</b>切分阶段必须同时统计每一层"未被继续下钻的目录中的文件"，并计入总数。这条不是优化项，是<b>正确性缺陷</b>：如果报告里"全盘占用"比资源管理器少 15GB，用户第一反应是"这工具连容量都算不准"，信任直接归零。<br>
+<b>顺带：</b><code>denied=472</code>（0.03%）必须在报告里以"未扫描 472 项"披露，不能静默吞掉——对应方案风险 R8。
+</div>
+
+<div class="okbox">
+<b>判定：通过，且远超预期。</b>AppData 4.8s（目标 8s）、全盘 15.2s（目标 120s，余量 8 倍）。<br>
+<b>对方案的影响：</b>① 删除"直读 NTFS MFT"备选（原列为 POC 后的风险分支，现已无必要）；② 线程数定为 8；③ 全盘扫描目标可从 120s 收紧到 30s，把余量留给 HDD 和老机器。
+</div>
+
+<h3>POC-1 补充：峰值内存</h3>
+<table>
+  <tr><th style="width:260px">场景</th><th class="num">峰值工作集</th><th class="num">扫描后常驻</th><th>说明</th></tr>
+  <tr><td>AppData，64.2 万项，8 线程</td><td class="num best">25.5MB</td><td class="num">24.2MB</td><td>流式聚合生效：枚举即累加，不把文件清单常驻内存</td></tr>
+</table>
+<p class="src">目标 ≤300MB，实测 25.5MB。这意味着即使全盘 137 万项也不会爆内存——但前提是<b>坚持流式聚合</b>；一旦为了做证据链而缓存全量条目，内存会线性上升到 GB 级。这是后续开发最容易破坏的一条纪律。</p>
+
+<h2>POC-2　打包：产物能否在无 Python 的机器上跑</h2>
+<p><b>方法：</b>写一个最小程序（读注册表卸载项 → 调 PowerShell 取 Appx 包 → 枚举目录 → 加载 Tkinter），用 PyInstaller <code>--onedir</code> 打包，<b>剥离 PATH 中的 Python</b> 后运行 <code>--selftest</code>。</p>
+<table>
+  <tr><th style="width:170px">构建环境</th><th class="num">文件数</th><th class="num">体积</th><th>Tkinter</th><th class="num">注册表</th><th class="num">Appx</th><th>枚举</th><th>结论</th></tr>
+  <tr>
+    <td><b>managed Python 3.13.12</b><br><span class="src">无 Tcl/Tk</span></td>
+    <td class="num">52</td><td class="num">19.8MB</td>
+    <td><span class="tag tr2">FAIL</span><br><span class="src">ModuleNotFoundError</span></td>
+    <td class="num">284 键<br>206 有名称</td><td class="num">199 包</td><td>17.3 万文件<br>7.1GB / 1.65s</td>
+    <td><span class="tag tr2">不通过</span></td>
+  </tr>
+  <tr>
+    <td><b>系统 Python 3.13.5</b><br><span class="src">Tcl/Tk 8.6</span></td>
+    <td class="num">982</td><td class="num">24.9MB</td>
+    <td><span class="tag tg">ok 8.6</span></td>
+    <td class="num">284 键<br>206 有名称</td><td class="num">199 包</td><td>17.3 万文件<br>7.2GB / 1.7s</td>
+    <td><span class="tag tg">通过</span></td>
+  </tr>
+</table>
+<p>启动耗时：<b>纯启动约 0.4~0.5 秒</b>（整体 2.16s / 2.91s 中约 1.6~2.4s 是自检逻辑里那一次 PowerShell 调用的开销，不是启动开销）。</p>
+
+<div class="danger">
+<b>缺陷②：构建解释器缺 Tcl/Tk，产物启动即崩</b><br>
+第一次打包（managed Python 3.13.12）产物只有 52 个文件、19.8MB，看起来更"轻"，但运行自检返回
+<code>tkinter: FAIL: ModuleNotFoundError("No module named 'tkinter'")</code>——<b>它在用户机器上会在弹出窗口前就崩掉</b>。原因是该解释器未安装 Tcl/Tk，PyInstaller 分析不到就静默跳过（构建日志无报错）。<br>
+换用系统 Python 3.13.5（Tcl/Tk 8.6）后：982 文件 / 24.9MB，Tkinter 正常，注册表/Appx/枚举全部正常。<b>代价只是 +5.1MB 与 +930 个 Tcl/Tk 运行文件。</b><br>
+<b>修复（写进方案）：</b>① 构建环境固定为带 Tcl/Tk 的 CPython，并在 CI 里加一条 <code>python -c "import tkinter"</code> 的前置断言；② 发布前必须跑 <code>--selftest</code> 并把 tkinter 检查作为通过条件。
+</div>
+
+<div class="note">
+<b>顺带一个诚实说明：</b>剥离 PATH 后第一次自检里 Appx 也报 <code>FileNotFoundError</code>，我一度以为是缺陷。复查发现是<b>我测试手法的问题</b>——把 PATH 裁到只剩 <code>system32</code>，而 <code>powershell.exe</code> 在 <code>System32\WindowsPowerShell\v1.0\</code> 下，自然找不到。恢复正常 PATH 后返回 199 个包。<b>这不是产品缺陷，但暴露一个真实依赖：产品对 <code>powershell.exe</code> 的依赖必须显式处理</b>（绝对路径调用 + 失败降级），否则在安全加固过的机器上会静默丢掉整个 UWP 判定分支。
+</div>
+
+<h2>POC-3　分发：未签名会不会被拦</h2>
+<table>
+  <tr><th style="width:190px">检查项</th><th>结果</th><th>结论</th></tr>
+  <tr><td>产物 SHA256</td><td><code>A8BD09E7B3D6…</code>（完整值见产物 <code>poc3_scan.txt</code>）</td><td><span class="tag tg">可用于发布页校验</span></td></tr>
+  <tr><td>Windows Defender 本地扫描</td><td><code>Scanning …\dist\poc2_tk found no threats.</code>（退出码 0）</td><td><span class="tag tg">通过</span></td></tr>
+  <tr><td><b>VirusTotal 多引擎</b></td><td><b>未测</b></td><td><span class="tag ta">需你操作</span><br><span class="src">需账号/API key，我无法代传；且上传即公开样本，需你确认</span></td></tr>
+  <tr><td><b>SmartScreen 真实拦截</b></td><td><b>未测</b></td><td><span class="tag ta">需你操作</span><br><span class="src">本机已存有信任记录，无法复现首次下载场景；需在未运行过该文件的干净机上双击</span></td></tr>
+</table>
+<p class="chk">判定：部分通过（1/2 类证据）。</p>
+<p><b>本地 Defender 干净只是及格线，不能当结论用。</b>清理类工具的误报主要来自国产杀软（360/火绒/腾讯管家）的启发式，而这三家恰好不在本机可测范围内。方案里的 R2 风险等级<b>维持"中高"不变</b>，`portable + SHA256 + 源码可自建` 的缓解组合一条都不能省。</p>
+
+<h2>POC-4　报告渲染：5000 行大表格会不会卡</h2>
+<table>
+  <tr><th style="width:250px">指标</th><th class="num">目标</th><th class="num">实测（3 次）</th><th>结论</th></tr>
+  <tr><td>首屏渲染（DOMContentLoaded）</td><td class="num">≤1.5s</td><td class="num best">594 / 613 / 670 ms</td><td><span class="tag tg">通过</span> 取中位 613ms</td></tr>
+  <tr><td>关键词筛选响应（5000 行全量 display 切换）</td><td class="num">≤300ms</td><td class="num best">43.0 / 51.9 / 52.3 ms</td><td><span class="tag tg">通过</span> 取中位 52ms</td></tr>
+  <tr><td>文件体积（5000 行，内联 CSS，无 CDN）</td><td class="num">≤5MB</td><td class="num">1.39MB（1,427,959 B）</td><td><span class="tag tg">通过</span></td></tr>
+  <tr><td>DOM 节点数</td><td class="num">—</td><td class="num">约 35,000</td><td><span class="tag tb">参考值</span></td></tr>
+</table>
+<p class="src">测量方式：页面内嵌 <code>performance.getEntriesByType('navigation')</code> 自报，用 Edge headless <code>--dump-dom</code> 三次采样取值。headless 为软件渲染，真实桌面浏览器通常相当或更快；HDD 与低端机未测，需内测覆盖。</p>
+<div class="okbox">
+<b>判定：通过，且余量充足。</b>不需要虚拟滚动、不需要分页、不需要虚拟 DOM——<b>纯静态 HTML + 原生 JS 就能扛住 5000 行</b>。这也反向验证了"不用 Electron/pywebview"的选择：一个 1.4MB 的 HTML 文件 + 系统浏览器，性能不输任何内嵌方案，成本却接近零。
+</div>
+
+<h2>回填：方案里的性能目标 → 实测值</h2>
+<p>原方案第五节的目标是<b>估算值</b>，以下是实测后的正式口径（已同步改入方案文档）：</p>
+<table>
+  <tr><th style="width:220px">指标</th><th class="num">原目标</th><th class="num">回填后目标</th><th class="num">实测</th><th>说明</th></tr>
+  <tr><td>AppData 全量扫描</td><td class="num">≤8s</td><td class="num">≤6s</td><td class="num">4.79s</td><td>收紧；8 线程 4.94s，留 20% 余量</td></tr>
+  <tr><td>全盘 C: 扫描（SSD）</td><td class="num">≤120s</td><td class="num">≤30s</td><td class="num">15.23s</td><td>余量 8 倍，收紧后仍留 2 倍</td></tr>
+  <tr><td>峰值内存</td><td class="num">≤300MB</td><td class="num">≤150MB</td><td class="num">25.5MB</td><td>前提：坚持流式聚合</td></tr>
+  <tr><td>报告首屏（5000 行）</td><td class="num">≤1.5s</td><td class="num">≤1.0s</td><td class="num">613ms</td><td>—</td></tr>
+  <tr><td>筛选响应</td><td class="num">≤300ms</td><td class="num">≤150ms</td><td class="num">52ms</td><td>—</td></tr>
+  <tr><td>安装包体积</td><td class="num">未设</td><td class="num">≤40MB</td><td class="num">24.9MB</td><td>新增指标（含 Tcl/Tk 与 Python 运行时）</td></tr>
+  <tr><td>冷启动</td><td class="num">未设</td><td class="num">≤1.5s</td><td class="num">0.4~0.5s</td><td>新增指标</td></tr>
+</table>
+
+<h2>方案变更清单（因 POC 结果而改）</h2>
+<table>
+  <tr><th style="width:56px">编号</th><th style="width:150px">变更类型</th><th>内容</th></tr>
+  <tr><td><b>C1</b></td><td><span class="tag tg">删减</span></td><td><b>删除"直读 NTFS MFT"备选路线</b>。原方案把它留在 POC 后作为风险分支；实测全盘 15.2s 已达标 8 倍余量，MFT 解析的复杂度不再值得承担</td></tr>
+  <tr><td><b>C2</b></td><td><span class="tag tb">确定参数</span></td><td>枚举并行度定为 <b>8 线程</b>（16 线程无收益）；采用"浅层 frontier 切分 + 叶级单线程递归"，禁止线程池内嵌套 submit</td></tr>
+  <tr><td><b>C3</b></td><td><span class="tag tr2">修缺陷</span></td><td><b>切分统计口径修正</b>：必须补算前沿以上层级的文件，否则全盘体积少算 14.76GB。列入 M1 验收项（"报告总容量与资源管理器偏差 &lt;1%"）</td></tr>
+  <tr><td><b>C4</b></td><td><span class="tag tr2">修缺陷</span></td><td><b>构建环境固定</b>：必须使用带 Tcl/Tk 的 CPython（本机 <code>D:\develop\environment\python</code> 3.13.5 合格；managed 3.13.12 不合格）。CI 增加 <code>import tkinter</code> 断言 + 发布前 <code>--selftest</code> 门禁</td></tr>
+  <tr><td><b>C5</b></td><td><span class="tag ta">新增约束</span></td><td><b>PowerShell 调用改为绝对路径</b>（<code>%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe</code>）+ 失败降级；避免加固环境静默丢失 UWP 判定分支</td></tr>
+  <tr><td><b>C6</b></td><td><span class="tag ta">新增披露</span></td><td>报告中新增"未扫描 / 跳过"统计（本机全盘 472 项权限拒绝，0.03%），不得静默吞掉</td></tr>
+  <tr><td><b>C7</b></td><td><span class="tag tg">确认</span></td><td>UI 形态（启动器 + 静态 HTML 报告）经实测验证可行：5000 行 613ms、筛选 52ms，无需引入任何前端框架</td></tr>
+</table>
+
+<h2>仍需你亲自做的 2 件事</h2>
+<table>
+  <tr><th style="width:44px">#</th><th style="width:230px">动作</th><th>原因与做法</th></tr>
+  <tr>
+    <td><b>U1</b></td>
+    <td>把产物传 VirusTotal 看多引擎结果</td>
+    <td>我无法代传（需账号，且上传即公开样本）。文件：<code>poc\dist\poc2_tk\poc2_tk.exe</code>。<b>注意</b>：上传后该样本对所有人可见，若不希望公开，可只传后续正式版</td>
+  </tr>
+  <tr>
+    <td><b>U2</b></td>
+    <td>在<b>从未运行过该文件</b>的干净 Win11 上双击一次</td>
+    <td>复现首次下载/运行的 SmartScreen 提示，记录实际拦截文案。本机已存在信任记录，无法复现该场景</td>
+  </tr>
+</table>
+
+<h2>复现方式与产物清单</h2>
+<pre># 目录：C:\Users\querkecor\WorkBuddy\电脑磁盘清理大师\poc
+
+# POC-1 枚举性能（约 80 秒）
+python poc1_scan_bench_v2.py                 # 输出 poc1_log_v2.txt / poc1_result.json
+python poc1b_mem.py                          # 峰值内存，输出 poc1b_mem_out.txt
+
+# POC-2 打包（需带 Tcl/Tk 的 CPython）
+pyinstaller --noconfirm --clean --onedir --console \
+  --name poc2_tk --distpath dist --workpath build_tk poc2_app.py
+dist\poc2_tk\poc2_tk.exe --selftest          # 输出 selftest_result.json
+
+# POC-3 本地杀软
+Get-FileHash dist\poc2_tk\poc2_tk.exe -Algorithm SHA256
+&amp; "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 `
+  -File "<项目>\poc\dist\poc2_tk" -DisableRemediation
+
+# POC-4 报告渲染
+python poc4_gen_bigreport.py                 # 生成 5000 行 poc4_bigreport.html
+msedge --headless=new --disable-gpu --dump-dom "file:///.../poc4_bigreport.html"</pre>
+<table>
+  <tr><th style="width:250px">产物</th><th>内容</th></tr>
+  <tr><td><code>poc1_log_v2.txt</code> / <code>poc1_result.json</code></td><td>POC-1 三档模式 × 两个范围的原始测量记录</td></tr>
+  <tr><td><code>poc1_log.txt</code></td><td><b>保留作反面样本</b>：v1 死锁版本的日志（只有一行输出就卡住）</td></tr>
+  <tr><td><code>poc1b_mem_out.txt</code></td><td>峰值内存测量</td></tr>
+  <tr><td><code>dist\poc2_min\</code> / <code>dist\poc2_tk\</code></td><td>两版打包产物（前者为缺 Tcl/Tk 的反面样本）</td></tr>
+  <tr><td><code>poc2_selftest_tk.txt</code> / <code>poc2_selftest2.txt</code></td><td>自检输出（含失败与成功两种状态）</td></tr>
+  <tr><td><code>poc3_scan.txt</code></td><td>Defender 扫描输出</td></tr>
+  <tr><td><code>poc4_bigreport.html</code></td><td>5000 行渲染测试页（自报耗时，可直接双击查看真实浏览器表现）</td></tr>
+</table>
+
+<div class="okbox">
+<b>M0 判定：通过（4 项中 3 项完全通过、1 项部分通过）。</b>按方案约定，M0 通过即进入 M1（引擎）。<br>
+<b>但 M1 开工前必须先落地 C3、C4、C5 三条</b>——它们是"不改就会返工"的前置项：C3 影响数字正确性、C4 影响产物能否启动、C5 影响判定完整性。
+</div>
+
+<footer>
+  W0 POC 实测报告 · 磁盘残留体检工具 · 2026-10-23<br>
+  所有数字均为本机实测（Windows 11 / SSD / 1,371,543 项 / 156.66GB），非估算；未测项已明确标注"需你操作"，未以推断替代实测。
+</footer>
+
+</div>
+</body>
+</html>

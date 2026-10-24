@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+build/
+dist/
+venv/
+.venv/
+*.log
+
+# 上游归档中的构建产物与二进制：本地保留，git 不纳管（治理 §1/§8）
+docs/upstream/poc/build/
+docs/upstream/poc/dist/
+
+# 虚拟机磁盘与可执行文件永不入库（DR-002）
+*.vhdx
+*.vhd
+*.exe

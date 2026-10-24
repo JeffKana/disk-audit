@@ -1,0 +1,21 @@
+{
+  "frozen": true,
+  "exe": "C:\\Users\\querkecor\\WorkBuddy\\电脑磁盘清理大师\\poc\\dist\\poc2_min\\poc2_min.exe",
+  "python": "3.13.14",
+  "cwd": "C:\\Users\\querkecor\\WorkBuddy\\电脑磁盘清理大师\\poc",
+  "tkinter": "FAIL: ModuleNotFoundError(\"No module named 'tkinter'\")",
+  "registry": {
+    "total_keys": 284,
+    "with_displayname": 206
+  },
+  "appx": "FAIL: FileNotFoundError(2, '系统找不到指定的文件。', None, 2, None)",
+  "walk": {
+    "files": 172903,
+    "dirs": 27098,
+    "size_mb": 7111.6,
+    "denied": 1,
+    "reparse": 4,
+    "root": "C:\\Users\\querkecor\\AppData\\Local"
+  },
+  "elapsed_sec": 1.65
+}

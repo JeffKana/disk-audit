@@ -1,0 +1,9 @@
+{
+  "root": "C:\\Users\\querkecor\\AppData",
+  "workers": 8,
+  "items": 641939,
+  "seconds": 4.76,
+  "peak_ws_before_mb": 25.5,
+  "peak_ws_after_mb": 25.5,
+  "peak_ws_final_mb": 24.2
+}

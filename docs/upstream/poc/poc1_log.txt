@@ -1,0 +1,2 @@
+====  C:\Users\querkecor\AppData
+{"root": "C:\\Users\\querkecor\\AppData", "mode": "single", "threads": 1, "seconds": 14.16, "files": 530608, "dirs": 111659, "items": 642267, "size_gb": 53.84, "denied": 2, "reparse_skipped": 67, "items_per_sec": 45350}

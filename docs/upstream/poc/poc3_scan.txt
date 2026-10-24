@@ -1,0 +1,3 @@
+Scan starting...
+Scan finished.
+Scanning C:\Users\querkecor\WorkBuddy\????????\poc\dist\poc2_tk found no threats.

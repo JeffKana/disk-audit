@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>磁盘残留体检工具 · v0.1 落地方案</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:0; background:#f6f7f9; color:#1f2937;
+    font-family:"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif; font-size:15px; line-height:1.75; }
+  .page { max-width:1080px; margin:0 auto; padding:40px 32px 80px; }
+  header.rpt { border-bottom:3px solid #2563eb; padding-bottom:20px; margin-bottom:26px; }
+  header.rpt h1 { font-size:26px; margin:0 0 10px; color:#111827; }
+  .meta { color:#6b7280; font-size:13px; } .meta span { margin-right:18px; }
+  h2 { font-size:20px; color:#1d4ed8; margin:40px 0 14px; padding-left:10px; border-left:4px solid #2563eb; }
+  h3 { font-size:16px; color:#111827; margin:24px 0 10px; }
+  h4 { font-size:14.5px; color:#374151; margin:18px 0 8px; }
+  p { margin:10px 0; }
+  .card { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:18px 22px; margin:14px 0; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+  .tldr { background:#eff6ff; border:1px solid #bfdbfe; }
+  .tldr ol { margin:8px 0 4px; padding-left:22px; } .tldr li { margin:7px 0; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:13.5px; background:#fff; }
+  th { background:#f3f4f6; color:#374151; text-align:left; padding:8px 10px; border:1px solid #e5e7eb; font-weight:600; }
+  td { padding:8px 10px; border:1px solid #e5e7eb; vertical-align:top; }
+  tr:nth-child(even) td { background:#fafafa; }
+  .scroll { overflow-x:auto; }
+  .tag { display:inline-block; font-size:11.5px; padding:1px 8px; border-radius:10px; white-space:nowrap; }
+  .tg { background:#dcfce7; color:#166534; } .ta { background:#fef3c7; color:#92400e; }
+  .tb { background:#dbeafe; color:#1e40af; } .tr2 { background:#fee2e2; color:#991b1b; }
+  .tp { background:#ede9fe; color:#5b21b6; } .tn { background:#e5e7eb; color:#374151; }
+  .num { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .note { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 16px; font-size:13.5px; margin:12px 0; color:#78350f; }
+  .danger { background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:10px 16px; font-size:13.5px; margin:12px 0; color:#7f1d1d; }
+  .okbox { background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px 16px; font-size:13.5px; margin:12px 0; color:#14532d; }
+  .src { font-size:12px; color:#6b7280; }
+  code { background:#f3f4f6; border-radius:4px; padding:1px 6px; font-size:12.8px; font-family:Consolas,"Courier New",monospace; }
+  .chk { color:#b45309; font-weight:600; }
+  .flow { display:flex; gap:8px; flex-wrap:wrap; margin:14px 0; }
+  .flow .step { background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:8px 13px; font-size:12.8px; flex:1; min-width:140px; }
+  .flow .step b { color:#1d4ed8; display:block; }
+  .flow .step small { color:#6b7280; font-size:11.8px; }
+  .two { display:flex; gap:14px; flex-wrap:wrap; }
+  .two > div { flex:1; min-width:280px; }
+  ul.tight { margin:8px 0; padding-left:20px; } ul.tight li { margin:5px 0; }
+  .ears { font-family:Consolas,"Courier New",monospace; font-size:12.8px; background:#f8fafc; border-left:3px solid #94a3b8; padding:6px 12px; margin:7px 0; display:block; }
+  footer { margin-top:50px; padding-top:16px; border-top:1px solid #e5e7eb; color:#9ca3af; font-size:12.5px; }
+  @media print { body{background:#fff} .page{padding:0} }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="rpt">
+  <h1>磁盘残留体检工具 · v0.1 落地方案</h1>
+  <div class="meta">
+    <span>日期：2026-10-23</span>
+    <span>周期：12 周（1~3 个月）</span>
+    <span>人力：单人 + AI 辅助开发</span>
+    <span>目标：开源发布</span>
+  </div>
+  <div class="meta" style="margin-top:6px">
+    <span>上游：《AppData 残留识别·调研与自研可行性报告》《技术选型决策表》</span>
+    <span>形态：Windows 11 x64 · 纯本地 · 只读</span>
+  </div>
+</header>
+
+<div class="card tldr">
+  <b style="font-size:16px">一句话结论</b>
+  <p style="margin:8px 0 4px">你的 10 个答案把方案锁定为 <b>「S6 自研只读分析器 + 浏览器版 HTML 报告 + Inno Setup 安装包 + Apache-2.0 开源」</b>：Python 引擎复用现有原型，<b>不做内嵌 GUI 框架、不做服务端、不做任何删除动作</b>；12 周分 6 个里程碑，前 3 天先做 4 项 POC 卡住性能与分发的真实风险。</p>
+  <p style="margin:4px 0">但有 <b>3 处答案之间互相冲突</b>，必须先定夺（第二节）：① 面向普通用户发布，却只出报告不删除；② 要安装包+自动更新，却暂不签名；③ 只做只读，却要开源，信任叙事反而是最大资产——这三条决定了产品定位与分发策略，不是执行细节。</p>
+  <p style="margin:4px 0;color:#166534"><b>W0 已执行完毕（2026-10-23）：</b>四项 POC 实测 —— AppData 4.79s、全盘 15.23s、峰值内存 25.5MB、包体 24.9MB、5000 行报告 613ms、本地 Defender 无告警；同时暴露 2 个必须修的缺陷（容量少算 14.76GB、构建环境缺 Tcl/Tk 导致产物启动即崩）。详见第十节。</p>
+</div>
+
+<h2>一、你的答案 → 方案收敛</h2>
+<table>
+  <tr><th style="width:44px">#</th><th style="width:150px">维度</th><th style="width:150px">你的选择</th><th>对方案的直接影响</th></tr>
+  <tr><td>1</td><td>用户场景</td><td><b>C</b> 公开发布给普通 Win 用户</td><td>必须有新手可读的结论与引导、必须有安装包与文档；<b>不能只交一个 CLI 脚本</b>。同时把"信任"变成一等需求</td></tr>
+  <tr><td>2</td><td>使用频率</td><td><b>B</b> 月度/季度体检</td><td>需要<b>本地历史快照 + 两次对比</b>（"这个月新增了 3.2GB 残留"）；不需要常驻、不需要实时监控</td></tr>
+  <tr><td>3</td><td>MVP 边界</td><td><b>A</b> 只读分析 + 置信度报告</td><td><b>永久排除删除能力</b>。省掉 IFileOperation、还原点、白名单执行、权限提升四大块，直接砍掉约 40% 工作量与绝大部分事故风险</td></tr>
+  <tr><td>4</td><td>数据量</td><td>用户自选：驱动器级 / 文件夹级（Win11）</td><td>引擎必须支持<b>任意根路径</b>，而非写死 AppData；性能目标按"全盘 C:"设计，按"AppData"做日常。需 POC 实测枚举速度</td></tr>
+  <tr><td>5</td><td>并发</td><td><b>A</b> 个人本地、无服务端</td><td>单进程 + 线程池 I/O；<b>零后端、零数据库、零账号</b>。这也让"完全离线"成为可承诺的产品事实</td></tr>
+  <tr><td>6</td><td>预算</td><td>暂不签名；后续开源到 GitHub</td><td>分发走 GitHub Releases + Inno Setup；<b>需承担 SmartScreen/杀软误报</b>（清理类工具是杀软高危品类）；License 必须是开源协议</td></tr>
+  <tr><td>7</td><td>上线时间</td><td><b>C</b> 1~3 个月</td><td>12 周可容纳"引擎→UI→知识库→内测→发布"，但<b>容纳不了重写 GUI 框架或自建云规则库</b></td></tr>
+  <tr><td>8</td><td>技术栈</td><td>vibe coding（AI 辅助，单人）</td><td><b>这一条直接判 S7（C# 二开）出局</b>：啃 17k stars 的 C# 库不符合这个开发模式。技术选型应偏向"AI 生成质量高 + 依赖少 + 心智负担小"的栈</td></tr>
+  <tr><td>9</td><td>合规</td><td><b>B</b> 开源署名合规</td><td>需要 LICENSE + NOTICE + THIRD_PARTY_NOTICES；借鉴 BCU 必须保留归属；<b>依赖 License 必须逐个核对</b>（这会否掉 LGPL 的重型 GUI 框架）</td></tr>
+  <tr><td>10</td><td>部署环境</td><td><b>B</b> 安装包 + 自动更新</td><td>Inno Setup 安装包 + 版本检查；<b>但与"不签名"冲突</b>，见第二节冲突②</td></tr>
+</table>
+
+<h3>与上一份决策表的差异（结论变更说明）</h3>
+<table>
+  <tr><th style="width:200px">原结论</th><th style="width:120px">变更</th><th>原因</th></tr>
+  <tr><td>S6 自研只读分析器</td><td><span class="tag tg">确认·升为主方案</span></td><td>Q3=A 只读、Q7=C 时间窗、Q8=vibe coding，全部指向 Python 轻栈</td></tr>
+  <tr><td>S7 BCU 源码二开</td><td><span class="tag tr2">移出备选</span></td><td>Q8=vibe coding 单人开发，C#/.NET 8 大型代码库的学习成本与 AI 辅助收益不匹配；仅在"某天要复刻成熟卸载流程"时才重新评估</td></tr>
+  <tr><td>S1 BCU 直接使用</td><td><span class="tag ta">降为基准工具</span></td><td>不再是交付物，而是<b>交叉验证基准 + 用户自救指引</b>（报告里可以引导用户去用它卸载）</td></tr>
+  <tr><td>S8 云规则库</td><td><span class="tag tr2">永久出局</span></td><td>Q5 无服务端 + Q9 开源合规 + Q3 只读，三条都不允许"上传清单"</td></tr>
+  <tr><td>UI 形态（原表未定）</td><td><span class="tag tb">新增决策</span></td><td>原表假设"GUI（WinUI/WPF）"；现按 vibe coding 改为<b>启动器 + 浏览器 HTML 报告</b>，理由见第四节</td></tr>
+</table>
+
+<h2>二、三处必须先定夺的冲突</h2>
+
+<div class="card" style="border-left:4px solid #b91c1c">
+  <h3 style="margin-top:2px">冲突①　面向普通用户发布（Q1=C）　vs　只出报告不删除（Q3=A）</h3>
+  <p><b>问题：</b>"清理大师"这个名字 + 公开发布，用户预期是"一键清出 10GB"；但 v0.1 只给报告。这个落差会直接变成一星评价——而清理类工具的差评成本极高，因为用户会怀疑"是不是它删坏了我的电脑"。</p>
+  <p><b>对策（三选一，需你定）：</b></p>
+  <ul class="tight">
+    <li><b>1-A 改定位不改行为：</b>对外叫"磁盘体检 / 残留诊断"，副标题写明"<b>只诊断，不动手</b>"。报告结尾给"下一步怎么做"的引导（打开系统存储感知、跳转应用卸载页、复制路径自行处理）。<span class="tag tg">推荐</span></li>
+    <li><b>1-B 保持"清理大师"名，只读作为 v0.1 的阶段性限制：</b>风险是用户不会读版本说明，直接按"清理"预期打分。</li>
+    <li><b>1-C 在报告里增加"可执行清单导出"：</b>导出 <code>.txt</code>/<code>.ps1</code>（<b>脚本只生成不执行</b>，由用户自己审阅后运行）。这能显著提升"有用感"，但要额外做安全审查与免责说明。<span class="tag ta">建议 v0.2</span></li>
+  </ul>
+  <p class="src">我的建议：v0.1 用 1-A；若内测反馈"看完不知道干嘛"占比 &gt;40%，再上 1-C。<b style="color:#166534">→ 已确认（D3 改）：采纳 1-A，对外改为诊断类命名，副标题前置"只诊断不动手"。</b></p>
+</div>
+
+<div class="card" style="border-left:4px solid #b45309">
+  <h3 style="margin-top:2px">冲突②　要安装包 + 自动更新（Q10=B）　vs　暂不签名（Q6）</h3>
+  <p><b>问题：</b>未签名的 <code>.exe</code> 安装包在 Win11 上会触发 SmartScreen"未知发布者"警告；而<b>"清理/磁盘"类工具是杀软误报的高危品类</b>——"扫描全盘 + 打包成 exe + 无签名"这个组合，被 Defender/国产杀软拦的概率不低。<b>更严重的是自动更新：无签名的情况下，程序自动下载并执行新版本 = 一个现成的提权/投毒面</b>，既危险又更容易被杀软判定为可疑行为。</p>
+  <p><b>对策（需你确认）：</b></p>
+  <table style="margin-top:8px">
+    <tr><th style="width:170px">环节</th><th>v0.1 建议做法</th><th>理由</th></tr>
+    <tr><td>分发主形态</td><td><b>免安装 portable zip 为主</b>，安装包为可选</td><td>portable 不写注册表、不留痕迹，杀软与用户戒心都更低；也符合"只读"叙事</td></tr>
+    <tr><td>安装包</td><td>Inno Setup 生成，<b>不签名</b>，README 明确写"会出现未知发布者提示，属预期"</td><td>满足 Q10；把预期前置，减少"以为是病毒"的流失</td></tr>
+    <tr><td>自动更新</td><td><b>降级为"版本提示"</b>：启动时（可选关闭）请求 GitHub Releases 拿版本号，仅提示"有新版本"，<b>不自动下载、不自动执行</b></td><td>无签名时自动更新是安全债，见下方风险登记 R2</td></tr>
+    <tr><td>完整性</td><td>每个 Release 附 <code>SHA256SUMS</code>；README 给出校验命令</td><td>用户可自证下载未被篡改，部分替代签名的信任作用</td></tr>
+    <tr><td>误报处理</td><td>发布前自查 VirusTotal；对主流杀软提误报申诉；README 提供"从源码构建"路径</td><td>开源 + 可自构建是未签名产品的兜底信任</td></tr>
+  </table>
+  <p class="note" style="margin-bottom:0"><b style="color:#166534">已确认（D1 同意）：</b>自动更新降级为"仅版本提示，不自动下载执行"；主形态 portable zip + 可选安装包 + SHA256SUMS。代码签名不提前到 v0.1，等有用户基数后再评估（OV/EV 证书有年费，且仅 EV 具备即时 SmartScreen 信誉）。</p>
+</div>
+
+<div class="card" style="border-left:4px solid #166534">
+  <h3 style="margin-top:2px">冲突③　"只读"是限制，也是这个项目唯一稀缺的资产</h3>
+  <p>市面上不缺能删的工具（BCU、Revo、HiBit 都能删）；<b>缺的是"敢让你看清它凭什么这么判断"的工具</b>。Q3=A 让"只读"成为可验证的产品事实，而不是营销话术。因此 v0.1 应把三件事做成硬约束，写进 README 与 UI：</p>
+  <ul class="tight">
+    <li><b>零写操作（除报告文件）：</b>只向 <code>%LOCALAPPDATA%\DiskCheck\</code> 写报告与缓存；不写注册表、不改文件属性、不动任何被扫对象。</li>
+    <li><b>零联网（除你主动点的版本检查）：</b>默认完全离线可运行；不收集任何统计。这条比"我们很安全"有力一百倍。</li>
+    <li><b>证据链可见：</b>每条判定都能展开看到"依据哪条规则/哪个注册表项/哪次进程快照"。</li>
+  </ul>
+</div>
+
+<h2>三、产品定位与 v0.1 范围</h2>
+
+<div class="two">
+  <div class="card" style="border-top:3px solid #16a34a">
+    <h4 style="margin-top:0;color:#166534">v0.1 做（In Scope）</h4>
+    <ul class="tight">
+      <li>选择扫描范围：整盘（C:/D:…）或任意文件夹</li>
+      <li>AppData/ProgramData/用户目录的<b>归属判定 + 残留分级</b>（高/中/低置信）</li>
+      <li>可回收空间分类：更新缓存、转储/临时、开发缓存（可勾选是否计入）</li>
+      <li>生成离线 HTML 报告：概览 / 明细表 / 证据链 / 建议动作</li>
+      <li>本地历史快照 + 两次扫描对比（月度体检场景）</li>
+      <li>报告导出 CSV（供进阶用户二次分析）</li>
+      <li>安装包 + portable 两种分发，Apache-2.0 开源</li>
+    </ul>
+  </div>
+  <div class="card" style="border-top:3px solid #b91c1c">
+    <h4 style="margin-top:0;color:#991b1b">v0.1 明确不做（Out of Scope）</h4>
+    <ul class="tight">
+      <li><b>任何删除/移动/重命名操作</b>（Q3=A，永久不做于 v0.1）</li>
+      <li>软件卸载功能（引导用户用系统或 BCU）</li>
+      <li>安装监控 / 快照 diff（路线 A，成本高且与"存量"目标不符）</li>
+      <li>服务端、账号、云规则库、匿名统计</li>
+      <li>Win10 / Windows Server / ARM64（Q4 明确 Win11）</li>
+      <li>常驻托盘 / 实时监控（Q2=B 不需要）</li>
+      <li>自动下载并安装更新（见冲突②）</li>
+      <li>多用户/远程机器扫描（需加载他人 HKCU 蜂巢，v0.2 再评估）</li>
+    </ul>
+  </div>
+</div>
+
+<h3>MVP 需求条目（EARS 表述）</h3>
+<p class="src" style="margin-top:4px">按项目规范用 EARS 句式写，每条可独立验收。Ubiquitous / Event-driven / Unwanted / State-driven 四类。</p>
+
+<span class="ears"><b>[U-1]</b> The system shall 在未获得用户显式选择的扫描范围前，不读取任何文件系统路径。</span>
+<span class="ears"><b>[U-2]</b> The system shall 以只读方式访问被扫描对象，除 <code>%LOCALAPPDATA%\DiskCheck\</code> 外的任何位置不得产生写操作。</span>
+<span class="ears"><b>[E-1]</b> When 用户选择扫描范围并确认，the system shall 在界面展示实时进度（已扫描条目数、当前路径、已用时），且进度刷新间隔不超过 500ms。</span>
+<span class="ears"><b>[E-2]</b> When 扫描完成，the system shall 生成一份离线可打开的 HTML 报告，并为每条残留候选输出：路径、大小、置信度、判定来源、证据链、建议动作。</span>
+<span class="ears"><b>[E-3]</b> When 本次扫描与上一次快照存在差异，the system shall 在报告中给出"新增/减少/不变"三态对比与净变化量。</span>
+<span class="ears"><b>[S-1]</b> While 扫描目标命中硬保护名单（<code>Roaming\Microsoft\Protect</code>、<code>Crypto</code>、XP 兼容 Junction、系统组件），the system shall 强制标记为"受保护·不可处理"，且该标记不可被任何配置覆盖。</span>
+<span class="ears"><b>[S-2]</b> While 判定依据仅来自启发式兜底（哈希/GUID/陈旧度），the system shall 将其置信度上限锁定为"低"，并显式提示"需人工确认"。</span>
+<span class="ears"><b>[X-1]</b> If 枚举过程中遇到权限不足、路径超长（&gt;260）、文件被占用或 reparse point，then the system shall 跳过该项、在报告中计入"未扫描/跳过"统计，并继续完成其余扫描而不中断。</span>
+<span class="ears"><b>[X-2]</b> If 扫描在完成前被用户中止或异常退出，then the system shall 保留已采集的部分结果并标记为"不完整报告"，不得输出任何汇总结论性结论。</span>
+<span class="ears"><b>[X-3]</b> If 版本检查请求失败或无网络，then the system shall 静默降级、不阻塞启动、不重试超过 1 次。</span>
+
+<h2>四、技术架构与选型</h2>
+
+<div class="flow">
+  <div class="step"><b>① 范围与预检</b><small>用户选盘/选目录 · 权限检查 · WebView 无关</small></div>
+  <div class="step"><b>② 证据采集</b><small>文件枚举 + 注册表卸载项 + Appx 包 + 进程/服务/自启动（全部只读）</small></div>
+  <div class="step"><b>③ 归属引擎</b><small>硬保护 → 知识库 → 注册表 → 进程/服务 → Appx → 启发式兜底</small></div>
+  <div class="step"><b>④ 分级与快照</b><small>置信度打标 · 本地历史 diff</small></div>
+  <div class="step"><b>⑤ 报告渲染</b><small>静态 HTML + CSV · 默认浏览器打开</small></div>
+</div>
+
+<h3>选型表（含"为什么不用"）</h3>
+<div class="scroll">
+<table style="min-width:760px">
+  <tr><th style="width:110px">层</th><th style="width:200px">选择</th><th>理由（贴合 vibe coding + 开源 + 免签名）</th><th style="width:230px">被排除的方案及原因</th></tr>
+  <tr>
+    <td><b>引擎语言</b></td><td>Python 3.12（标准库为主）</td>
+    <td>现有 ~500 行原型可直接演进；AI 辅助生成质量高、生态成熟；无需编译链，贡献者门槛低</td>
+    <td>Go/Rust：分发更干净但需重写原型，单人 12 周不划算</td>
+  </tr>
+  <tr>
+    <td><b>文件枚举</b></td><td><code>os.scandir</code> + <b>前沿切分并行 8 线程</b> + <code>\\?\</code> 长路径 + 跳过 reparse point</td>
+    <td><b>已实测（W0）</b>：全盘 137 万项 15.23s、AppData 64 万项 4.94s、峰值内存 25.5MB。16 线程无增益，故定 8。<b>并行必须用"浅层 frontier 切分 + 叶级单线程递归"，禁止线程池内嵌套 submit（实测会死锁）</b></td>
+    <td>直读 NTFS MFT（WizTree 路线）：<b>已实测后排除</b>——性能已有 8 倍余量，不值得承担 MFT/USN 解析与管理员权限的复杂度</td>
+  </tr>
+  <tr>
+    <td><b>注册表</b></td><td><code>winreg</code>（<code>KEY_READ</code>）</td>
+    <td>标准库，只读访问卸载项/自启动项，无写风险</td>
+    <td>第三方库：无必要</td>
+  </tr>
+  <tr>
+    <td><b>UWP/商店包</b></td><td><code>powershell -NoProfile -Command Get-AppxPackage</code></td>
+    <td>官方姿势（社区 msix 模块同思路）；只读、输出 JSON 易解析</td>
+    <td>WinRT API 直调：需 pywin32/winsdk，打包体积与兼容性成本更高</td>
+  </tr>
+  <tr>
+    <td><b>UI 形态</b></td><td><b>轻量启动器（Tkinter 选目录 + 进度）+ 本地静态 HTML 报告</b></td>
+    <td>零 UI 框架依赖、无内嵌浏览器、<b>不监听端口</b>（杀软友好）、包体小；HTML/CSS 正是 AI 辅助最擅长的部分，报告样式可快速迭代</td>
+    <td>
+      <b>PySide6/Qt</b>：包体 100MB+、LGPL 分发义务（需提供可重新链接能力），对一个"只读报告工具"完全过量<br>
+      <b>Electron</b>：包体 150MB+，与"轻量工具"定位冲突<br>
+      <b>pywebview</b>：体验更好，但依赖 WebView2 运行时 → 列 v0.2 候选<br>
+      <b>本地 Flask 服务</b>：监听端口会被杀软当可疑行为，且引入"服务"概念，与"纯本地工具"叙事冲突
+    </td>
+  </tr>
+  <tr>
+    <td><b>打包</b></td><td>PyInstaller <code>--onedir</code>（非 onefile）<br><b style="color:#b91c1c">构建解释器必须带 Tcl/Tk</b></td>
+    <td><code>onedir</code> 启动快、不易被启发式判为"自解压恶意程序"。<b>已实测（W0）</b>：带 Tcl/Tk 的 CPython 3.13.5 → 982 文件 / 24.9MB / 冷启动 0.4~0.5s；<b>缺 Tcl/Tk 的 managed 3.13.12 → 产物启动即 <code>ModuleNotFoundError: tkinter</code>，且构建日志不报错</b>。CI 必须加 <code>import tkinter</code> 断言</td>
+    <td>Nuitka：编译收益有限，构建复杂度上升。onefile：每次运行解压到 temp，杀软更敏感</td>
+  </tr>
+  <tr>
+    <td><b>安装包</b></td><td>Inno Setup</td>
+    <td>免费、脚本化、可生成 uninstaller；对开源项目无授权成本</td>
+    <td>MSI/WiX：学习曲线陡，非必要</td>
+  </tr>
+  <tr>
+    <td><b>更新</b></td><td>GitHub Releases API 仅做版本提示</td>
+    <td>无服务端、无凭据、无需自建；符合 Q5</td>
+    <td>自建更新服务：与"无后端"矛盾</td>
+  </tr>
+  <tr>
+    <td><b>测试</b></td><td>pytest + <b>脱敏回归集</b>（判定样例 JSON）</td>
+    <td>判定逻辑是纯函数，易测；回归集是防"改一处崩一片"的唯一保险</td>
+    <td>依赖真实机器做测试：不可复现，CI 跑不了</td>
+  </tr>
+  <tr>
+    <td><b>CI</b></td><td>GitHub Actions（windows-latest）</td>
+    <td>开源项目免费额度内；跑 pytest + 构建产物</td>
+    <td>—</td>
+  </tr>
+</table>
+</div>
+
+<div class="note"><b>关于"支持任意驱动器/文件夹"的一个必须提前想清的差异：</b>扫 <code>C:\</code> 与扫 <code>%APPDATA%</code>，判定逻辑不是同一套。AppData 下的目录是"<b>数据目录</b>"，可用"注册表无卸载记录 + 陈旧度"推残留；而 <code>Program Files</code> 下的目录是"<b>安装目录</b>"，<b>必须用卸载项的 <code>InstallLocation</code> 反查</b>，不能靠名字猜。v0.1 的策略：<b>数据目录做深（准确率优先），安装目录做浅（只做 InstallLocation 反查 + 标记"需人工确认"）</b>，并在报告里分区呈现，不让用户误以为两者精度相同。</div>
+
+<h2>五、性能与数据预算</h2>
+<p class="src" style="margin-top:0">下表的"实测"列已于 W0 完成（2026-10-23，本机 SSD / 1,371,543 项 / 156.66GB），详见 <code>poc\W0_POC实测报告_2026-10-23.html</code>。目标值已按实测结果收紧。</p>
+<table>
+  <tr><th style="width:180px">项目</th><th style="width:100px">v0.1 目标</th><th style="width:110px">实测</th><th>说明</th></tr>
+  <tr><td>AppData 全量扫描</td><td>≤ 6 秒</td><td><b style="color:#166534">4.79s</b></td><td>64.3 万项 / 53.9GB，8 线程 4.94s。原目标 8s 已收紧</td></tr>
+  <tr><td>全盘 C: 扫描（SSD）</td><td>≤ 30 秒</td><td><b style="color:#166534">15.23s</b></td><td>137 万项，8 线程；16 线程无增益（15.34s），故并行度定 8。原目标 120s 余量过大，已收紧</td></tr>
+  <tr><td>全盘（HDD / 网络盘）</td><td>不承诺，UI 明确提示</td><td>未测</td><td>顺序 I/O 极慢，应在选择阶段警告并提供"只扫常用目录"预设</td></tr>
+  <tr><td>内存占用</td><td>峰值 ≤ 150MB</td><td><b style="color:#166534">25.5MB</b></td><td><b>前提是坚持流式聚合</b>：为构建证据链而缓存全量条目会让内存线性上升到 GB 级，这是最易被破坏的纪律</td></tr>
+  <tr><td>报告体积</td><td>≤ 5MB / 单次</td><td><b style="color:#166534">1.39MB</b></td><td>5000 行、内联 CSS、无 CDN，保证离线打开不乱版</td></tr>
+  <tr><td>报告首屏（5000 行）</td><td>≤ 1.0 秒</td><td><b style="color:#166534">613ms</b></td><td>DOMContentLoaded 三次采样中位数；无需虚拟滚动或分页</td></tr>
+  <tr><td>报告筛选响应</td><td>≤ 150ms</td><td><b style="color:#166534">52ms</b></td><td>5000 行全量 display 切换</td></tr>
+  <tr><td>冷启动</td><td>≤ 1.5 秒</td><td><b style="color:#166534">0.4~0.5s</b></td><td>打包产物实测（自检逻辑的 PowerShell 开销另计，约 1.6s，不属启动）</td></tr>
+  <tr><td>安装包体积</td><td>≤ 40MB</td><td><b style="color:#166534">24.9MB</b></td><td>982 文件（含 Python 运行时 + Tcl/Tk 8.6）</td></tr>
+  <tr><td>本地持久化</td><td>≤ 50MB</td><td>—</td><td>报告 + 快照，默认保留最近 12 次，超出按时间淘汰</td></tr>
+  <tr><td>自动归属率</td><td>≥ 75%（v0.1）</td><td>待内测</td><td>本机实测 89%，但那是<b>开发者环境单点样本</b>，普通用户机器上大概率下降。<b>仍需内测验证</b></td></tr>
+  <tr><td>高置信档误判</td><td><b>0</b>（对在用软件）</td><td>待内测</td><td>硬指标：宁可漏报，不可误报。一旦有误判视为 P0 缺陷</td></tr>
+  <tr><td>容量口径偏差（新增）</td><td>＜ 1%</td><td>—</td><td><b>W0 发现的缺陷 C3</b>：并行切分漏算根级大文件（<code>pagefile.sys</code>/<code>hiberfil.sys</code>），实测少算 14.76GB。M1 必须修到与资源管理器偏差 &lt;1%</td></tr>
+</table>
+
+<h2>六、里程碑（12 周）</h2>
+<table>
+  <tr><th style="width:78px">阶段</th><th style="width:88px">时间</th><th>交付物</th><th style="width:34%">验收口径（可判定，不写"基本完成"）</th></tr>
+  <tr>
+    <td><b>M0</b><br><span class="src">风险前置</span><br><span class="tag tg">已完成</span></td><td>W0（3 天）<br><span class="src">2026-10-23 完成</span></td>
+    <td>4 份 POC 实测记录（见第十节 + <code>poc\W0_POC实测报告_2026-10-23.html</code>）；确定枚举方案与分发形态</td>
+    <td><b>已通过</b>：全盘 15.23s / AppData 4.79s / 峰值内存 25.5MB / 包体 24.9MB / 冷启动 0.5s / 5000 行报告 613ms；本地 Defender 无告警。<b>遗留 2 项需人工</b>：VirusTotal 多引擎、干净机 SmartScreen（见 POC 报告 U1/U2）</td>
+  </tr>
+  <tr>
+    <td><b>M1</b><br><span class="src">引擎</span></td><td>W1~W2</td>
+    <td>采集层 + 归属引擎 v1（重构为可测模块）+ 知识库 500 条 + 报告 JSON Schema</td>
+    <td>在本机 + 2 台非开发机出报告；自动归属率 ≥ 70%；引擎层<b>无 UI 依赖</b>（可独立 CLI 调用）；pytest 覆盖硬保护规则 100%</td>
+  </tr>
+  <tr>
+    <td><b>M2</b><br><span class="src">可用</span></td><td>W3~W4</td>
+    <td>启动器（范围选择 + 进度）+ HTML 报告渲染 + CSV 导出</td>
+    <td>双击到看到报告 ≤ 3 步操作；断网、无 CDN 环境下报告样式与功能完整；扫描中可中止且不留半成品结论</td>
+  </tr>
+  <tr>
+    <td><b>M3</b><br><span class="src">体检闭环</span></td><td>W5~W6</td>
+    <td>历史快照 + 两次对比视图 + 证据链展开 + 受保护项标记</td>
+    <td>连续两次扫描能正确输出"新增/减少/不变"；对比数据与两次报告可交叉核对一致</td>
+  </tr>
+  <tr>
+    <td><b>M4</b><br><span class="src">准发布</span></td><td>W7~W9</td>
+    <td>知识库 800~1000 条 + 正则族（<code>*-updater</code>/<code>*_pp</code>/哈希GUID）+ 回归集 30 例 + 内测修复</td>
+    <td>回归集通过率 100%；高置信档对在用软件误判 = 0；10 人内测自动归属率 ≥ 75%，无 P0 问题</td>
+  </tr>
+  <tr>
+    <td><b>M5</b><br><span class="src">开源发布</span></td><td>W10~W12</td>
+    <td>安装包 + portable zip + SHA256SUMS + 版本提示 + 文档（README/使用说明/隐私说明/CONTRIBUTING）+ Apache-2.0 + NOTICE</td>
+    <td>干净 Win11（无 Python）安装后可用；README 能在 3 分钟内让人跑起来；VirusTotal 自查记录留档；Release 页含已知限制清单</td>
+  </tr>
+</table>
+
+<div class="note"><b>排期风险直说：</b>12 周对单人是紧的，而这个计划里<b>唯一真正的变量是知识库</b>（M4 占 3 周）。如果 W9 时自动归属率仍 &lt; 70%，正确动作是<b>延后发布、先把范围缩到"只 AppData"</b>，而不是带着 60% 的准确率上线——一次误判造成的信任损失，比晚三周发布严重得多。</div>
+
+<h2>七、质量与防误杀</h2>
+<h3>置信度模型（v0.1 用三档 + 证据清单，不做伪精确的概率值）</h3>
+<table>
+  <tr><th style="width:90px">档位</th><th style="width:250px">触发条件</th><th>输出措辞</th></tr>
+  <tr><td><span class="tag tr2">高</span></td><td>多个独立证据同时成立：注册表无卸载记录 + 无匹配进程/服务 + 无自启动 + 目录陈旧（&gt;180 天未改）+ 知识库明确标注"已停止/不存在"</td><td>"高度可能为残留"——仍附"删除前请确认"</td></tr>
+  <tr><td><span class="tag ta">中</span></td><td>2 个证据成立，或知识库命中但缺生命周期信息（如厂商仍在但产品已下线无法判定）</td><td>"疑似残留，建议核对证据"</td></tr>
+  <tr><td><span class="tag tn">低</span></td><td>仅启发式兜底命中（哈希/GUID 命名、陈旧度、无 exe/无版本信息）</td><td>"归属未知，需人工判断"——<b>不做任何暗示</b></td></tr>
+  <tr><td><span class="tag tp">受保护</span></td><td>硬保护名单命中（Microsoft 系、DPAPI、Junction、系统组件）</td><td>"受保护，不可处理"——UI 上不给任何"下一步"按钮</td></tr>
+</table>
+
+<h3>三条不可协商的工程底线</h3>
+<ul class="tight">
+  <li><b>硬保护先于一切判定：</b>保护规则在流水线最前面短路返回，不参与打分、不可被配置覆盖（EARS 的 S-1）。</li>
+  <li><b>误判必须变成测试用例：</b>每个真实误判（如原型首版把 <code>Roaming\Code</code> 判成 <code>openaicodex</code> 的子串误匹配）当天进回归集，形成"越用越准"的机制，而不是靠记忆。</li>
+  <li><b>宁可漏报不可误报：</b>召回率可以在 README 里诚实披露（"我们可能漏掉 10~20%，但不该冤枉在用的软件"），这比虚高的覆盖率更能建立信任。</li>
+</ul>
+
+<h2>八、开源与合规</h2>
+<table>
+  <tr><th style="width:150px">事项</th><th>v0.1 做法</th><th>说明</th></tr>
+  <tr><td>项目 License</td><td><b>Apache-2.0</b></td><td>与 BCU 同协议，便于"参考其思路甚至复用片段"；含明确专利授权，对企业用户更友好。若你更想最简可用 MIT，但那样复用时义务说明要更谨慎</td></tr>
+  <tr><td>BCU 归属</td><td><code>NOTICE</code> 中声明参考源与协议</td><td><b>仅参考思路也要致谢；实际复制代码必须保留版权头与声明</b>（Q9=B 的合规基线）</td></tr>
+  <tr><td>依赖清单</td><td><code>THIRD_PARTY_NOTICES.md</code> + <code>pip freeze</code> 快照</td><td>逐个核对 License；PyInstaller 的打包产物授权例外、Tkinter 的 PSF 许可 <span class="chk">需查官方文档确认后在 NOTICE 写明</span></td></tr>
+  <tr><td>隐私</td><td>不收集、不上传；报告仅本地</td><td>报告含本机路径（可识别个人信息），因此：<b>导出/分享时提示</b>，并提供"脱敏导出"（用户名替换为 <code>%USER%</code>）</td></tr>
+  <tr><td>联网</td><td>默认离线；版本检查为显式可关闭项</td><td>请求只带版本号，不带任何机器信息；无遥测</td></tr>
+  <tr><td>免责</td><td>README + 报告页脚固定声明</td><td>"本工具不执行任何删除；判定仅供参考，处置后果由用户自行承担"</td></tr>
+  <tr><td>无签名告知</td><td>README 首屏 + 安装包欢迎页</td><td>说明会出现"未知发布者"提示并提供 SHA256 校验方式</td></tr>
+</table>
+
+<h2>九、风险登记册</h2>
+<table>
+  <tr><th style="width:44px">#</th><th style="width:190px">风险</th><th style="width:74px">概率/影响</th><th>缓解措施</th><th style="width:180px">止损信号</th></tr>
+  <tr><td><b>R1</b></td><td>全盘枚举性能不达标（用户等不了 5 分钟）</td><td><span class="tag ta">中</span> / <span class="tag tr2">高</span></td><td>POC-1 先测；流式聚合；提供"常用目录"预设；HDD 明确预警</td><td>SSD 全盘 &gt; 4 分钟 → v0.1 砍掉全盘，只支持目录级</td></tr>
+  <tr><td><b>R2</b></td><td>未签名被杀软误报 / SmartScreen 拦截导致无人敢装</td><td><span class="tag ta">中高</span> / <span class="tag tr2">高</span></td><td>portable 优先、onedir 打包、SHA256、VirusTotal 自查、误报申诉、源码可自建</td><td>≥3 家主流杀软持续拦截且申诉无果 → 主推"源码运行"，安装包降级为实验性</td></tr>
+  <tr><td><b>R3</b></td><td>用户期待"一键清理"，只读导致差评</td><td><span class="tag tr2">高</span> / <span class="tag ta">中</span></td><td>改名"体检/诊断"、副标题前置"只诊断不动手"、报告给下一步引导</td><td>内测中"看完不知道做什么" &gt; 40% → 上 1-C 可执行清单导出</td></tr>
+  <tr><td><b>R4</b></td><td>知识库覆盖不足，报告价值低</td><td><span class="tag ta">中</span> / <span class="tag tr2">高</span></td><td>正则族放大覆盖、别名表、厂商归一、内测反馈回流</td><td>W9 自动归属率 &lt; 70% → 缩范围到 AppData + 延后发布</td></tr>
+  <tr><td><b>R5</b></td><td>误判导致用户手动删错（我们不删，但诱导了删除）</td><td><span class="tag ta">中</span> / <span class="tag tr2">极高</span></td><td>置信度三档、证据链、受保护项硬标记、措辞保守、免责声明</td><td>任一"高置信档误判在用软件" → 立即降级该规则并全量复核同类规则</td></tr>
+  <tr><td><b>R6</b></td><td>单人 + AI 辅助导致代码腐化、无法维护</td><td><span class="tag ta">中</span> / <span class="tag ta">中</span></td><td>引擎与 UI 解耦、纯函数化判定、回归集守卫、CI 强制 pytest、类型标注</td><td>回归集频繁红 → 暂停加功能，先偿还结构债</td></tr>
+  <tr><td><b>R7</b></td><td>无签名下做自动更新引入投毒面</td><td><span class="tag tg">低</span> / <span class="tag tr2">极高</span></td><td>v0.1 只做版本提示，不自动执行；SHA256 校验</td><td>—（已在方案层规避）</td></tr>
+  <tr><td><b>R8</b></td><td>Win11 版本碎片 / 权限差异（其他用户目录需提权）</td><td><span class="tag ta">中</span> / <span class="tag ta">中</span></td><td>默认当前用户范围；需提权时提示但不自动提权；跳过并计入"未扫描"</td><td>权限问题导致跳过率 &gt; 15% → 增加"以管理员重新扫描"引导</td></tr>
+</table>
+
+<h2>十、W0 POC 实测结果（已完成）</h2>
+<p>原计划的 4 项 POC 已全部执行，<b>3 项完全通过、1 项部分通过</b>（杀软只验了本地 Defender）。完整数据、原始日志与复现命令见 <code>poc\W0_POC实测报告_2026-10-23.html</code>。以下是结论摘要与它对方案的改动：</p>
+<table>
+  <tr><th style="width:56px">编号</th><th style="width:180px">POC</th><th style="width:190px">实测结果</th><th>判定与对方案的影响</th></tr>
+  <tr>
+    <td><b>POC-1</b></td><td>枚举性能</td>
+    <td>AppData 64.3 万项 <b>4.79s</b>（8 线程 4.94s）<br>全盘 C: 137 万项 <b>15.23s</b>（单线程 31.28s）<br>峰值内存 <b>25.5MB</b></td>
+    <td><span class="tag tg">通过</span> 余量 8 倍 → <b>排除 MFT 直读</b>；并行度定 8（16 无增益）；目标收紧到 AppData ≤6s / 全盘 ≤30s</td>
+  </tr>
+  <tr>
+    <td><b>POC-2</b></td><td>打包可运行</td>
+    <td>带 Tcl/Tk 的 3.13.5：<b>982 文件 / 24.9MB</b>，注册表 284 键、Appx 199 包、枚举正常<br>缺 Tcl/Tk 的 3.13.12：<b>tkinter 导入失败</b></td>
+    <td><span class="tag tg">通过（附条件）</span> <b>构建解释器必须带 Tcl/Tk</b>，CI 加 <code>import tkinter</code> 断言；剥离 PATH 仍可运行，证明运行时已内置</td>
+  </tr>
+  <tr>
+    <td><b>POC-3</b></td><td>分发与杀软</td>
+    <td>本地 Defender：<b>found no threats</b><br>SHA256 已生成<br>VirusTotal / SmartScreen：<b>未测</b></td>
+    <td><span class="tag ta">部分通过</span> 国产杀软不在可测范围，<b>R2 风险等级维持"中高"</b>，缓解措施一条不减。需你完成 U1/U2</td>
+  </tr>
+  <tr>
+    <td><b>POC-4</b></td><td>报告渲染</td>
+    <td>5000 行 / 1.39MB：首屏 <b>613ms</b>，筛选 <b>52ms</b></td>
+    <td><span class="tag tg">通过</span> 无需虚拟滚动/分页，纯静态 HTML 即可 → 反向验证"不用 Electron/pywebview"的选择</td>
+  </tr>
+</table>
+
+<h3>W0 发现的两个缺陷（已写入 M1 前置条件）</h3>
+<div class="danger">
+<b>C3（正确性）并行切分漏算根级大文件，全盘体积少算 14.76GB。</b>frontier 方案只统计切分点以下的子树，<code>C:\</code> 根目录的 <code>pagefile.sys</code>/<code>hiberfil.sys</code> 被整段跳过（156.66GB → 141.90GB）。<b>修复：切分层必须补算"未下钻目录中的文件"</b>，M1 验收加"报告总容量与资源管理器偏差 &lt;1%"。<br>
+<b>C4（打包）构建解释器缺 Tcl/Tk，产物启动即崩。</b>该失败<b>构建日志不报错</b>，只能靠运行自检发现。已把"发布前跑 <code>--selftest</code>"设为门禁。<br>
+<b>C5（健壮性）PowerShell 必须绝对路径调用。</b>实测在裁剪 PATH 的环境下 <code>Get-AppxPackage</code> 直接 FileNotFoundError；加固过的机器上会静默丢掉整个 UWP 判定分支。
+</div>
+
+<h3>仍需你亲自完成 2 件事</h3>
+<table>
+  <tr><th style="width:44px">#</th><th style="width:220px">动作</th><th>说明</th></tr>
+  <tr><td><b>U1</b></td><td>产物上传 VirusTotal 看多引擎结果</td><td>需账号且上传即公开样本，我无法代传。文件：<code>poc\dist\poc2_tk\poc2_tk.exe</code></td></tr>
+  <tr><td><b>U2</b></td><td>在<b>从未运行过该文件</b>的干净 Win11 上双击</td><td>本机已有信任记录，无法复现首次运行的 SmartScreen 场景</td></tr>
+</table>
+
+<h2>十一、决策点状态（D1~D4 已全部确认）</h2>
+<table>
+  <tr><th style="width:56px">编号</th><th style="width:280px">决策点</th><th>我的建议</th><th style="width:76px">状态</th></tr>
+  <tr><td><b>D1</b></td><td>自动更新是否接受"降级为仅版本提示"（不自动下载执行）</td><td><b>建议接受。</b>无签名下自动执行新版本是安全债，也是杀软高危行为；等有了签名再做真更新</td><td><span class="tag tg">已同意</span></td></tr>
+  <tr><td><b>D2</b></td><td>UI 形态是否接受"启动器 + 浏览器 HTML 报告"，而非内嵌窗口 GUI</td><td><b>建议接受。</b>零框架依赖、无端口监听、体量小、AI 辅助迭代最快；代价是"不像原生应用"，可用报告质感弥补。<b>pywebview 留作 v0.2</b></td><td><span class="tag tg">已同意</span></td></tr>
+  <tr><td><b>D3</b></td><td>对外名称与定位：是继续叫"清理大师"，还是改为"磁盘体检/残留诊断"</td><td><b>建议改为诊断类命名</b>（或在主名后加"体检版"副标题），把"只诊断不动手"放在副标题第一行，从源头管理预期</td><td><span class="tag tg">已改：诊断类命名</span></td></tr>
+  <tr><td><b>D4</b></td><td>是否确认 v0.1 只支持 Windows 11 x64（不支持 Win10）</td><td><b>建议确认。</b>可省掉大量兼容分支；但需在 README 首行醒目声明，否则 Win10 用户会误下</td><td><span class="tag tg">已确认</span></td></tr>
+</table>
+<p class="src">D1~D4 于 2026-10-23 确认，方案据此定稿；W0 的 4 项 POC 已在此口径下执行完毕（见第十节）。</p>
+
+<div class="okbox">
+<b>下一步（D1~D4 已确认，M0 已完成）：</b><br>
+① <b>已执行</b>：W0 四项 POC 完成，实测数字已回填第五节，M0 判定通过；<br>
+② <b>现在可进 M1</b>，但开工前先落地三条前置修正：<b>C3 切分统计口径</b>（否则容量少算 14.76GB）、<b>C4 构建环境带 Tcl/Tk</b>（否则产物启动即崩）、<b>C5 PowerShell 绝对路径</b>（否则 UWP 分支静默失效）；<br>
+③ 待你完成 U1（VirusTotal）、U2（干净机双击），用于定稿 R2 风险的最终等级；<br>
+④ <b>协作流转提醒：</b>方案与 POC 报告定稿后建议 —— 与两份上游报告一起<b>上传到项目资料库</b>形成统一上下文；创建"v0.1 范围与定位评审"事项分配给设计/技术负责人；POC-3 结论建议同步给负责发布与文档的同学关注。
+</div>
+
+<div class="danger">
+<b>安全边界（不因任何阶段放宽）：</b>本项目 v0.1 <b>不含任何删除能力</b>。<code>Roaming\Microsoft\Protect</code>（DPAPI 密钥）与 <code>Crypto</code> 永远标记"受保护"，README 需明确写出：删除它们会导致浏览器密码、证书、Wi-Fi 凭据<b>永久无法解密</b>。XP 兼容 Junction（<code>Application Data / History / Temporary Internet Files</code>）同样硬黑名单。报告中所有建议动作都只是"文字建议"，工具本身不执行。
+</div>
+
+<footer>
+  磁盘残留体检工具 · v0.1 落地方案 · 2026-10-23（W0 POC 后修订）<br>
+  基于用户对 10 项决策变量的回答 + W0 实测数据制定。<b>性能目标已由本机实测回填</b>（AppData 4.79s / 全盘 15.23s / 内存 25.5MB / 包体 24.9MB）；<b>自动归属率 ≥75% 与高置信档零误判仍为待验证假设</b>，需内测回填后方可作为对外承诺。
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+[
+  {
+    "k": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "n": "Fences",
+    "c": "\"c:\\program files (x86)\\stardock\\fences\\Fences.exe\" /startup"
+  },
+  {
+    "k": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "n": "electron.app.Notion",
+    "c": "\"C:\\Users\\querkecor\\AppData\\Local\\Programs\\Notion\\Notion.exe\" --open-at-login"
+  },
+  {
+    "k": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "n": "ctfmon",
+    "c": "C:\\WINDOWS\\system32\\ctfmon.exe"
+  },
+  {
+    "k": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "n": "Nutstore",
+    "c": "\"C:\\Program Files\\Nutstore\\Nutstore.exe\" --autostart"
+  },
+  {
+    "k": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "n": "QianwenUpdaterTaskUser1.0.0.10",
+    "c": "\"C:\\Users\\querkecor\\AppData\\Local\\QianwenUpdater\\QianwenUpdater\\1.0.0.10\\updater.exe\" --wake --enable-logging --vmodule=*/components/winhttp/*=1,*/components/update_client/*=2,*/chrome/updater/*=2,*/chrome/updater/quark/*=2,*/quark/utils/*=2"
+  },
+  {
+    "k": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "n": "MicrosoftEdgeAutoLaunch_B121628E04E4D3FC5AEED1036F5FCA6F",
+    "c": "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\" --no-startup-window --win-session-start"
+  },
+  {
+    "k": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "n": "SecurityHealth",
+    "c": "C:\\WINDOWS\\system32\\SecurityHealthSystray.exe"
+  },
+  {
+    "k": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "n": "Fences",
+    "c": "\"C:\\Program Files (x86)\\Stardock\\Fences\\Fences.exe\" /startup"
+  },
+  {
+    "k": "HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "n": "SunJavaUpdateSched",
+    "c": "\"C:\\Program Files (x86)\\Common Files\\Java\\Java Update\\jusched.exe\""
+  },
+  {
+    "k": "HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "n": "Wondershare Helper Compact.exe",
+    "c": "C:\\Program Files (x86)\\Common Files\\Wondershare\\Wondershare Helper Compact\\WSHelper.exe"
+  }
+]

@@ -1,0 +1,335 @@
+{
+  "generated_at": "2026-10-23 21:31:02",
+  "evidence": {
+    "uninstall_entries": 206,
+    "appx_packages": 164,
+    "active_paths": 107,
+    "processes": 54,
+    "services": 303
+  },
+  "treesize_rows": {
+    "Roaming": 152,
+    "Local": 167
+  },
+  "totals": {
+    "Roaming": {
+      "count": 152,
+      "size_mb": 21983.848277473444
+    },
+    "Local": {
+      "count": 167,
+      "size_mb": 32818.43928318025
+    }
+  },
+  "category_agg": {
+    "使用中(无安装记录)": {
+      "count": 8,
+      "size_mb": 624.5
+    },
+    "兼容链接·严禁删除": {
+      "count": 3,
+      "size_mb": 0.0
+    },
+    "容器(已下钻)": {
+      "count": 2,
+      "size_mb": 3584.0
+    },
+    "已安装应用": {
+      "count": 240,
+      "size_mb": 37118.2
+    },
+    "开发缓存": {
+      "count": 35,
+      "size_mb": 6924.7
+    },
+    "更新缓存": {
+      "count": 15,
+      "size_mb": 3176.6
+    },
+    "残留候选·中置信": {
+      "count": 60,
+      "size_mb": 125.2
+    },
+    "残留候选·低置信": {
+      "count": 56,
+      "size_mb": 1267.2
+    },
+    "残留候选·高置信": {
+      "count": 16,
+      "size_mb": 116.7
+    },
+    "游戏数据": {
+      "count": 20,
+      "size_mb": 1283.6
+    },
+    "系统组件": {
+      "count": 32,
+      "size_mb": 2600.3
+    },
+    "缓存/转储": {
+      "count": 13,
+      "size_mb": 1802.6
+    }
+  },
+  "category_agg_toplevel": {
+    "使用中(无安装记录)": {
+      "count": 8,
+      "size_mb": 624.5
+    },
+    "兼容链接·严禁删除": {
+      "count": 3,
+      "size_mb": 0.0
+    },
+    "容器(已下钻)": {
+      "count": 2,
+      "size_mb": 3584.0
+    },
+    "已安装应用": {
+      "count": 85,
+      "size_mb": 33307.8
+    },
+    "开发缓存": {
+      "count": 35,
+      "size_mb": 6924.7
+    },
+    "更新缓存": {
+      "count": 15,
+      "size_mb": 3176.6
+    },
+    "残留候选·中置信": {
+      "count": 35,
+      "size_mb": 123.9
+    },
+    "残留候选·低置信": {
+      "count": 55,
+      "size_mb": 1257.5
+    },
+    "残留候选·高置信": {
+      "count": 16,
+      "size_mb": 116.7
+    },
+    "游戏数据": {
+      "count": 20,
+      "size_mb": 1283.6
+    },
+    "系统组件": {
+      "count": 32,
+      "size_mb": 2600.3
+    },
+    "缓存/转储": {
+      "count": 13,
+      "size_mb": 1802.6
+    }
+  },
+  "classify_sources": {
+    "kb": 283,
+    "registry": 3,
+    "process": 0,
+    "appx": 152,
+    "heuristic": 55,
+    "container": 2,
+    "hard": 5
+  },
+  "top_orphans": [
+    [
+      "Roaming",
+      "qq_guild",
+      107.9,
+      "2023-12-28",
+      "QQ频道",
+      "腾讯 QQ频道服务已下线"
+    ],
+    [
+      "Roaming",
+      "OpenArk",
+      22.4,
+      "2024-07-14",
+      "OpenArk(安全工具)",
+      "若仍在使用请保留"
+    ],
+    [
+      "Roaming",
+      "thunder",
+      20.0,
+      "2026-05-12",
+      "迅雷",
+      "迅雷下载器数据"
+    ],
+    [
+      "Roaming",
+      "LolAICoach",
+      17.4,
+      "2026-10-12",
+      "LOL AI 教练",
+      ""
+    ],
+    [
+      "Roaming",
+      "third_wpsdc",
+      16.0,
+      "2024-01-08",
+      "WPS 第三方组件",
+      "wpsdc=WPS 数据组件"
+    ],
+    [
+      "Local",
+      "icreate-sdk",
+      13.6,
+      "2026-10-12",
+      "iCreate SDK(LOL 辅助)",
+      ""
+    ],
+    [
+      "Roaming",
+      "icreate-pc-lol",
+      10.1,
+      "2026-10-12",
+      "iCreate 英雄联盟辅助",
+      "LOL 教练/辅助类"
+    ],
+    [
+      "Roaming",
+      "alixby",
+      8.1,
+      "2023-09-29",
+      "小白羊云盘(开源阿里云盘客户端)",
+      "项目 2023 年已停止维护"
+    ],
+    [
+      "Roaming",
+      "thunderx",
+      6.1,
+      "2023-08-11",
+      "迅雷X",
+      "迅雷旧版本数据"
+    ],
+    [
+      "Roaming",
+      "xmp",
+      5.9,
+      "2023-08-27",
+      "迅雷影音(XMP)",
+      "迅雷播放器"
+    ],
+    [
+      "Roaming",
+      "xlgame",
+      4.8,
+      "2026-05-11",
+      "迅雷游戏",
+      ""
+    ],
+    [
+      "Roaming",
+      "BaiduYunGuanjia",
+      4.3,
+      "2026-10-11",
+      "百度网盘管家",
+      ""
+    ],
+    [
+      "Roaming",
+      "antdownload",
+      1.8,
+      "2023-02-25",
+      "未知",
+      "无安装记录、无运行进程,且 1336 天未修改"
+    ],
+    [
+      "Local\\Packages",
+      "DesktopSpotlight",
+      0.9,
+      "2025-02-19",
+      "未注册 UWP 应用数据",
+      "商店应用已卸载或仅为其他账户暂存(staged)"
+    ],
+    [
+      "Roaming",
+      "IObit",
+      0.7,
+      "2025-08-07",
+      "IObit 组件",
+      "若 IObit 系已卸载则为残留"
+    ],
+    [
+      "Local",
+      "kwallpaper_sogou",
+      0.7,
+      "2026-05-23",
+      "搜狗壁纸(推广组件)",
+      ""
+    ],
+    [
+      "Roaming",
+      "DrvMgr",
+      0.4,
+      "2023-04-08",
+      "捆绑推广组件(驱动管理类)",
+      "同上,2023-04-08 批量植入"
+    ],
+    [
+      "Local",
+      "fastpdf_sogou",
+      0.3,
+      "2026-10-13",
+      "搜狗系 PDF 推广组件",
+      "fastpdf 推广族"
+    ],
+    [
+      "Local\\Packages",
+      "cr.sb.odm3E4D1A088C1F6D498C84F3C86DE73CE49F82A104",
+      0.2,
+      "2025-02-19",
+      "未注册 UWP 应用数据",
+      "商店应用已卸载或仅为其他账户暂存(staged)"
+    ],
+    [
+      "Roaming",
+      "LGHUB_BKP",
+      0.1,
+      "2026-07-12",
+      "罗技 G HUB 备份",
+      "LGHUB 配置备份"
+    ],
+    [
+      "Local\\Packages",
+      "cr.sb.odmf5200eafd3ad904629cbb0f87a78a3c7211081fe",
+      0.1,
+      "2025-05-07",
+      "未注册 UWP 应用数据",
+      "商店应用已卸载或仅为其他账户暂存(staged)"
+    ],
+    [
+      "Roaming",
+      "Sun",
+      0.0,
+      "2023-02-22",
+      "旧版 Sun Java(JRE/JDK)",
+      "Sun 品牌早已并入 Oracle,目录名 Sun 常为多年前 Java 残留"
+    ],
+    [
+      "Roaming",
+      "TPDownloadProxy",
+      0.0,
+      "2023-02-28",
+      "下载组件(疑似迅雷系)",
+      "TP=ThunderPlatform 相关代理组件"
+    ],
+    [
+      "Roaming",
+      "chat_pp",
+      0.0,
+      "2023-04-08",
+      "捆绑推广组件",
+      "与 360safe/鲁大师/Ludashi/lds/dzip_pp/tabx_pp/DrvMgr 同日(2023-04-08)植入,典型全家桶痕迹"
+    ],
+    [
+      "Roaming",
+      "dzip_pp",
+      0.0,
+      "2023-04-08",
+      "捆绑推广组件",
+      "同上,2023-04-08 批量植入"
+    ]
+  ]
+}
