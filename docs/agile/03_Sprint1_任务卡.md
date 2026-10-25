@@ -18,6 +18,7 @@
   - **实现决策及依据**：① 标准库判定用 `sys.stdlib_module_names`（CPython 3.13 内置，含 winreg 等平台专属模块）——开发规范 §2；② 扫描范围仅 `disk_audit/`（卡面约束，tools/tests 属开发侧）；③ 验收②负例用 `--root` 指向临时目录等价验证（免污染分支，证据等效），卡面字面的"临时分支"做法亦列入命令清单备选；④ 相对导入（level>0）视为包内放行。
   - **未尽事项/已知限制**：无新发现。验收③（PR 上四段门禁全绿）待本卡 push 后由 CI 确认。
   - **自测输出摘要**：根因定位与修复过程见《[环境修复记录-2026-10-24-原生exe挂起](../governance/环境修复记录-2026-10-24-原生exe挂起.md)》——负责人 2026-10-24 修复会话挂起问题（HOSTNAME 乱码归一 + HOME/bin 路径补丁），**《环境基线》的变更登记由验收环节依据该记录执行**。修复后已在本会话全量实测：**pytest 全量 115 passed；--selftest 6/6 passed；验收① `python tools\check_imports.py` → 退出码 0（"通过：…所有 import 均为标准库或包内模块"）；验收②负例（临时目录含 `import requests` 的 probe.py）→ 退出码 1，输出"probe.py:1: import requests"**。剩余待验证：验收③（PR 四段门禁全绿，push 后 CI 确认）。分支与提交已由执行 Agent 本地完成（治理文档收尾在 `docs/治理文档Sprint0收尾`；本卡在 `chore/A4-import白名单门禁`，干净树 pytest 33 passed + selftest 6/6）。负责人终端：`git push -u origin docs/治理文档Sprint0收尾 chore/A4-import白名单门禁` → 分别建 PR（描述=各卡执行记录的验收标准对照 + "AI 辅助生成，待验收"）→ 验收通过后合入。
+  - **退回处理（2026-10-24，退回 1/2，PM：不占用上限）**：PR #2 CI 门禁④在 windows runner 上假红——根因为 runner 的 Python 3.13 stdout 默认 cp1252（PEP 686 的 UTF-8 默认自 3.15 才生效），中文 print 抛 UnicodeEncodeError（PM 定位；判定逻辑审查通过）。按 PM 建议做 a+b 双保险修复：a) `tools/check_imports.py` 入口 `_force_utf8_stdio()` 强制 stdout/stderr 为 UTF-8（hasattr 守卫兼容 pytest 捕获流）；b) ci.yml workflow 顶层 `env: PYTHONUTF8: "1"`（顺带保护未来含中文输出的步骤；退回单授权的例外变更）。新增回归用例 `test_gate_survives_non_utf8_stdout`（PYTHONIOENCODING=cp1252 子进程复现 runner 场景：干净树必须退出码 0）。修复提交 eaa83c7 已推回同分支，本地 pytest 34 passed + selftest 6/6 + cp1252 直接复现退出码 0，待 PM 复验。
 
 ---
 
