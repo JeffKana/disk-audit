@@ -99,7 +99,43 @@
 
 - **动作要点**：`H:\Virtual Machine\` 建 22H2 / 24H2 父镜像（各 4GB 内存 / 2 vCPU / 动态 VHDX，更新后 `Optimize-VHD` 压缩、设只读）；每父镜像建 1 台差分验收机；在差分机上装 10~15 个常见软件作为最小 ground truth（供 M1 ②归属率估算；正式装 N 卸 M 矩阵在 M4）。
 - **完成标志**：两台差分机可开机，`python -m disk_audit scan/judge` 可运行，软件清单登记到本卡记录。
-- **状态**：待负责人安排（S2 末 M1 验收的地基，勿拖到周五）。
+- **状态**：✅ 已完成（2026-10-26，负责人委托 AI 会话以 VirtualBox 执行，执行记录如下）
+
+### R-L1 执行记录（2026-10-25 ~ 10-26）
+
+**做了什么**：在 VirtualBox 7.2.22（负责人 2026-10-25 裁决改用 VirtualBox，替代 DR-002/DR-003 的 Hyper-V 假设，避免对 Hyper-V 栈做提权安装与整机重启；WSL2/Docker 不受影响）下建成 4 台 VM：
+
+| VM | 系统 | 状态 | 磁盘位置 |
+| --- | --- | --- | --- |
+| L1-base-22h2 | Win11 22H2 专业版 zh-CN，build 22621.382（WU 至 ALL_DONE） | 已关机，快照 base-v1（只读基线） | H:\Virtual Machine\L1-base-22h2\ |
+| L1-base-24h2 | Win11 24H2 专业版 zh-CN，26100.1742 → KB5127648 后 26100.9711（WU ALL_DONE） | 已关机，快照 base-v1（只读基线） | H:\Virtual Machine\L1-base-24h2\ |
+| L1-acc-22h2 | 差分验收机（linked-clone，父 base-v1） | 关机（GT 装毕、scan 验证毕） | H:\Virtual Machine\L1-acc-22h2\ |
+| L1-acc-24h2 | 差分验收机（linked-clone，父 base-v1） | 关机（GT 装毕、scan 验证毕） | H:\Virtual Machine\L1-acc-24h2\ |
+
+父镜像：4GB 内存 / 2 vCPU / EFI + TPM 2.0 / 80GB 动态 VDI / NAT；本地管理员 `qa`（autologon，密码登记于 VM 内 autounattend，未入库）；OOBE 全跳过（无 MS 账号）；Guest Additions 已装；`C:\stage\python-3.13.5`（含 Tcl/Tk）与仓库 main 快照已烤入父镜像（差分机开箱即含）；父镜像更新后 sdelete 置零 + `VBoxManage modifymedium --compact`（22H2：16.97→16.07GB；24H2：46.3→43.8GB）+ base-v1 快照 = 只读基线（差分盘只写子层）。
+
+**ground truth 软件清单（11 个，双差分机同构；覆盖 Program Files / Local / Roaming 三类写入位）**：
+Chrome（enterprise MSI）、Firefox 157.0.1、7-Zip 26.05、Notepad++ 8.9.8.1、Git 2.56.0.3、VS Code 1.141.2、微信（WeChatSetup）、QQ NT 9.9.33、WPS Office 12.2.0.23196、网易云音乐 3.1.42.205594、Steam 2.10.91.91。另有系统预置 Edge。VLC 弃装（镜像源不可达，11≥10 达标）。
+
+**实现决策及依据**：
+1. 虚拟化层 Hyper-V→VirtualBox：负责人 2026-10-25 口头裁决（原计划 Hyper-V 未真正启用——`vmms`/管理栈缺失，环境基线 §1"已开启"记录与实际不符，已在本文件与《环境基线》修正）；VLC→VDI、Optimize-VHD→`modifymedium --compact` 为等价替代，父镜像"更新后压缩、只读基线"意图不变。
+2. ISO 来源：sysin→msdl CLI（`winget install starkSV.msdl`，直取微软官方 CDN，绕开其服务器封锁窗口）；负责人百度网盘下载 22H2/24H2 商业版简中 ISO（X23-12741/X23-69833）。
+3. 安装方式：VirtualBox unattended install（autounattend 自动装 Pro#3 + 免 MS 账号 + 自动装 GA）；差分机 = `clonevm --options=link`（差分盘等价语义）。
+4. WU 排障链（全部记录于 host 侧 stage 目录与 VBox 日志）： guest 内 `tlu.dl.delivery.mp.microsoft.com`（DO 载荷 CDN）不可达 → 注册表 `DODownloadMode=0` 强制直连 `download.windowsupdate.com`（需提权）→ guestcontrol 进程为非提权 token → `Start-Process -Verb RunAs` + 键盘注入应答 UAC（22H2 GUI / 24H2 盲注入）→ wu4.ps1 三轮 search→download→install 双机 ALL_DONE。
+5. GT 安装：winget 在 22H2 镜像（v1.2）崩溃（0xC0000005，客户端本体缺陷），改为主机下载官方安装包（URL 取自 acc-24h2 的 winget 日志）+ guest 本地静默装（msiexec /qn、/S、/VERYSILENT）；24H2 镜像 winget 1.7+ 正常，winget 路线装成。
+6. 运行纪律：24H2 系 GUI 附加（`--type separate`）会触发 GA 显示驱动挂死（BLKCACHE 之前表现为 heartbeat flatlined），全程 headless；主机自动睡眠（System Idle，Event 42）会同步暂停 VM，已临时置位 SetThreadExecutionState 4 小时并两次救援恢复。
+
+**未尽事项/已知限制**：
+- 父镜像 Windows 未激活（实验室豁免；M1 验收不受影响）。
+- `judge` 子命令属 T2-02（本 Sprint），R-L1 验证时点引擎为 scan CLI——差分机已验证 scan 可运行，T2-02 交付后在同一环境直接可跑 judge。
+- 24H2 差分机 GA 显示驱动与 GUI 附加不兼容（挂死两次），该机永久 headless 运行；M1 在差分机上以 CLI 验收，无需显示。
+- H 盘余量紧张（ISO 已删除释放 11GB，当前 ~11GB free；M4 八台差分机扩容前需清理或扩容，见《环境基线》§3 修订）。
+- 主机自动睡眠（System Idle）与 VM 并行工作冲突，验收期间建议保持本记录中的睡眠抑制。
+
+**自测输出摘要**：
+- 完成标志①：两差分机均 headless 开机并 autologon 成功（guestcontrol 探活通过）。
+- 完成标志②：`C:\stage\python-3.13.5\python.exe -m disk_audit scan C:\Users\qa\AppData\Local\Microsoft` 双机 RC=0——22H2 机：906 files/408 dirs、logical 274,231,124B、allocated 275,673,872B、reparse 跳过 22；24H2 机：2268 files/1049 dirs、logical 500,956,217B、allocated 504,125,856B、reparse 跳过 44（`--selftest` 6/6 双机通过，见安装期验证）。
+- 完成标志③：软件清单见上表，双机目录级 census 已核（Program Files / AppData\Local / AppData\Roaming 落位与清单一致）。
 
 ## M1 五条闸门验收清单（Sprint 2 末，PM 主持）
 
