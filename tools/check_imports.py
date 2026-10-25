@@ -15,6 +15,22 @@ from pathlib import Path
 PACKAGE_NAME = "disk_audit"
 
 
+def _force_utf8_stdio() -> None:
+    """强制 stdout/stderr 为 UTF-8。
+
+    约束：GitHub windows runner 的 Python 3.13 stdout 默认 cp1252（PEP 686 的
+    UTF-8 默认自 3.15 才生效），含中文的 print 会抛 UnicodeEncodeError 使门禁
+    假红（PM 退回单 T-01 根因）；与 ci.yml 的 PYTHONUTF8=1 构成双保险。hasattr
+    守卫兼容 pytest 等替换过的流对象。
+    """
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8")
+            except (OSError, ValueError):  # 流已关闭/不可重配等场景
+                pass
+
+
 def default_scan_root() -> Path:
     """仓库内 disk_audit/ 目录（脚本位于 tools/ 下）。"""
     return Path(__file__).resolve().parents[1] / PACKAGE_NAME
@@ -56,6 +72,7 @@ def find_violations(scan_root: Path, package_name: str = PACKAGE_NAME) -> list[s
 
 
 def main(argv: list[str] | None = None) -> int:
+    _force_utf8_stdio()
     parser = argparse.ArgumentParser(description="import 白名单门禁（运行时零第三方依赖）")
     parser.add_argument(
         "--root",

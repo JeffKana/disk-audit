@@ -5,6 +5,11 @@ on:
     branches: [main]
   pull_request:
 
+# runner 的 Python 3.13 stdout 默认 cp1252（PEP 686 的 UTF-8 默认自 3.15 才生效），
+# 含中文输出的门禁步骤依赖此开关；与脚本内 reconfigure 双保险（PM 退回单 T-01）
+env:
+  PYTHONUTF8: "1"
+
 jobs:
   windows:
     runs-on: windows-latest

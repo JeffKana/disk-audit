@@ -6,6 +6,8 @@ main() 退出码、真实仓库包通过（验收①的可执行形态）。
 from __future__ import annotations
 
 import importlib.util
+import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -93,3 +95,25 @@ def test_main_missing_root_fails(tmp_path):
 def test_real_package_passes():
     """真实仓库 disk_audit/ 必须通过门禁（验收①）。"""
     assert check_imports.main() == 0
+
+
+def test_gate_survives_non_utf8_stdout(tmp_path):
+    """回归（PM 退回单 T-01）：runner stdout 默认 cp1252 时中文输出不得使门禁假红。
+
+    用 PYTHONIOENCODING=cp1252 子进程复现（其优先级高于 PYTHONUTF8）：干净树必须
+    退出码 0（未修复时会因 UnicodeEncodeError 崩成非 0）；违规树仍为退出码 1。
+    """
+    clean = _make_tree(tmp_path / "clean", {"pkg/a.py": "import os\n"})
+    env = {**os.environ, "PYTHONIOENCODING": "cp1252"}
+    proc = subprocess.run(
+        [sys.executable, str(_TOOLS / "check_imports.py"), "--root", str(clean)],
+        capture_output=True, env=env, timeout=60,
+    )
+    assert proc.returncode == 0, proc.stdout[-200:]
+
+    dirty = _make_tree(tmp_path / "dirty", {"pkg/a.py": "import requests\n"})
+    proc = subprocess.run(
+        [sys.executable, str(_TOOLS / "check_imports.py"), "--root", str(dirty)],
+        capture_output=True, env=env, timeout=60,
+    )
+    assert proc.returncode == 1
