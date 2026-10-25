@@ -1,0 +1,60 @@
+{
+  "description": "T-07 验收②的 5 条代表性样例：系统组件/开发缓存/国产软件/更新缓存/未知长尾各一。全部取自原型知识库实条目（docs/upstream/prototype/analyze_appdata.py），可追溯。",
+  "entries": [
+    {
+      "name": "resmon.resmoncfg",
+      "product": "资源监视器配置(系统)",
+      "vendor": "Microsoft",
+      "aliases": [],
+      "category": "系统组件",
+      "lifecycle": "在用",
+      "regex_family": null,
+      "source": "公开软件名",
+      "notes": "原型 KB_LOCAL 实条目：资源监视器配置（系统）；Windows 内置组件，公开可查"
+    },
+    {
+      "name": "nuget",
+      "product": "NuGet(Visual Studio)包缓存",
+      "vendor": "Microsoft",
+      "aliases": [],
+      "category": "开发缓存",
+      "lifecycle": "在用",
+      "regex_family": null,
+      "source": "公开软件名",
+      "notes": "原型 KB_ROAM 实条目；NuGet 为公开维护的开发工具链"
+    },
+    {
+      "name": "baiduyunkernel",
+      "product": "百度网盘内核",
+      "vendor": "百度",
+      "aliases": ["baiduyunguanjia"],
+      "category": "已安装应用",
+      "lifecycle": "在用",
+      "regex_family": null,
+      "source": "公开软件名",
+      "notes": "原型 KB_ROAM 实条目；国产软件代表"
+    },
+    {
+      "name": "xmind-vana-updater",
+      "product": "XMind 更新缓存",
+      "vendor": "XMind",
+      "aliases": [],
+      "category": "更新缓存",
+      "lifecycle": "在用",
+      "regex_family": "updater-suffix",
+      "source": "本机实测",
+      "notes": "原型 KB_LOCAL 实条目：Electron 更新下载包；*-updater 后缀正则族代表"
+    },
+    {
+      "name": "aclos",
+      "product": "归属不明",
+      "vendor": "",
+      "aliases": [],
+      "category": "残留候选·低置信",
+      "lifecycle": "未知",
+      "regex_family": null,
+      "source": "本机实测",
+      "notes": "原型 KB_ROAM 实条目：46MB,125 个文件,建议人工排查内容；未知长尾代表"
+    }
+  ]
+}
