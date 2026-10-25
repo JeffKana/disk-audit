@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/JeffKana/disk-audit/docs/schemas/report-v1.schema.json",
+  "title": "disk-audit 体检报告 JSON Schema v1 草案",
+  "description": "依据：方案 E-2（每条候选 7 字段：路径/逻辑大小/占用空间/置信度/判定来源/证据链/建议动作）、5.1（置信度四档）、5.2（可再生两档，分别列示小计）、5.3（动作 A1~A5 固定枚举）、Q3（禁用'可回收'字样与合并'可释放 X GB'总量）、Q7（schema_version 语义，版本不匹配提示'旧记录不可比'）；X-1/C6（未扫描/跳过统计披露）。待办 F1（任务卡 T-09，S1 草案、S2 定稿）。供 S2 判定引擎与 S3 渲染消费。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "scan_root",
+    "totals",
+    "candidates"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "description": "Q7：只存候选条目+聚合统计；版本不匹配提示'旧记录不可比'，禁止原地改义"
+    },
+    "generated_at": {
+      "type": "string",
+      "minLength": 1,
+      "description": "报告生成时间（ISO 8601 含时区）"
+    },
+    "scan_root": {
+      "type": "string",
+      "minLength": 1,
+      "description": "本次体检的扫描根"
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allocated_bytes",
+        "logical_bytes",
+        "regenerable_subtotal",
+        "regenerable_confirm_subtotal",
+        "skipped_entries"
+      ],
+      "properties": {
+        "allocated_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "磁盘占用总量（占用空间口径，P1：汇总一律用占用空间）"
+        },
+        "logical_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "逻辑大小总量（双口径之一，仅呈现，不作汇总口径）"
+        },
+        "regenerable_subtotal": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "可再生小计（5.2 第一档；两档分别列示，禁止合并'可释放'总量——Q3）"
+        },
+        "regenerable_confirm_subtotal": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "可再生但需确认小计（5.2 第二档：开发缓存/下载缓存等）"
+        },
+        "skipped_entries": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "未扫描/跳过条目数（X-1 与 W0-C6：不得静默吞掉）"
+        }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/candidate"}
+    }
+  },
+  "$defs": {
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "logical_bytes",
+        "allocated_bytes",
+        "confidence",
+        "verdict_source",
+        "evidence_chain",
+        "suggested_action"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "候选路径"
+        },
+        "logical_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "逻辑大小（st_size）"
+        },
+        "allocated_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "占用空间（磁盘分配，P1 双口径之一）"
+        },
+        "confidence": {
+          "enum": ["高", "中", "低", "受保护"],
+          "description": "置信度四档（5.1）：高/中/低/受保护；受保护项不提供任何'下一步'处理入口"
+        },
+        "verdict_source": {
+          "enum": ["硬保护", "知识库", "注册表", "进程服务", "Appx", "启发式"],
+          "description": "判定来源（方案第四节流程③顺序：硬保护 → 知识库 → 注册表 → 进程/服务 → Appx → 启发式）"
+        },
+        "evidence_chain": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source", "content"],
+            "properties": {
+              "source": {
+                "type": "string",
+                "minLength": 1,
+                "description": "证据来源（如 硬保护规则/知识库/注册表卸载项/进程/服务/Appx/启发式）"
+              },
+              "content": {
+                "type": "string",
+                "description": "证据内容（人读）"
+              }
+            }
+          },
+          "description": "证据链（E-2），报告内 A4'查看证据链'的展示数据"
+        },
+        "suggested_action": {
+          "enum": ["A1", "A2", "A3", "A4", "A5"],
+          "description": "建议动作（5.3 固定 5 种，不新增）：A1 复制路径 / A2 打开所在文件夹 / A3 打开系统应用列表 / A4 查看证据链 / A5 无建议（受保护项与低置信项固定使用）"
+        }
+      }
+    }
+  }
+}
