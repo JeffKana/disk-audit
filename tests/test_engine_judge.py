@@ -28,7 +28,10 @@ from tests._mini_schema import mini_validate
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCHEMA = json.loads(
-    (REPO_ROOT / "docs" / "schemas" / "report-v1.schema.json").read_text(encoding="utf-8")
+    open(
+        os.path.join(REPO_ROOT, "docs", "schemas", "report-v1.schema.json"),
+        encoding="utf-8",
+    ).read()
 )
 
 NOW_TS = 1_800_000_000.0  # 固定"当前时间"，保证快照确定
