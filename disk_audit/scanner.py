@@ -1,12 +1,14 @@
 """文件枚举器：os.scandir + 8 线程前沿切分，双口径计量（逻辑大小 / 占用空间）。
 
 依据：方案第四节"文件枚举"行与 P1（逻辑大小与占用空间双列，汇总一律用占用空间）；
+DR-004（含 2026-10-25 修订节，三段分流：压缩/稀疏句柄实查、逻辑<簇 align8、
+逻辑≥簇簇对齐，簇大小经 GetDiskFreeSpaceW 查询缓存）；
 9.2（判定单元 = 扫描范围顶层目录及下钻子项，随遍历顺带聚合，D1 判定流水线消费）；
 W0 实测报告缺陷①修复——前沿切分必须补算"前沿之上"层级的文件，否则漏算根级大文件
 （docs/upstream/poc/W0_POC实测报告_2026-10-23.html，全盘曾少算 14.76GB）；
 X-1：权限不足/超长/占用/reparse point 一律跳过+计数+继续，不中断扫描。
 约束：浅层切分 + 叶级单线程递归，禁止线程池内嵌套 submit（W0 实测死锁）；
-流式聚合，不缓存全量条目；纯引擎、零 UI 依赖（待办 C2，任务卡 T-02）。
+流式聚合，不缓存全量条目；纯引擎、零 UI 依赖（待办 C2，任务卡 T-02/T2-01）。
 """
 from __future__ import annotations
 
@@ -20,6 +22,10 @@ from functools import partial
 
 # Win32 FILE_ATTRIBUTE_REPARSE_POINT（Junction/符号链接等，跳过防循环）
 _FILE_ATTRIBUTE_REPARSE_POINT = 0x400
+# Win32 FILE_ATTRIBUTE_COMPRESSED / FILE_ATTRIBUTE_SPARSE_FILE
+# （DR-004 修订版三段分流①：含任一属性位 → 句柄实查占用空间）
+_FILE_ATTRIBUTE_COMPRESSED = 0x800
+_FILE_ATTRIBUTE_SPARSE_FILE = 0x200
 _LONG_PREFIX = "\\\\?\\"
 _LONG_UNC_PREFIX = "\\\\?\\UNC\\"
 # 路径达到该长度即加 \\?\ 前缀（POC v2 同款阈值，为 MAX_PATH 预留余量）
@@ -56,9 +62,20 @@ if os.name == "nt":
     _close_handle = _kernel32.CloseHandle
     _close_handle.argtypes = [ctypes.c_void_p]
     _close_handle.restype = ctypes.c_int
+    # DR-004：簇大小经 GetDiskFreeSpaceW 查询一次并缓存（三段分流②③推算依据）
+    _get_disk_free_space_w = _kernel32.GetDiskFreeSpaceW
+    _get_disk_free_space_w.argtypes = [
+        ctypes.c_wchar_p,
+        ctypes.POINTER(ctypes.c_ulong),
+        ctypes.POINTER(ctypes.c_ulong),
+        ctypes.POINTER(ctypes.c_ulong),
+        ctypes.POINTER(ctypes.c_ulong),
+    ]
+    _get_disk_free_space_w.restype = ctypes.c_int
 else:
     # 非 Windows 开发环境降级：占用空间以逻辑大小代替（仅便于本地开发，验收在 Windows）
     _create_file_w = None
+    _get_disk_free_space_w = None
 
 _FILE_READ_ATTRIBUTES = 0x0080
 _FILE_SHARE_ALL = 0x00000007  # READ | WRITE | DELETE
@@ -89,6 +106,44 @@ def _long_path(path: str) -> str:
     if len(path) >= _LONG_PATH_THRESHOLD:
         return _LONG_PREFIX + path
     return path
+
+
+# 簇大小缓存：{盘符根小写: 字节数}（DR-004：GetDiskFreeSpaceW 查询一次并缓存）
+_CLUSTER_DEFAULT = 4096
+_CLUSTER_CACHE: dict[str, int] = {}
+
+
+def _align8(size: int) -> int:
+    """8 字节向上对齐（NTFS MFT 驻留小文件的实占口径，DR-004 修订版三段分流②）。"""
+    return (size + 7) & ~7
+
+
+def _cluster_bytes(path: str) -> int:
+    """返回路径所在卷的簇大小（字节）；GetDiskFreeSpaceW 按盘符根查询并缓存，
+    查询失败回退 4096（与 tools/check_size_deviation.py cluster_bytes_of 同口径）。"""
+    if _get_disk_free_space_w is None:
+        return _CLUSTER_DEFAULT
+    drive = os.path.splitdrive(os.path.abspath(path))[0].lower() or "?"
+    cached = _CLUSTER_CACHE.get(drive)
+    if cached is not None:
+        return cached
+    sectors_per_cluster = ctypes.c_ulong()
+    bytes_per_sector = ctypes.c_ulong()
+    free_clusters = ctypes.c_ulong()
+    total_clusters = ctypes.c_ulong()
+    ok = _get_disk_free_space_w(
+        drive + "\\",  # 盘符根，如 "C:\\"
+        sectors_per_cluster,  # ctypes 实例直接传参，自动按 POINTER 转换
+        bytes_per_sector,
+        free_clusters,
+        total_clusters,
+    )
+    if ok and sectors_per_cluster.value and bytes_per_sector.value:
+        cluster = sectors_per_cluster.value * bytes_per_sector.value
+    else:
+        cluster = _CLUSTER_DEFAULT
+    _CLUSTER_CACHE[drive] = cluster
+    return cluster
 
 
 def _allocated_size(path: str, st: os.stat_result) -> int | None:
@@ -283,11 +338,29 @@ def _reparse_or_symlink(st: os.stat_result) -> bool:
 def _account_file(
     path: str, name: str, st: os.stat_result, stats: ScanStats, unit: UnitStats | None
 ) -> None:
-    """文件计量：占用空间查询失败时整个文件按 X-1 计入 occupied（保证双口径一致）。"""
-    allocated = _allocated_size(path, st)
-    if allocated is None:
-        stats.skips.occupied += 1
-        return
+    """文件计量（DR-004 修订版三段分流）：
+
+    ① st_file_attributes 含压缩/稀疏 → 句柄实查（失败按 X-1 计入 occupied，
+       双口径一致，语义与既有实现不变）；
+    ② 逻辑 < 簇 → align8（MFT 驻留实占口径）；
+    ③ 逻辑 ≥ 簇 → 簇对齐（GetDiskFreeSpaceW 查询并缓存簇大小）。
+    非 Windows 开发降级不变（占用空间=逻辑大小，验收在 Windows）。
+    """
+    if _create_file_w is None:
+        allocated = st.st_size
+    else:
+        attrs = getattr(st, "st_file_attributes", 0)
+        if attrs & (_FILE_ATTRIBUTE_COMPRESSED | _FILE_ATTRIBUTE_SPARSE_FILE):
+            allocated = _allocated_size(path, st)
+            if allocated is None:
+                stats.skips.occupied += 1
+                return
+        else:
+            cluster = _cluster_bytes(path)
+            if st.st_size < cluster:
+                allocated = _align8(st.st_size)
+            else:
+                allocated = ((st.st_size + cluster - 1) // cluster) * cluster
     stats.files += 1
     stats.logical_bytes += st.st_size
     stats.allocated_bytes += allocated
