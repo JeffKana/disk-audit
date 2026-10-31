@@ -98,11 +98,12 @@ def test_snapshot_protected():
         "path": r"C:\Users\u\AppData\Roaming\Microsoft\Protect",
         "confidence": "受保护",
         "verdict_source": "硬保护",
-        "evidence_chain": [{
-            "source": "硬保护规则",
-            "content": "HARDPROTECT-DPAPI：DPAPI 密钥目录（Microsoft\\Protect / Crypto）："
-                       "删除将导致已保存的密码、证书、Wi-Fi 凭据永久无法解密",
-        }],
+        "evidence_chain": [
+            {"source": "硬保护规则", "content": "受保护，不可处理"},
+            {"source": "硬保护规则",
+             "content": "HARDPROTECT-DPAPI：DPAPI 密钥目录（Microsoft\\Protect / Crypto）："
+                        "删除将导致已保存的密码、证书、Wi-Fi 凭据永久无法解密"},
+        ],
         "suggested_action": "A5",
     }
 
@@ -124,11 +125,12 @@ def test_snapshot_knowledge_hit_missing_lifecycle():
         "path": r"C:\Users\u\AppData\Roaming\sun",
         "confidence": "中",
         "verdict_source": "知识库",
-        "evidence_chain": [{
-            "source": "知识库",
-            "content": "知识库命中：旧版 Sun Java(JRE/JDK)（残留候选·高置信；"
-                       "生命周期未知，缺公开下线依据）",
-        }],
+        "evidence_chain": [
+            {"source": "知识库", "content": "疑似残留，建议核对证据"},
+            {"source": "知识库",
+             "content": "知识库命中：旧版 Sun Java(JRE/JDK)（残留候选·高置信；"
+                        "生命周期未知，缺公开下线依据）"},
+        ],
         "suggested_action": "A2",
     }
 
@@ -139,11 +141,12 @@ def test_snapshot_updater_naming_family():
         "path": r"C:\Users\u\AppData\Roaming\xmind-vana-updater",
         "confidence": "高",
         "verdict_source": "知识库",
-        "evidence_chain": [{
-            "source": "知识库·正则族",
-            "content": "updater-suffix（*-updater）：Electron electron-updater 下载的"
-                       "安装包缓存，可再生（应用会自行重建）",
-        }],
+        "evidence_chain": [
+            {"source": "知识库·正则族", "content": "可再生：应用会自行重建"},
+            {"source": "知识库·正则族",
+             "content": "updater-suffix（*-updater）：Electron electron-updater 下载的"
+                        "安装包缓存"},
+        ],
         "suggested_action": "A2",
     }
 
@@ -156,6 +159,7 @@ def test_snapshot_heuristic_hash_name():
         "confidence": "低",  # S-2：仅启发式兜底，置信度上限锁"低"
         "verdict_source": "启发式",
         "evidence_chain": [
+            {"source": "启发式", "content": "归属未知，需人工判断"},
             {"source": "启发式",
              "content": "哈希/GUID 命名目录，常见于推广 SDK/DRM 组件，无法从名称推断归属"},
             {"source": "启发式", "content": "单元内无可执行文件（.exe）"},
@@ -170,10 +174,11 @@ def test_snapshot_unknown_tail():
         "path": r"C:\Users\u\AppData\Roaming\zzz-unknown-tail",
         "confidence": "低",
         "verdict_source": "启发式",
-        "evidence_chain": [{
-            "source": "启发式",
-            "content": "无安装记录、无运行证据、无命名特征命中（未知长尾）",
-        }],
+        "evidence_chain": [
+            {"source": "启发式", "content": "归属未知，需人工判断"},
+            {"source": "启发式",
+             "content": "无安装记录、无运行证据、无命名特征命中（未知长尾）"},
+        ],
         "suggested_action": "A5",
     }
 
@@ -240,6 +245,7 @@ def test_high_confidence_requires_all_five_evidences():
     assert v.suggested_action == "A2"
     contents = [e.content for e in v.evidence_chain]
     assert contents == [
+        "高度可能为残留；删除前请确认",
         "知识库标注已停止：OldApp 停运产品",
         "注册表无卸载记录",
         "无匹配进程/服务/自启动",
