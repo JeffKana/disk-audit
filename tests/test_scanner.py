@@ -47,6 +47,7 @@ class _FakeIter:
 class _FakeEntry:
     def __init__(self, path: str, is_dir: bool, size: int = 0, stat_error: OSError | None = None):
         self.path = path
+        self.name = path.replace("/", "\\").rsplit("\\", 1)[-1]  # 对齐 os.DirEntry.name
         self._is_dir = is_dir
         self._size = size
         self._stat_error = stat_error
@@ -55,7 +56,9 @@ class _FakeEntry:
         if self._stat_error is not None:
             raise self._stat_error
         mode = (stat_mod.S_IFDIR if self._is_dir else stat_mod.S_IFREG) | 0o644
-        return types.SimpleNamespace(st_mode=mode, st_size=self._size, st_file_attributes=0)
+        return types.SimpleNamespace(
+            st_mode=mode, st_size=self._size, st_file_attributes=0, st_mtime=0.0
+        )
 
 
 # ---------- 验收②：根级文件计入（W0 缺陷①回归） ----------

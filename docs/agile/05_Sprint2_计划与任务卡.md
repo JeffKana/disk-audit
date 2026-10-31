@@ -36,7 +36,35 @@
 - **实现约束**：**硬保护在最前短路返回，不参与打分、不可配置覆盖（S-1）**；其后知识库 → 注册表 → 进程/服务 → Appx → 启发式；判定单元按 9.2（扫描范围顶层目录及下钻子项，文件级不单独计入）；判定为纯函数（输入：单元路径 + 大小聚合 + EvidenceBundle + KB；输出：档位/来源/证据链/动作），I/O 只在采集层；消费 evidence 时统一"唯一路径"口径（服务 172 vs 原型 303 的差异按验收报告 §3.3 口径处理并在输出披露口径字段）。
 - **验收标准**：① 对本机 AppData 319 顶层目录全量判定跑通，每单元有档位/来源/证据链/动作，无异常中断；② 纯函数快照测试（固定输入 → 固定输出，至少 6 个代表单元：受保护/已安装/知识库命中/启发式/更新缓存/未知长尾各一）；③ 硬保护优先且不可覆盖的专项测试；④ CLI：`python -m disk_audit judge <scan-result>` 可独立调用（零 UI 依赖）；⑤ 产出候选条目通过 report-v1 草案校验（T2-07 定稿前按草案）。
 - **依赖**：无（与 T2-01 并行；知识库与证据集已合入 main）。
-- **执行记录**：
+- **执行记录**（2026-10-31，分支 `feature/D1-判定流水线`）：
+
+  **做了什么**：六层归属判定流水线 v1 落地。scan 增加判定单元级聚合输出（`UnitStats`：files/dirs/双口径/max_mtime/exe_files；BFS 段共享聚合、并行段局部增量后串行合并，零额外系统调用）；新增 `disk_audit/engine/` 包：`knowledge.py`（知识库装载与 name/别名精确匹配）、`judge.py`（六层顺序短路纯函数判定）、`report.py`（report-v1 草案装配 + judge 编排）；CLI 新增 `judge <scan-result>` 子命令（零 UI 依赖）。关键文件：`disk_audit/scanner.py`、`disk_audit/engine/{__init__,knowledge,judge,report}.py`、`disk_audit/__main__.py`、`tests/test_engine_units.py`、`tests/test_engine_judge.py`、`tests/_mini_schema.py`（自 test_report_schema 抽出共用校验器）、`tests/test_report_schema.py`（改导入）、`tests/test_scanner.py`（_FakeEntry 对齐 DirEntry.name/st_mtime）。
+
+  **实现决策及依据**：
+  1. 判定单元划分：顶层目录为单元；顶层 `Programs`/`Packages` 容器（大小写不敏感）下钻一层，子目录亦为单元，容器本身仍为单元——对齐原型 drill_programs/drill_packages 与 9.2"顶层目录及其下钻子项"。
+  2. 陈旧度阈值取 180 天（方案 5.1），不取原型 540——优先级"方案定稿>原型"（项目治理 §4）。
+  3. 知识库命中但注册表/进程/服务/自启动证据表明在用 → 以在用为准（注册表→A3、运行证据→A5），知识库作证据链上下文——依据 9.2"已安装"口径与 M4"高置信档对在用软件误判=0"；5.1 高档五证据在 KB 层内部核验（无注册表+无运行证据+陈旧），未破坏架构③层序（原型"KB 命中即返回"不采用，避免在用软件被 KB 残留条目误判）。
+  4. "已停止"但不够陈旧 → 中（KB 标注+无运行证据=2 项证据成立，5.1 中档）；180 天边界参数化锁定（180→中、181→高），全组合矩阵留 T2-03。
+  5. 仅启发式（哈希/GUID/陈旧/无 exe 任一或组合）一律低置信+A5+措辞"归属未知，需人工判断"——S-2"上限锁低"字面执行（原型 stale→中 不采用）；"无 exe"仅在单元有文件时记信号，避免空目录噪声。
+  6. 服务证据"唯一路径"口径披露写入服务命中证据链 content（"服务唯一路径口径，全库 N 条唯一路径"）；报告草案顶层 `additionalProperties:false` 不容独立字段，T2-07 定稿时再议。
+  7. Appx 匹配三口径（原型 match_appx + drill_packages）：包名/全名精确 → 含点号包名式命名双向包含（code≠openaicodex 防护）→ Packages 数据目录 FamilyName_hash 按全名前缀比对；注册表包含匹配保留 len≥5 门槛（原型口径）。
+  8. 动作映射 v1：注册表/Appx 命中→A3；KB"已安装应用"→A3；运行证据/受保护/在用/容器/系统组件/低置信→A5；KB 残留候选、更新缓存（*-updater 正则族）→A2——F4（S4）定稿时对齐 5.3。
+  9. scan 输出新增 `units` 数组为附加字段，现有键不动（L2 脚本、T2-05 部分结果消费不受影响）。
+  10. `mini_validate` 抽到 `tests/_mini_schema.py` 共用（引擎输出草案校验复用），test_report_schema 改导入，行为不变。
+
+  **未尽事项/已知限制**：
+  1. **新问题（属 C5，建议另立任务）**：`evidence/_ps.py` 以 UTF-8 解码 PowerShell 输出，本机实测 Get-Process 输出含中文路径（GBK 字节）时读取线程 UnicodeDecodeError 崩溃，进程证据**静默变空**（available=True + 0 条，未降级未披露）。本次全量判定进程源实际为空（注册表 286/Appx 199/服务 173/自启动 15 均正常），"在用"判定退化。建议：解码容错（errors=replace 或按控制台代码页/PowerShell 侧 OutputEncoding）+ 空 stdout 与 0 路径区分披露。VM 差分机 GT 软件进程路径均为 ASCII，M1 验收②预计不受影响，但应在 M1 前修复确认。
+  2. "无版本信息"启发式（5.1 低档列举）v1 未实现（需读 PE 版本资源，超本卡范围）——留 D4/M4。
+  3. 中档"2 项证据成立"完整组合矩阵由 T2-03 参数化锁定；本次仅锁"已停止+无运行证据（不够陈旧）→中"与 180 天边界。
+  4. 本机实测注册表命中仅 6 单元（双目录合计 3+3），叠加进程源为空，"已安装/在用"占比偏低——归属率真实水平待 VM 环境 + 未尽事项 1 修复后评估（M1 ②在差分机验收）。
+
+  **自测输出摘要**：
+  - pytest 151 passed（含新增 test_engine_units 10 例、test_engine_judge 24 例）；`--selftest` 6/6，RC=0。
+  - 验收①实测（本机，解释器 `D:\develop\environment\python\python.exe`）：
+    scan `%LOCALAPPDATA%`：22.1s，files 439,357 / dirs 76,237，跳过 120，单元 341（顶层 160 + 下钻 181）；scan `%APPDATA%`：9.53s，files 193,966 / dirs 47,679，跳过 1，单元 138；顶层目录合计 298（方案口径 319 为调研时点状态，以实测为准）。
+    judge 双目录 RC=0：479 单元全部产出档位/来源/证据链/动作，路径唯一、无异常中断；置信度分布 Local 高68/中240/低32/受保护1，Roaming 高57/中71/低9/受保护1。
+    Q3 复核：输出不含"可回收"、totals 无合并"可释放"字段；抽查 `Roaming\Code` → 高·知识库·"Visual Studio Code 用户数据（已安装应用）"·A3（无 openaicodex 误判）；`Roaming\Microsoft` → 受保护·A5。
+    本机 judge 无服务命中单元，"唯一路径口径"披露未在输出出现（机制由 test_service_hit_discloses_unique_path_scope 覆盖）。
 
 ---
 

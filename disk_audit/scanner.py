@@ -1,6 +1,7 @@
 """文件枚举器：os.scandir + 8 线程前沿切分，双口径计量（逻辑大小 / 占用空间）。
 
 依据：方案第四节"文件枚举"行与 P1（逻辑大小与占用空间双列，汇总一律用占用空间）；
+9.2（判定单元 = 扫描范围顶层目录及下钻子项，随遍历顺带聚合，D1 判定流水线消费）；
 W0 实测报告缺陷①修复——前沿切分必须补算"前沿之上"层级的文件，否则漏算根级大文件
 （docs/upstream/poc/W0_POC实测报告_2026-10-23.html，全盘曾少算 14.76GB）；
 X-1：权限不足/超长/占用/reparse point 一律跳过+计数+继续，不中断扫描。
@@ -15,6 +16,7 @@ import stat as _stat
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
+from functools import partial
 
 # Win32 FILE_ATTRIBUTE_REPARSE_POINT（Junction/符号链接等，跳过防循环）
 _FILE_ATTRIBUTE_REPARSE_POINT = 0x400
@@ -24,6 +26,8 @@ _LONG_UNC_PREFIX = "\\\\?\\UNC\\"
 _LONG_PATH_THRESHOLD = 240
 _DEFAULT_WORKERS = 8
 _FRONTIER_MAX_DEPTH = 4
+# 判定单元下钻容器（9.2 + 原型 drill_programs/drill_packages 口径，大小写不敏感）
+_CONTAINER_NAMES = frozenset({"programs", "packages"})
 
 # 模块级间接层：供测试 monkeypatch 替换，不污染全局 os
 _scandir = os.scandir
@@ -145,8 +149,59 @@ class SkipStats:
 
 
 @dataclass
+class UnitStats:
+    """判定单元聚合（9.2：顶层目录及下钻子项；文件级不单独计入）。
+
+    随遍历顺带聚合（st 在 _handle_entry 已取得，零额外系统调用）；
+    dirs 含单元目录自身；max_mtime 为单元子树内最新修改时间（陈旧度启发式输入）；
+    exe_files 为 .exe 文件数（"无 exe"启发式输入）。并行段各自本地聚合后合并。
+    """
+
+    path: str
+    files: int = 0
+    dirs: int = 0
+    logical_bytes: int = 0
+    allocated_bytes: int = 0
+    max_mtime: float = 0.0
+    exe_files: int = 0
+
+    def add_file(self, name: str, size: int, allocated: int, mtime: float) -> None:
+        self.files += 1
+        self.logical_bytes += size
+        self.allocated_bytes += allocated
+        self.note_mtime(mtime)
+        if name.lower().endswith(".exe"):
+            self.exe_files += 1
+
+    def note_mtime(self, mtime: float) -> None:
+        """仅更新最新修改时间（目录在"发现时"记 mtime，"展开时"才计 dirs，防双计）。"""
+        if mtime > self.max_mtime:
+            self.max_mtime = mtime
+
+    def merge(self, other: "UnitStats") -> None:
+        self.files += other.files
+        self.dirs += other.dirs
+        self.logical_bytes += other.logical_bytes
+        self.allocated_bytes += other.allocated_bytes
+        if other.max_mtime > self.max_mtime:
+            self.max_mtime = other.max_mtime
+        self.exe_files += other.exe_files
+
+    def to_json_dict(self) -> dict:
+        return {
+            "path": self.path,
+            "files": self.files,
+            "dirs": self.dirs,
+            "logical_bytes": self.logical_bytes,
+            "allocated_bytes": self.allocated_bytes,
+            "max_mtime": self.max_mtime,
+            "exe_files": self.exe_files,
+        }
+
+
+@dataclass
 class ScanStats:
-    """一次扫描的聚合结果（只有汇总值，不含任何条目缓存）。"""
+    """一次扫描的聚合结果（双口径总量与跳过统计；单元级聚合另见 UnitStats）。"""
 
     files: int = 0
     dirs: int = 0
@@ -170,6 +225,7 @@ class ScanResult:
     frontier_depth: int
     seconds: float
     stats: ScanStats
+    units: list[UnitStats] = field(default_factory=list)
 
     def to_json_dict(self) -> dict:
         return {
@@ -191,6 +247,7 @@ class ScanResult:
                 "other": self.stats.skips.other,
                 "total": self.stats.skips.total,
             },
+            "units": [u.to_json_dict() for u in self.units],
         }
 
 
@@ -223,7 +280,9 @@ def _reparse_or_symlink(st: os.stat_result) -> bool:
     return _stat.S_ISLNK(st.st_mode)
 
 
-def _account_file(path: str, st: os.stat_result, stats: ScanStats) -> None:
+def _account_file(
+    path: str, name: str, st: os.stat_result, stats: ScanStats, unit: UnitStats | None
+) -> None:
     """文件计量：占用空间查询失败时整个文件按 X-1 计入 occupied（保证双口径一致）。"""
     allocated = _allocated_size(path, st)
     if allocated is None:
@@ -232,10 +291,72 @@ def _account_file(path: str, st: os.stat_result, stats: ScanStats) -> None:
     stats.files += 1
     stats.logical_bytes += st.st_size
     stats.allocated_bytes += allocated
+    if unit is not None:
+        unit.add_file(name, st.st_size, allocated, st.st_mtime)
 
 
-def _handle_entry(entry: os.DirEntry, stats: ScanStats, subdirs: list[str]) -> None:
-    """单个目录项统一处理：异常/reparse 按 X-1 计数，目录收集，文件即层计量。"""
+def _enumerate_units(root_abs: str) -> dict[str, UnitStats]:
+    """判定单元划分（9.2）：扫描根的每个顶层子目录为一个单元；顶层存在
+    Programs/Packages 容器（大小写不敏感）时，其每个子目录亦为单元（对齐原型
+    drill_programs/drill_packages 下钻一层口径）。reparse point 不作单元（X-1）。
+    """
+    units: dict[str, UnitStats] = {}
+    containers: list[str] = []
+    try:
+        iterator = os.scandir(root_abs)
+    except OSError:
+        return units
+    with iterator:
+        for entry in iterator:
+            try:
+                st = entry.stat(follow_symlinks=False)
+            except OSError:
+                continue
+            if _reparse_or_symlink(st) or not _stat.S_ISDIR(st.st_mode):
+                continue
+            units[entry.path] = UnitStats(path=entry.path)
+            if entry.name.lower() in _CONTAINER_NAMES:
+                containers.append(entry.path)
+    for container in containers:
+        try:
+            sub_iterator = os.scandir(container)
+        except OSError:
+            continue
+        with sub_iterator:
+            for entry in sub_iterator:
+                try:
+                    st = entry.stat(follow_symlinks=False)
+                except OSError:
+                    continue
+                if _reparse_or_symlink(st) or not _stat.S_ISDIR(st.st_mode):
+                    continue
+                units[entry.path] = UnitStats(path=entry.path)
+    return units
+
+
+def _sink_get(sink: dict[str, UnitStats], unit_path: str | None) -> UnitStats | None:
+    """取单元聚合器：BFS 段 sink=共享 units（键必在）；并行段 sink=局部增量（按需建）。"""
+    if unit_path is None:
+        return None
+    unit = sink.get(unit_path)
+    if unit is None:
+        unit = sink[unit_path] = UnitStats(path=unit_path)
+    return unit
+
+
+def _handle_entry(
+    entry: os.DirEntry,
+    stats: ScanStats,
+    subdirs: list[tuple[str, str | None]],
+    units: dict[str, UnitStats],
+    sink: dict[str, UnitStats],
+    parent_unit_path: str | None,
+) -> None:
+    """单个目录项统一处理：异常/reparse 按 X-1 计数，目录收集，文件即层计量。
+
+    单元归属：文件归其所在目录的单元；目录的 mtime 归目录自身解析出的单元。
+    units 只读（成员判定）；聚合写入走 sink（BFS 段=共享，并行段=局部增量）。
+    """
     try:
         st = entry.stat(follow_symlinks=False)
     except OSError as exc:
@@ -245,9 +366,14 @@ def _handle_entry(entry: os.DirEntry, stats: ScanStats, subdirs: list[str]) -> N
         stats.skips.reparse += 1
         return
     if _stat.S_ISDIR(st.st_mode):
-        subdirs.append(entry.path)
+        unit_path = entry.path if entry.path in units else parent_unit_path
+        subdirs.append((entry.path, unit_path))
+        unit = _sink_get(sink, unit_path)
+        if unit is not None:
+            unit.note_mtime(st.st_mtime)  # 目录 mtime 在发现时记；dirs 在展开时计
     else:
-        _account_file(entry.path, st, stats)
+        unit = _sink_get(sink, parent_unit_path)
+        _account_file(entry.path, entry.name, st, stats, unit)
 
 
 def _open_dir(directory: str, stats: ScanStats):
@@ -259,34 +385,49 @@ def _open_dir(directory: str, stats: ScanStats):
         return None
 
 
-def _expand_dir(directory: str, subdirs: list[str], stats: ScanStats) -> None:
+def _expand_dir(
+    directory: str,
+    subdirs: list[tuple[str, str | None]],
+    stats: ScanStats,
+    units: dict[str, UnitStats],
+    sink: dict[str, UnitStats],
+    parent_unit_path: str | None,
+) -> None:
     """BFS 展开一个目录：目录计数、其中文件即层统计（W0 缺陷①修复）、子目录收集。"""
     stats.dirs += 1
+    unit_path = directory if directory in units else parent_unit_path
+    unit = _sink_get(sink, unit_path)
+    if unit is not None:
+        unit.dirs += 1  # 目录计数归展开时解析出的单元（含单元目录自身）
     iterator = _open_dir(directory, stats)
     if iterator is None:
         return
     with iterator:
         for entry in iterator:
-            _handle_entry(entry, stats, subdirs)
+            _handle_entry(entry, stats, subdirs, units, sink, unit_path)
 
 
 def _build_frontier(
-    root: str, min_parts: int, max_depth: int, stats: ScanStats
-) -> tuple[list[str], int]:
-    """BFS 切出前沿目录集合；返回（前沿目录列表, 深度）。
+    root: str,
+    min_parts: int,
+    max_depth: int,
+    stats: ScanStats,
+    units: dict[str, UnitStats],
+) -> tuple[list[tuple[str, str | None]], int]:
+    """BFS 切出前沿目录集合；返回（前沿目录与所属单元路径列表, 深度）。
 
     与 POC v2（docs/upstream/poc/poc1_scan_bench_v2.py build_frontier）的差异：
     POC 展开各层时只收集子目录、丢掉文件，导致前沿之上层级的文件全部漏算
     （W0 缺陷①，全盘少算 14.76GB）。此处展开每层时同步统计该层文件，前沿为空
     表示全部内容已在 BFS 阶段统计完，无需并行阶段。
     """
-    level = [root]
+    level: list[tuple[str, str | None]] = [(root, None)]
     depth = 0
     frontier = level
     while depth < max_depth:
-        next_level: list[str] = []
-        for directory in level:
-            _expand_dir(directory, next_level, stats)
+        next_level: list[tuple[str, str | None]] = []
+        for directory, parent_unit_path in level:
+            _expand_dir(directory, next_level, stats, units, units, parent_unit_path)
         if not next_level:
             frontier = []  # 该层已全部展开且无子目录：无剩余工作
             break
@@ -298,26 +439,38 @@ def _build_frontier(
     return frontier, depth
 
 
-def _scan_tree(root: str) -> ScanStats:
-    """叶级单线程递归统计（栈式迭代避免递归深度问题）；每个前沿子树独立聚合。"""
+def _scan_tree(
+    item: tuple[str, str | None], units: dict[str, UnitStats]
+) -> tuple[ScanStats, dict[str, UnitStats]]:
+    """叶级单线程递归统计（栈式迭代避免递归深度问题）；每个前沿子树独立聚合。
+
+    并行段不写共享 UnitStats：单元增量先记入本子树局部字典，由 scan_path
+    在汇合时串行合并（多前沿可属同一单元，避免线程竞争）。
+    """
+    root, unit_hint = item
     stats = ScanStats()
-    stack = [root]
+    local_units: dict[str, UnitStats] = {}
+    stack = [(root, unit_hint)]
     while stack:
-        current = stack.pop()
+        current, parent_unit_path = stack.pop()
         stats.dirs += 1
+        unit_path = current if current in units else parent_unit_path
+        unit = _sink_get(local_units, unit_path)
+        if unit is not None:
+            unit.dirs += 1
         iterator = _open_dir(current, stats)
         if iterator is None:
             continue
-        subdirs: list[str] = []
+        subdirs: list[tuple[str, str | None]] = []
         with iterator:
             for entry in iterator:
-                _handle_entry(entry, stats, subdirs)
+                _handle_entry(entry, stats, subdirs, units, local_units, unit_path)
         stack.extend(subdirs)
-    return stats
+    return stats, local_units
 
 
 def scan_path(root: str, workers: int = _DEFAULT_WORKERS) -> ScanResult:
-    """扫描一个目录树，返回双口径汇总与跳过统计。
+    """扫描一个目录树，返回双口径汇总、跳过统计与判定单元聚合。
 
     线程模型（W0 实测定稿）：浅层 BFS 切分 + 每个前沿目录单线程递归，
     ThreadPoolExecutor.map 汇聚，全程无嵌套 submit。
@@ -329,14 +482,19 @@ def scan_path(root: str, workers: int = _DEFAULT_WORKERS) -> ScanResult:
         raise ValueError(f"扫描根路径不存在或不是目录：{root_abs}")
 
     start = time.perf_counter()
+    units = _enumerate_units(root_abs)
     stats = ScanStats()
     frontier, depth = _build_frontier(
-        root_abs, min_parts=workers * 3, max_depth=_FRONTIER_MAX_DEPTH, stats=stats
+        root_abs, min_parts=workers * 3, max_depth=_FRONTIER_MAX_DEPTH, stats=stats, units=units
     )
     if frontier:
         with ThreadPoolExecutor(max_workers=workers) as pool:
-            for part_stats in pool.map(_scan_tree, frontier):
+            for part_stats, part_units in pool.map(
+                partial(_scan_tree, units=units), frontier
+            ):
                 stats.merge(part_stats)
+                for unit_path, delta in part_units.items():
+                    units[unit_path].merge(delta)
     return ScanResult(
         root=root_abs,
         workers=workers,
@@ -344,4 +502,5 @@ def scan_path(root: str, workers: int = _DEFAULT_WORKERS) -> ScanResult:
         frontier_depth=depth,
         seconds=time.perf_counter() - start,
         stats=stats,
+        units=sorted(units.values(), key=lambda u: u.path),
     )
