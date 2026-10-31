@@ -45,4 +45,8 @@ def collect_processes(
         return ProcessResult(
             available=False, reason=f"该证据源不可用：PowerShell 退出码 {returncode}（{detail}）"
         )
+    if not stdout.strip():
+        # C5 新问题披露口径：空输出与"0 条路径"区分——正常系统必有带路径进程，
+        # 空输出按不可用披露，杜绝 available=True + 0 条的静默态。
+        return ProcessResult(available=False, reason="该证据源不可用：PowerShell 空输出（正常必有带路径进程，空输出即异常）")
     return ProcessResult(available=True, paths=parse_path_lines(stdout))
