@@ -1,0 +1,35 @@
+{
+  "case_id": "R002",
+  "title": "com.sample 含点号包名式命名允许包含匹配（防护规则正向边界）",
+  "registered_at": "2026-10-31",
+  "registered_by": "执行 Agent（任务卡 T2-04）",
+  "source_ref": "原型修复口径：仅对含点号的包名式命名（如 com.example.app）做包含匹配",
+  "root_cause": "防护边界反例（防过度封锁）：若包含匹配一刀切禁用，com.sample 这类合法的包名式前缀将漏判 Appx 归属",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Local\\Packages\\com.sample",
+  "unit": {
+    "files": 2,
+    "dirs": 1,
+    "logical_bytes": 2048,
+    "allocated_bytes": 4096,
+    "max_mtime": 0,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [
+      {
+        "name": "com.sample.app",
+        "package_full_name": "com.sample.app_1.0.0_x64__abcdef01",
+        "install_location": "C:\\Program Files\\WindowsApps\\com.sample.app_1.0.0_x64__abcdef01"
+      }
+    ],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "中",
+    "verdict_source": "Appx"
+  },
+  "notes": "com.sample（含点号、norm 后长度≥4）双向包含命中 com.sample.app → Appx 注册包匹配，中置信在用；选用 com.sample 避开生产 KB 已登记的 com.example（层序交互见 R005）"
+}

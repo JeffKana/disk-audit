@@ -125,7 +125,19 @@
 - **实现约束**：样例格式定义（JSON：路径模式 / 期望档位 / 期望来源 / 误判根因 / 登记日期 / 来源登记）；样例数据驱动跑引擎；**脱敏**（不含用户名/机器名/SID）；包含匹配防护规则 = 仅限含点号的包名式命名（原型修复口径）。
 - **验收标准**：① 样例格式文档 + schema；② 首例 Code≠openaicodex 通过（引擎对该路径输出不含 openaicodex 判定）；③ 至少 3 个反例锁定防护规则边界（如 `com.example` 合法包含、`code` 裸名不参与包含匹配）；④ 样例全脱敏断言。
 - **依赖**：T2-02（建议栈式）。
-- **执行记录**：
+- **执行记录**（2026-10-31，分支 `feature/D6-首例回归`，基于 D2D3 分支栈式切出，合入顺序 D1→C2→E3→D2D3→D6）：
+
+  **做了什么**：误判回归基础设施落地。样例格式 schema `docs/schemas/regression-case-v1.schema.json`（字段：case_id/title/registered_at/registered_by/root_cause/path_pattern/unit/evidence_scenario/expect[confidence+verdict_source+forbidden_terms]/notes，与卡面"路径模式/期望档位/期望来源/误判根因/登记日期/来源登记"对应，另加复现所需的罐装证据场景）；格式文档 `docs/schemas/回归样例格式-v1.md`（存放位置、三层校验流程、脱敏规则、知识库修正联动）；样例 `tests/data/regression/` 5 例（R001 首例 Code≠openaicodex + R002~R005 边界）；数据驱动测试 `tests/test_regression_cases.py`（schema 校验 + 脱敏断言 + 引擎判定断言，新增样例零改动自动纳入）。共用校验器 `tests/_mini_schema.py` 增 `pattern` 关键字支持。关键文件：上述 schema/文档/样例/测试 + `_mini_schema.py`。**引擎零改动**——防护规则 T2-02 已正确实现，本卡以回归集锁定。
+
+  **实现决策及依据**：
+  1. 样例增补 `evidence_scenario` 字段（卡面字段清单之外）：回归样例需可复现触发边界，必须携带罐装证据（判定为纯函数的输入之一）；unit 字段与 scan 输出 units 元素同构（开发规范 §3 数据驱动）。
+  2. 脱敏断言动态取本机真实值（getpass 用户名/COMPUTERNAME/SID 正则），而非硬编码名单（开发规范 §3：不含用户名/机器名/SID）。
+  3. R002 原用 com.example，实测与生产 KB 已登记条目（示例包名调试残留）冲突——知识库层先于 Appx 层短路属正确架构③层序；样例改用 com.sample 避开 KB，层序交互本身固化为 R005 备案（误判样例发现新交互 → 当天入集，底线二）。
+  4. R001 期望来源=知识库（依赖生产 KB 含 code 条目）：回归样例锁定当前真实判定，KB 未来变更导致样例失败时即触发人工复核（回归集的本意）。
+
+  **未尽事项/已知限制**：回归样例期望绑定生产知识库内容，KB 大规模扩充（E4）时可能批量触发复核——届时按治理 §6 修正流程逐条处理。
+
+  **自测输出摘要**：pytest 193 passed（新增 test_regression_cases 16 例：schema 校验 5、首例在场 1、脱敏 5、引擎断言 5）；`--selftest` 6/6，RC=0。样例 5 例：R001 首例（输出全文禁现 openaicodex ✓）、R002 含点号合法包含 ✓、R003 短名拒包含 ✓、R004 长名合法包含 ✓、R005 层序备案 ✓。
 
 ---
 

@@ -1,0 +1,35 @@
+{
+  "case_id": "R005",
+  "title": "知识库层先于 Appx 层短路（架构③层序：com.example 命中 KB 即定档）",
+  "registered_at": "2026-10-31",
+  "registered_by": "执行 Agent（任务卡 T2-04）",
+  "source_ref": "方案第四节架构③（硬保护 → 知识库 → 注册表 → 进程/服务 → Appx → 启发式，顺序短路）；T2-04 撰写样例时实测发现",
+  "root_cause": "层序交互备案：包名式目录名同时命中知识库条目与 Appx 包时，知识库层先短路定档（本机确有名为 com.example 的示例包名调试残留，原型迁移时登记），Appx 层不再参与",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Local\\Packages\\com.example",
+  "unit": {
+    "files": 2,
+    "dirs": 1,
+    "logical_bytes": 2048,
+    "allocated_bytes": 4096,
+    "max_mtime": 0,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [
+      {
+        "name": "com.example.app",
+        "package_full_name": "com.example.app_1.0.0_x64__abcdef01",
+        "install_location": "C:\\Program Files\\WindowsApps\\com.example.app_1.0.0_x64__abcdef01"
+      }
+    ],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "中",
+    "verdict_source": "知识库"
+  },
+  "notes": "KB 条目 com.example（示例包名调试残留，残留候选·中置信，本机实测）→ 命中即定档中置信；若层序被改动（Appx 先于 KB），本样例将失败并提示回归"
+}

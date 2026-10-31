@@ -1,0 +1,36 @@
+{
+  "case_id": "R001",
+  "title": "Roaming\\Code 不得误判为 openaicodex（子串误判首例）",
+  "registered_at": "2026-10-31",
+  "registered_by": "执行 Agent（任务卡 T2-04）",
+  "source_ref": "9.1 底线二；调研报告 Roaming\\Code 误判 openaicodex 实证；原型修复 docs/upstream/prototype/analyze_appdata.py match_appx（仅含点号包名式命名允许包含匹配）",
+  "root_cause": "子串包含匹配未限定语境：裸名 code 是 openaicodex 的子串，在 Appx 包名包含匹配中误命中，导致 VS Code 用户数据被判成 openaicodex 商店包数据",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\Code",
+  "unit": {
+    "files": 3,
+    "dirs": 1,
+    "logical_bytes": 4096,
+    "allocated_bytes": 4096,
+    "max_mtime": 0,
+    "exe_files": 1
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [
+      {
+        "name": "openaicodex",
+        "package_full_name": "openaicodex_1.0.0_x64__abcdef01",
+        "install_location": "C:\\Program Files\\WindowsApps\\openaicodex_1.0.0_x64__abcdef01"
+      }
+    ],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "知识库",
+    "forbidden_terms": ["openaicodex"]
+  },
+  "notes": "期望来源=知识库：KB 命中 code（Visual Studio Code 用户数据，已安装应用）；防护规则=仅对含点号的包名式命名做 Appx 包含匹配，裸名 code 不参与"
+}
