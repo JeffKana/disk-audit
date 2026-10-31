@@ -148,7 +148,20 @@
 - **实现约束**：用户中止（Ctrl+C/停止信号）与异常退出统一走"不完整"出口：已采集单元保留、汇总（totals）不输出或显式标记无效；不产生半成品结论；与 E-4"未扫描条目数"字段衔接。
 - **验收标准**：① 模拟中止（注入中断/超时）→ 输出含"不完整"标记且无有效 totals；② 正常完成路径不受影响（回归）；③ 部分结果可被 judge 消费并同样标记不完整；④ 测试覆盖两种触发（用户中止/异常）。
 - **依赖**：T2-01（同改 scanner/CLI，建议在其后栈式）。
-- **执行记录**：
+- **执行记录**（2026-10-31，分支 `feature/C7-中止与部分结果`，基于 D6 分支栈式切出，合入顺序 D1→C2→E3→D2D3→D6→C7）：
+
+  **做了什么**：X-2 中止安全口径落地。`scanner.scan_path` 新增 `abort_check` 周期轮询参数（每个目录展开前调用一次，含并行段叶级循环）；中止信号（abort_check 返回 True）、Ctrl+C（KeyboardInterrupt）与未预期异常**统一走"不完整"出口**——不抛出，返回已采集部分（ScanResult 新增 `incomplete: bool`，scan JSON 输出 `incomplete` 键；并行段增量已按子树合并，已采集单元保留）。judge 侧：`judge_scan_result` 消费 incomplete 扫描结果并在报告输出 `incomplete: true`（正常报告无该键，草案校验不受影响）。关键文件：`disk_audit/scanner.py`、`disk_audit/engine/report.py`、`tests/test_scanner.py`（+5 例）、`tests/test_engine_judge.py`（+2 例）。
+
+  **实现决策及依据**：
+  1. totals 采"显式标记无效"而非"不输出"：X-2 给出的两个选项中，保留部分 totals + `incomplete` 标记信息量更大且向后兼容（消费方按标记判无效）；scan JSON 与报告同口径。
+  2. 异常出口吞掉未预期异常本身（X-2"统一不完整出口"字面执行），细粒度失败仍由 X-1 跳过统计披露；具体异常类型不在部分结果中携带（记入未尽事项）。
+  3. E-4"未扫描条目数"衔接：中止时剩余条目数不可知，以 `incomplete` 标记 + 已知 `skipped` 统计披露，不虚构计数。
+  4. 报告 `incomplete` 仅在不完整时输出：定稿前草案 schema `additionalProperties:false` 不容新字段，正常报告保持草案合法；T2-07 定稿收录该可选字段。
+  5. CLI 中止后退出码 0、标记在带内（部分结果属正常产物而非错误）。
+
+  **未尽事项/已知限制**：① 未预期异常的具体信息当前被吞（仅 incomplete 标记）——建议 T2-07/后续卡评估是否在 scan JSON 增 `errors` 披露；② UI 中止按钮接线在 G2（S3），本卡交付引擎侧机制（abort_check 供 UI/CLI 注入）。
+
+  **自测输出摘要**：pytest 197 passed（新增 7 例：正常回归 1、abort_check 中止 1、KeyboardInterrupt 1、异常注入 1、CLI 标记 1、judge 消费 2）；`--selftest` 6/6，RC=0。
 
 ---
 

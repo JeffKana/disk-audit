@@ -38,8 +38,12 @@ def _require_scan_result(scan: object) -> None:
         raise ValueError("输入不是 scan 子命令的扫描结果 JSON：units 应为数组")
 
 
-def build_report(scan: dict, verdicts: list[Verdict]) -> dict:
-    """判定结果 + scan 汇总 → report-v1 草案结构（Q3 双禁止天然满足：不产出该类字段）。"""
+def build_report(scan: dict, verdicts: list[Verdict], *, incomplete: bool = False) -> dict:
+    """判定结果 + scan 汇总 → report-v1 草案结构（Q3 双禁止天然满足：不产出该类字段）。
+
+    incomplete（X-2/C7）：中止/异常产生的部分结果，totals 由该标记判无效；
+    定稿前的草案 schema 不含该字段（T2-07 收录），故仅在不完整时输出。
+    """
     units_by_path = {u["path"]: u for u in scan["units"]}
     candidates: list[dict] = []
     regenerable = 0
@@ -63,7 +67,7 @@ def build_report(scan: dict, verdicts: list[Verdict]) -> dict:
             }
         )
     skipped = scan["skipped"] if isinstance(scan["skipped"], dict) else {}
-    return {
+    report = {
         "schema_version": REPORT_SCHEMA_VERSION,
         "generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
         "scan_root": scan["root"],
@@ -76,6 +80,9 @@ def build_report(scan: dict, verdicts: list[Verdict]) -> dict:
         },
         "candidates": candidates,
     }
+    if incomplete:
+        report["incomplete"] = True
+    return report
 
 
 def judge_scan_result(
@@ -88,4 +95,4 @@ def judge_scan_result(
     evidence = bundle if bundle is not None else collect_all()
     knowledge = kb if kb is not None else load_knowledge()
     verdicts = [judge_unit(UnitInput.from_scan_unit(u), evidence, knowledge) for u in scan["units"]]
-    return build_report(scan, verdicts)
+    return build_report(scan, verdicts, incomplete=bool(scan.get("incomplete")))
