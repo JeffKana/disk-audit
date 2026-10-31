@@ -1,0 +1,38 @@
+{
+  "case_id": "R004",
+  "title": "foobarcode（norm 后 ≥5 字符）允许注册表包含匹配（规则正向边界）",
+  "registered_at": "2026-10-31",
+  "registered_by": "执行 Agent（任务卡 T2-04）",
+  "source_ref": "原型 match_installed 口径：未精确命中且 norm 长度 ≥5 时允许包含匹配",
+  "root_cause": "防护边界正例（防过度封锁）：长度门槛若误伤长名目录，正常的'目录名 ⊂ 产品名'归属判定将失效",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\foobarcode",
+  "unit": {
+    "files": 3,
+    "dirs": 1,
+    "logical_bytes": 4096,
+    "allocated_bytes": 4096,
+    "max_mtime": 0,
+    "exe_files": 1
+  },
+  "evidence_scenario": {
+    "uninstall": [
+      {
+        "display_name": "Foobar Code Editor",
+        "publisher": "ExampleSoft",
+        "install_location": "C:\\Program Files\\Foobar Code Editor",
+        "install_date": "",
+        "uninstall_string": "",
+        "reg_path": "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\foobarcode"
+      }
+    ],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "注册表"
+  },
+  "notes": "norm 'foobarcode' ⊂ norm 'foobarcodeeditor'（长度 ≥5）→ 注册表卸载记录命中，已安装应用"
+}

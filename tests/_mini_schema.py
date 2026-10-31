@@ -2,9 +2,12 @@
 
 自 tests/test_report_schema.py 抽出共用（T2-02 判定引擎输出校验复用），
 支持本仓库 schema 用到的关键字：$defs / $ref / const / enum / type /
-required / additionalProperties / minLength / minimum / minItems / items。
+required / additionalProperties / minLength / minimum / minItems / items /
+pattern（T2-04 回归样例 schema 引入）。
 """
 from __future__ import annotations
+
+import re
 
 
 def _type_ok(instance, expected: str) -> bool:
@@ -50,6 +53,8 @@ def mini_validate(instance, schema: dict, root: dict | None = None, path: str = 
         errors.append(f"{path}：{instance!r} 不在枚举 {schema['enum']}")
     if isinstance(instance, str) and "minLength" in schema and len(instance) < schema["minLength"]:
         errors.append(f"{path}：长度 < {schema['minLength']}")
+    if isinstance(instance, str) and "pattern" in schema and not re.search(schema["pattern"], instance):
+        errors.append(f"{path}：{instance!r} 不匹配模式 {schema['pattern']!r}")
     if (
         isinstance(instance, int)
         and not isinstance(instance, bool)

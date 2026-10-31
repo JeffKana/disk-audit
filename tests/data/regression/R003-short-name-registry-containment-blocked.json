@@ -1,0 +1,39 @@
+{
+  "case_id": "R003",
+  "title": "abcd 短名（norm 后 <5 字符）不参与注册表包含匹配",
+  "registered_at": "2026-10-31",
+  "registered_by": "执行 Agent（任务卡 T2-04）",
+  "source_ref": "原型 match_installed 口径：包含匹配仅限 norm 后长度 ≥5 的目录名",
+  "root_cause": "防护边界反例（防短名子串误判）：abcd 是 'Abcd Explorer Suite' 归属名的子串，若不限长度将把无关短名目录误判为该软件数据",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\abcd",
+  "unit": {
+    "files": 3,
+    "dirs": 1,
+    "logical_bytes": 4096,
+    "allocated_bytes": 4096,
+    "max_mtime": 0,
+    "exe_files": 1
+  },
+  "evidence_scenario": {
+    "uninstall": [
+      {
+        "display_name": "Abcd Explorer Suite",
+        "publisher": "ExampleSoft",
+        "install_location": "C:\\Program Files\\Abcd Explorer Suite",
+        "install_date": "",
+        "uninstall_string": "",
+        "reg_path": "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\abcd"
+      }
+    ],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "低",
+    "verdict_source": "启发式",
+    "forbidden_terms": ["Abcd Explorer Suite"]
+  },
+  "notes": "精确匹配不中（norm 'abcd' ≠ 'abcdexplorersuite'），包含匹配因长度 <5 被拒 → 落启发式未知长尾"
+}
