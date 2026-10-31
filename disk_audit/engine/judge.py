@@ -32,6 +32,7 @@ from ..evidence.appx import AppxResult
 from ..evidence.evidence import EvidenceBundle
 from ..hardprotect import check_protection
 from .knowledge import KnowledgeBase, KnowledgeEntry, match_entry
+from .texts import CONFIDENCE_WORDING, REGENERABLE_WORDING
 
 # 方案 5.1：目录陈旧（>180 天未改）；原型为 540 天，按"方案定稿优先"取 180
 _STALE_DAYS = 180
@@ -195,7 +196,11 @@ def _judge_kb_hit(
     reg_hits: list[str],
     active: tuple[str, str] | None,
 ) -> Verdict | None:
-    """知识库层判定；返回 None 表示本层不能定档，落到后续层（知识库转上下文）。"""
+    """知识库层判定；返回 None 表示本层不能定档，落到后续层（知识库转上下文）。
+
+    残留类判定在证据链首位携带 5.1 输出措辞（文案资源 texts.CONFIDENCE_WORDING）；
+    已安装/在用类判定不属残留档位，不带残留措辞。
+    """
     category = entry.category
     if category in ("容器(已下钻)", "系统组件", "兼容链接·严禁删除"):
         return Verdict(
@@ -205,7 +210,8 @@ def _judge_kb_hit(
         )
     if entry.lifecycle == "已停止":
         if not reg_hits and active is None:
-            chain = [
+            chain = [EvidenceItem("知识库", CONFIDENCE_WORDING["中" if not stale else "高"])]
+            chain += [
                 EvidenceItem("知识库", f"知识库标注已停止：{entry.product}"),
                 EvidenceItem("注册表卸载项", "注册表无卸载记录"),
                 EvidenceItem("进程服务", "无匹配进程/服务/自启动"),
@@ -219,7 +225,7 @@ def _judge_kb_hit(
                     path="", confidence="高", verdict_source="知识库",
                     evidence_chain=tuple(chain), suggested_action="A2", category=category,
                 )
-            # "已停止"但不够陈旧：KB 标注 + 无运行证据 = 2 项证据成立 → 中（T2-03 锁边界）
+            # "已停止"但不够陈旧：KB 标注 + 无运行证据 = 2 项证据成立 → 中（5.1 中档）
             return Verdict(
                 path="", confidence="中", verdict_source="知识库",
                 evidence_chain=tuple(chain), suggested_action="A2", category=category,
@@ -248,6 +254,7 @@ def _judge_kb_hit(
     return Verdict(
         path="", confidence="中", verdict_source="知识库",
         evidence_chain=(
+            EvidenceItem("知识库", CONFIDENCE_WORDING["中"]),
             EvidenceItem(
                 "知识库",
                 f"知识库命中：{entry.product}（{category}；生命周期未知，缺公开下线依据）",
@@ -272,6 +279,7 @@ def judge_unit(
         return Verdict(
             path=unit.path, confidence="受保护", verdict_source="硬保护",
             evidence_chain=(
+                EvidenceItem("硬保护规则", CONFIDENCE_WORDING["受保护"]),
                 EvidenceItem("硬保护规则", f"{protection.rule_id}：{protection.reason}"),
             ),
             suggested_action="A5", category="系统组件",
@@ -313,10 +321,11 @@ def judge_unit(
             Verdict(
                 path="", confidence="高", verdict_source="知识库",
                 evidence_chain=(
+                    EvidenceItem("知识库·正则族", REGENERABLE_WORDING),
                     EvidenceItem(
                         "知识库·正则族",
                         "updater-suffix（*-updater）：Electron electron-updater 下载的"
-                        "安装包缓存，可再生（应用会自行重建）",
+                        "安装包缓存",
                     ),
                 ),
                 suggested_action="A2", category="更新缓存",
@@ -367,7 +376,7 @@ def judge_unit(
         )
 
     # ---- 6. 启发式（S-2：仅启发式兜底命中，置信度上限锁"低"，措辞无倾向） ----
-    signals: list[EvidenceItem] = []
+    signals: list[EvidenceItem] = [EvidenceItem("启发式", CONFIDENCE_WORDING["低"])]
     if _HASH_RE.match(name_l) or _GUID_RE.match(name_l):
         signals.append(EvidenceItem(
             "启发式", "哈希/GUID 命名目录，常见于推广 SDK/DRM 组件，无法从名称推断归属"
@@ -378,7 +387,7 @@ def judge_unit(
         ))
     if unit.files > 0 and unit.exe_files == 0:
         signals.append(EvidenceItem("启发式", "单元内无可执行文件（.exe）"))
-    if not signals:
+    if len(signals) == 1:  # 仅措辞，无任何启发式信号：未知长尾说明
         signals.append(EvidenceItem("启发式", "无安装记录、无运行证据、无命名特征命中（未知长尾）"))
     return _finalize(
         Verdict(
