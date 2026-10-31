@@ -203,7 +203,21 @@
 - **实现约束**：版本语义写明升级规则（结构破坏性变更 → major+1，并联动 I3"旧记录不可比"提示）；证据链 `source` 收紧为枚举（与 evidence.v1 六源对齐）；保持 Q3 双禁止。
 - **验收标准**：① 版本语义与枚举收紧后样例同步更新、非法样例被拒；② T2-02 引擎真实输出（本机 AppData 全量）通过定稿 schema 校验；③ 对照表：schema 字段 ↔ E-2/5.1/5.2/5.3 逐项；④ CI 绿。
 - **依赖**：T2-02 产出后对齐（定稿合入前完成对齐校验）。
-- **执行记录**：
+- **执行记录**（2026-10-31，分支 `feature/F1-schema定稿`，基于 C7 分支栈式切出，合入顺序 D1→C2→E3→D2D3→D6→C7→F1）：
+
+  **做了什么**：报告 schema 从草案转定稿。`docs/schemas/report-v1.schema.json`：标题去"草案"；`schema_version` 写明版本语义（结构破坏性变更 → major+1 并联动"旧记录不可比"（I3），非破坏可选新增 → minor+1，禁止原地改义；定稿锁 1.0）；证据链 `source` 收紧为九值枚举（evidence.v1 六源对齐：注册表卸载项/Appx/进程/服务/自启动/文件枚举 + 架构③判定层三源：硬保护/知识库/启发式）；新增可选 `incomplete` boolean（X-2/C7 部分结果标记，非 required）；Q3 双禁止保持（字段集锁定 + 负例测试）。样例同步（source 归枚举、陈旧口径 540→180 对齐 5.1）；引擎两处 source 改名对齐（"硬保护规则"→"硬保护"、"知识库·正则族"→"知识库"），六快照同步；新增字段对照表 `docs/schemas/report-v1-字段对照表.md`（schema 字段 ↔ E-2/5.1/5.2/5.3/9.2/X-1/E-4/X-2/Q3/Q7 逐项）。关键文件：schema/example/对照表、`disk_audit/engine/judge.py`、`tests/test_report_schema.py`（+6 例）、`tests/test_engine_judge.py`（快照+incomplete 断言翻转）。
+
+  **实现决策及依据**：
+  1. source 枚举取九值而非仅六源：判定链必须携带硬保护/知识库/启发式判定层依据（架构③），仅六源将使 T2-02 引擎输出非法（违背验收②）；六源命名与 evidence.v1 字段一一对应（映射表在 schema description 与对照表文档）。
+  2. `incomplete` 设为可选 boolean（非 required）：正常报告不含该键（T2-05 口径），草案→定稿非破坏变更，版本保持 1.0（Q7 minor+1 先例）。
+  3. 定稿非结构破坏 → `schema_version` 保持 "1.0"（草案与定稿间无已发布消费方）。
+  4. 样例"目录陈旧（>540 天）"改 180：对齐 5.1 与 T2-03 口径（原样例文字为原型遗留）。
+
+  **未尽事项/已知限制**：5.2"下载缓存"无独立知识库类别（对照表已留注意项，E4 扩充时一并评估）；引擎运行时证据（进程源）受 `_ps.py` 解码问题影响（T2-02 执行记录未尽事项 1，非本卡范围）。
+
+  **自测输出摘要**：
+  - pytest 203 passed（新增 6 例：去草案化/source 枚举/非法 source 拒绝/incomplete 可选/incomplete 类型负例/版本语义）；`--selftest` 6/6，RC=0。
+  - 验收②实测（本机 AppData 全量，解释器 `D:\develop\environment\python\python.exe`）：scan+judge 双目录 RC=0，Local 341 单元 + Roaming 138 单元的真实引擎输出通过定稿 schema 校验（违规 0）；证据链 source 全部落在九值枚举内（Local 分布：知识库 250/启发式 62/Appx 151/硬保护 2/注册表卸载项 1）；全文无"可回收"、正常报告无 incomplete 键。503 条知识库（E3）使 KB 命中由 T2-02 时的 154 升至 250。
 
 ---
 
