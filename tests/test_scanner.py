@@ -45,19 +45,21 @@ class _FakeIter:
 
 
 class _FakeEntry:
-    def __init__(self, path: str, is_dir: bool, size: int = 0, stat_error: OSError | None = None):
+    def __init__(self, path: str, is_dir: bool, size: int = 0,
+                 stat_error: OSError | None = None, attrs: int = 0):
         self.path = path
         self.name = path.replace("/", "\\").rsplit("\\", 1)[-1]  # 对齐 os.DirEntry.name
         self._is_dir = is_dir
         self._size = size
         self._stat_error = stat_error
+        self._attrs = attrs
 
     def stat(self, follow_symlinks: bool = False):
         if self._stat_error is not None:
             raise self._stat_error
         mode = (stat_mod.S_IFDIR if self._is_dir else stat_mod.S_IFREG) | 0o644
         return types.SimpleNamespace(
-            st_mode=mode, st_size=self._size, st_file_attributes=0, st_mtime=0.0
+            st_mode=mode, st_size=self._size, st_file_attributes=self._attrs, st_mtime=0.0
         )
 
 
@@ -250,3 +252,116 @@ def test_selftest_still_green(capsys):
     """--selftest 门禁不受 scan 子命令接入影响。"""
     assert cli_main(["--selftest"]) == 0
     assert "passed" in capsys.readouterr().out
+
+
+# ---------- DR-004 修订版三段分流（T2-01；验收④：属性位 monkeypatch） ----------
+
+_COMPRESSED = 0x800  # FILE_ATTRIBUTE_COMPRESSED
+_SPARSE = 0x200  # FILE_ATTRIBUTE_SPARSE_FILE
+
+
+def test_compressed_sparse_files_use_handle_query(tmp_path, monkeypatch):
+    """属性位含压缩/稀疏 → 句柄实查；常规文件走推算（验收④）。"""
+    entries = {
+        str(tmp_path): [
+            _FakeEntry(str(tmp_path / "c.bin"), False, 100, attrs=_COMPRESSED),
+            _FakeEntry(str(tmp_path / "s.bin"), False, 100, attrs=_SPARSE),
+            _FakeEntry(str(tmp_path / "n.bin"), False, 100),
+        ],
+    }
+    monkeypatch.setattr(scanner, "_scandir", lambda path: _FakeIter(entries[path]))
+    called: list[str] = []
+
+    def spy_handle(path, st):
+        called.append(path)
+        return 4096
+
+    monkeypatch.setattr(scanner, "_allocated_size", spy_handle)
+    monkeypatch.setattr(scanner, "_cluster_bytes", lambda path: 4096)
+    result = scan_path(str(tmp_path), workers=2)
+    assert len(called) == 2  # 仅压缩/稀疏两个文件开句柄
+    assert result.stats.allocated_bytes == 4096 * 2 + 104  # 常规文件 align8(100)
+
+
+def test_normal_files_never_open_handle(tmp_path, monkeypatch):
+    """未压缩且非稀疏的文件一律零句柄（DR-004 修订版，性能前提）。"""
+    entries = {str(tmp_path): [_FakeEntry(str(tmp_path / "a.bin"), False, 5000)]}
+    monkeypatch.setattr(scanner, "_scandir", lambda path: _FakeIter(entries[path]))
+
+    def boom(path, st):
+        raise AssertionError("常规文件不得开句柄（DR-004 三段分流）")
+
+    monkeypatch.setattr(scanner, "_allocated_size", boom)
+    monkeypatch.setattr(scanner, "_cluster_bytes", lambda path: 4096)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.allocated_bytes == 8192  # 逻辑 ≥ 簇 → 簇对齐 ceil(5000/4096)
+
+
+def test_align8_pure():
+    """逻辑 < 簇 → align8（MFT 驻留实占口径，DR-004 修订版；探针 100→104）。"""
+    assert scanner._align8(0) == 0
+    assert scanner._align8(1) == 8
+    assert scanner._align8(100) == 104
+    assert scanner._align8(700) == 704
+    assert scanner._align8(712) == 712
+    assert scanner._align8(4096) == 4096
+
+
+def test_handle_failure_counts_occupied(tmp_path, monkeypatch):
+    """压缩/稀疏文件句柄实查失败 → X-1 计入 occupied（双口径一致，语义不变）。"""
+    entries = {str(tmp_path): [_FakeEntry(str(tmp_path / "c.bin"), False, 9, attrs=_COMPRESSED)]}
+    monkeypatch.setattr(scanner, "_scandir", lambda path: _FakeIter(entries[path]))
+    monkeypatch.setattr(scanner, "_allocated_size", lambda path, st: None)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.skips.occupied == 1
+    assert result.stats.files == 0
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="句柄实查仅 Windows")
+def test_resident_probe_align8_matches_handle(tmp_path):
+    """DR-004 修订版探针条款：常驻小文件 align8 与句柄实查逐文件一致。
+
+    样本 ≤600B，稳居本卷 MFT 驻留区间（探针实测驻留上限 ≈712B，
+    完整梯度表见 tools/probe_resident_allocation.py 与 T2-01 执行记录）。
+    """
+    for size in (0, 1, 100, 600):
+        probe = tmp_path / f"p{size}.bin"
+        probe.write_bytes(b"x" * size)
+        st = probe.stat()
+        assert scanner._align8(st.st_size) == scanner._allocated_size(str(probe), st)
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="句柄实查仅 Windows")
+def test_cluster_alignment_matches_handle_for_large_file(tmp_path):
+    """逻辑 ≥ 簇 → 簇对齐与句柄实查一致（真实 NTFS 文件）。"""
+    big = tmp_path / "big.bin"
+    big.write_bytes(b"x" * 5000)
+    st = big.stat()
+    cluster = scanner._cluster_bytes(str(big))
+    expected = ((st.st_size + cluster - 1) // cluster) * cluster
+    assert expected == scanner._allocated_size(str(big), st)
+
+
+def test_cluster_bytes_cached_and_fallback(monkeypatch):
+    """GetDiskFreeSpaceW 按盘符根查询并缓存；失败回退 4096。"""
+    monkeypatch.setattr(scanner, "_CLUSTER_CACHE", {})
+    calls: list[str] = []
+
+    def fake_query(root, sectors, bytes_per_sector, free, total):
+        calls.append(root)
+        sectors.value = 8
+        bytes_per_sector.value = 512
+        free.value = 100
+        total.value = 200
+        return 1
+
+    monkeypatch.setattr(scanner, "_get_disk_free_space_w", fake_query)
+    assert scanner._cluster_bytes(r"C:\x\y") == 8 * 512
+    assert scanner._cluster_bytes(r"C:\z") == 8 * 512
+    assert len(calls) == 1  # 同盘符缓存生效
+
+    monkeypatch.setattr(
+        scanner, "_get_disk_free_space_w", lambda *a: 0  # 查询失败
+    )
+    monkeypatch.setattr(scanner, "_CLUSTER_CACHE", {})
+    assert scanner._cluster_bytes(r"D:\x") == 4096  # 回退默认簇
