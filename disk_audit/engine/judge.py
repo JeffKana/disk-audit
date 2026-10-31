@@ -279,8 +279,8 @@ def judge_unit(
         return Verdict(
             path=unit.path, confidence="受保护", verdict_source="硬保护",
             evidence_chain=(
-                EvidenceItem("硬保护规则", CONFIDENCE_WORDING["受保护"]),
-                EvidenceItem("硬保护规则", f"{protection.rule_id}：{protection.reason}"),
+                EvidenceItem("硬保护", CONFIDENCE_WORDING["受保护"]),
+                EvidenceItem("硬保护", f"{protection.rule_id}：{protection.reason}"),
             ),
             suggested_action="A5", category="系统组件",
         )
@@ -321,9 +321,9 @@ def judge_unit(
             Verdict(
                 path="", confidence="高", verdict_source="知识库",
                 evidence_chain=(
-                    EvidenceItem("知识库·正则族", REGENERABLE_WORDING),
+                    EvidenceItem("知识库", REGENERABLE_WORDING),
                     EvidenceItem(
-                        "知识库·正则族",
+                        "知识库",
                         "updater-suffix（*-updater）：Electron electron-updater 下载的"
                         "安装包缓存",
                     ),

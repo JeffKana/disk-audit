@@ -148,7 +148,20 @@
 - **实现约束**：用户中止（Ctrl+C/停止信号）与异常退出统一走"不完整"出口：已采集单元保留、汇总（totals）不输出或显式标记无效；不产生半成品结论；与 E-4"未扫描条目数"字段衔接。
 - **验收标准**：① 模拟中止（注入中断/超时）→ 输出含"不完整"标记且无有效 totals；② 正常完成路径不受影响（回归）；③ 部分结果可被 judge 消费并同样标记不完整；④ 测试覆盖两种触发（用户中止/异常）。
 - **依赖**：T2-01（同改 scanner/CLI，建议在其后栈式）。
-- **执行记录**：
+- **执行记录**（2026-10-31，分支 `feature/C7-中止与部分结果`，基于 D6 分支栈式切出，合入顺序 D1→C2→E3→D2D3→D6→C7）：
+
+  **做了什么**：X-2 中止安全口径落地。`scanner.scan_path` 新增 `abort_check` 周期轮询参数（每个目录展开前调用一次，含并行段叶级循环）；中止信号（abort_check 返回 True）、Ctrl+C（KeyboardInterrupt）与未预期异常**统一走"不完整"出口**——不抛出，返回已采集部分（ScanResult 新增 `incomplete: bool`，scan JSON 输出 `incomplete` 键；并行段增量已按子树合并，已采集单元保留）。judge 侧：`judge_scan_result` 消费 incomplete 扫描结果并在报告输出 `incomplete: true`（正常报告无该键，草案校验不受影响）。关键文件：`disk_audit/scanner.py`、`disk_audit/engine/report.py`、`tests/test_scanner.py`（+5 例）、`tests/test_engine_judge.py`（+2 例）。
+
+  **实现决策及依据**：
+  1. totals 采"显式标记无效"而非"不输出"：X-2 给出的两个选项中，保留部分 totals + `incomplete` 标记信息量更大且向后兼容（消费方按标记判无效）；scan JSON 与报告同口径。
+  2. 异常出口吞掉未预期异常本身（X-2"统一不完整出口"字面执行），细粒度失败仍由 X-1 跳过统计披露；具体异常类型不在部分结果中携带（记入未尽事项）。
+  3. E-4"未扫描条目数"衔接：中止时剩余条目数不可知，以 `incomplete` 标记 + 已知 `skipped` 统计披露，不虚构计数。
+  4. 报告 `incomplete` 仅在不完整时输出：定稿前草案 schema `additionalProperties:false` 不容新字段，正常报告保持草案合法；T2-07 定稿收录该可选字段。
+  5. CLI 中止后退出码 0、标记在带内（部分结果属正常产物而非错误）。
+
+  **未尽事项/已知限制**：① 未预期异常的具体信息当前被吞（仅 incomplete 标记）——建议 T2-07/后续卡评估是否在 scan JSON 增 `errors` 披露；② UI 中止按钮接线在 G2（S3），本卡交付引擎侧机制（abort_check 供 UI/CLI 注入）。
+
+  **自测输出摘要**：pytest 197 passed（新增 7 例：正常回归 1、abort_check 中止 1、KeyboardInterrupt 1、异常注入 1、CLI 标记 1、judge 消费 2）；`--selftest` 6/6，RC=0。
 
 ---
 
@@ -190,7 +203,21 @@
 - **实现约束**：版本语义写明升级规则（结构破坏性变更 → major+1，并联动 I3"旧记录不可比"提示）；证据链 `source` 收紧为枚举（与 evidence.v1 六源对齐）；保持 Q3 双禁止。
 - **验收标准**：① 版本语义与枚举收紧后样例同步更新、非法样例被拒；② T2-02 引擎真实输出（本机 AppData 全量）通过定稿 schema 校验；③ 对照表：schema 字段 ↔ E-2/5.1/5.2/5.3 逐项；④ CI 绿。
 - **依赖**：T2-02 产出后对齐（定稿合入前完成对齐校验）。
-- **执行记录**：
+- **执行记录**（2026-10-31，分支 `feature/F1-schema定稿`，基于 C7 分支栈式切出，合入顺序 D1→C2→E3→D2D3→D6→C7→F1）：
+
+  **做了什么**：报告 schema 从草案转定稿。`docs/schemas/report-v1.schema.json`：标题去"草案"；`schema_version` 写明版本语义（结构破坏性变更 → major+1 并联动"旧记录不可比"（I3），非破坏可选新增 → minor+1，禁止原地改义；定稿锁 1.0）；证据链 `source` 收紧为九值枚举（evidence.v1 六源对齐：注册表卸载项/Appx/进程/服务/自启动/文件枚举 + 架构③判定层三源：硬保护/知识库/启发式）；新增可选 `incomplete` boolean（X-2/C7 部分结果标记，非 required）；Q3 双禁止保持（字段集锁定 + 负例测试）。样例同步（source 归枚举、陈旧口径 540→180 对齐 5.1）；引擎两处 source 改名对齐（"硬保护规则"→"硬保护"、"知识库·正则族"→"知识库"），六快照同步；新增字段对照表 `docs/schemas/report-v1-字段对照表.md`（schema 字段 ↔ E-2/5.1/5.2/5.3/9.2/X-1/E-4/X-2/Q3/Q7 逐项）。关键文件：schema/example/对照表、`disk_audit/engine/judge.py`、`tests/test_report_schema.py`（+6 例）、`tests/test_engine_judge.py`（快照+incomplete 断言翻转）。
+
+  **实现决策及依据**：
+  1. source 枚举取九值而非仅六源：判定链必须携带硬保护/知识库/启发式判定层依据（架构③），仅六源将使 T2-02 引擎输出非法（违背验收②）；六源命名与 evidence.v1 字段一一对应（映射表在 schema description 与对照表文档）。
+  2. `incomplete` 设为可选 boolean（非 required）：正常报告不含该键（T2-05 口径），草案→定稿非破坏变更，版本保持 1.0（Q7 minor+1 先例）。
+  3. 定稿非结构破坏 → `schema_version` 保持 "1.0"（草案与定稿间无已发布消费方）。
+  4. 样例"目录陈旧（>540 天）"改 180：对齐 5.1 与 T2-03 口径（原样例文字为原型遗留）。
+
+  **未尽事项/已知限制**：5.2"下载缓存"无独立知识库类别（对照表已留注意项，E4 扩充时一并评估）；引擎运行时证据（进程源）受 `_ps.py` 解码问题影响（T2-02 执行记录未尽事项 1，非本卡范围）。
+
+  **自测输出摘要**：
+  - pytest 203 passed（新增 6 例：去草案化/source 枚举/非法 source 拒绝/incomplete 可选/incomplete 类型负例/版本语义）；`--selftest` 6/6，RC=0。
+  - 验收②实测（本机 AppData 全量，解释器 `D:\develop\environment\python\python.exe`）：scan+judge 双目录 RC=0，Local 341 单元 + Roaming 138 单元的真实引擎输出通过定稿 schema 校验（违规 0）；证据链 source 全部落在九值枚举内（Local 分布：知识库 250/启发式 62/Appx 151/硬保护 2/注册表卸载项 1）；全文无"可回收"、正常报告无 incomplete 键。503 条知识库（E3）使 KB 命中由 T2-02 时的 154 升至 250。
 
 ---
 

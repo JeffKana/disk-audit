@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/JeffKana/disk-audit/docs/schemas/report-v1.schema.json",
-  "title": "disk-audit 体检报告 JSON Schema v1 草案",
-  "description": "依据：方案 E-2（每条候选 7 字段：路径/逻辑大小/占用空间/置信度/判定来源/证据链/建议动作）、5.1（置信度四档）、5.2（可再生两档，分别列示小计）、5.3（动作 A1~A5 固定枚举）、Q3（禁用'可回收'字样与合并'可释放 X GB'总量）、Q7（schema_version 语义，版本不匹配提示'旧记录不可比'）；X-1/C6（未扫描/跳过统计披露）。待办 F1（任务卡 T-09，S1 草案、S2 定稿）。供 S2 判定引擎与 S3 渲染消费。",
+  "title": "disk-audit 体检报告 JSON Schema v1（定稿）",
+  "description": "依据：方案 E-2（每条候选 7 字段：路径/逻辑大小/占用空间/置信度/判定来源/证据链/建议动作）、5.1（置信度四档）、5.2（可再生两档，分别列示小计）、5.3（动作 A1~A5 固定枚举）、Q3（禁用'可回收'字样与合并'可释放 X GB'总量）、Q7（schema_version 语义）、9.2（判定单元：顶层目录及下钻子项）、X-1/E-4（未扫描/跳过统计披露）、X-2/C7（部分结果 incomplete 标记）。待办 F1（任务卡 T2-07，S2 定稿；草案见 Sprint1 验收报告）。供判定引擎（D1）与渲染（F2，S3）消费；字段↔方案条目逐项对照见 docs/schemas/report-v1-字段对照表.md。",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -15,7 +15,7 @@
   "properties": {
     "schema_version": {
       "const": "1.0",
-      "description": "Q7：只存候选条目+聚合统计；版本不匹配提示'旧记录不可比'，禁止原地改义"
+      "description": "Q7 版本语义：schema_version = major.minor。结构破坏性变更（删除/改名/改语义字段、收紧枚举致旧记录非法）→ major+1（如 1.0→2.0），消费方对不匹配版本提示'旧记录不可比'（联动 I3），不崩溃；可选字段新增等非破坏变更 → minor+1；禁止原地改义。定稿 1.0 = 候选七字段（E-2）+ totals 五字段 + 可选 incomplete（X-2）。"
     },
     "generated_at": {
       "type": "string",
@@ -51,12 +51,12 @@
         "regenerable_subtotal": {
           "type": "integer",
           "minimum": 0,
-          "description": "可再生小计（5.2 第一档；两档分别列示，禁止合并'可释放'总量——Q3）"
+          "description": "可再生小计（5.2 第一档：'可再生：应用会自行重建'；两档分别列示，禁止合并'可释放'总量——Q3）"
         },
         "regenerable_confirm_subtotal": {
           "type": "integer",
           "minimum": 0,
-          "description": "可再生但需确认小计（5.2 第二档：开发缓存/下载缓存等）"
+          "description": "可再生但需确认小计（5.2 第二档：'可再生但需确认：清理后需重新下载，可能影响离线构建'；开发缓存等）"
         },
         "skipped_entries": {
           "type": "integer",
@@ -68,6 +68,10 @@
     "candidates": {
       "type": "array",
       "items": {"$ref": "#/$defs/candidate"}
+    },
+    "incomplete": {
+      "type": "boolean",
+      "description": "X-2/C7：仅中止/异常产生的部分报告携带 true——此时 totals 与 candidates 为已采集部分，totals 判无效，不得作为完整体检结论使用；正常报告不含本键。"
     }
   },
   "$defs": {
@@ -87,7 +91,7 @@
         "path": {
           "type": "string",
           "minLength": 1,
-          "description": "候选路径"
+          "description": "候选路径（9.2 判定单元）"
         },
         "logical_bytes": {
           "type": "integer",
@@ -101,7 +105,7 @@
         },
         "confidence": {
           "enum": ["高", "中", "低", "受保护"],
-          "description": "置信度四档（5.1）：高/中/低/受保护；受保护项不提供任何'下一步'处理入口"
+          "description": "置信度四档（5.1）：高/中/低/受保护；触发条件与输出措辞见方案 5.1 表格及 disk_audit/engine/texts.py（逐字对照）；受保护项不提供任何'下一步'处理入口"
         },
         "verdict_source": {
           "enum": ["硬保护", "知识库", "注册表", "进程服务", "Appx", "启发式"],
@@ -116,9 +120,11 @@
             "required": ["source", "content"],
             "properties": {
               "source": {
-                "type": "string",
-                "minLength": 1,
-                "description": "证据来源（如 硬保护规则/知识库/注册表卸载项/进程/服务/Appx/启发式）"
+                "enum": [
+                  "硬保护", "知识库", "注册表卸载项", "进程", "服务",
+                  "自启动", "Appx", "启发式", "文件枚举"
+                ],
+                "description": "证据来源枚举（与 evidence.v1 六源对齐：注册表卸载项↔uninstall、Appx↔appx、进程↔processes、服务↔services、自启动↔autostart、文件枚举↔文件枚举器；另有架构③判定层三源：硬保护/知识库/启发式）"
               },
               "content": {
                 "type": "string",
@@ -126,7 +132,7 @@
               }
             }
           },
-          "description": "证据链（E-2），报告内 A4'查看证据链'的展示数据"
+          "description": "证据链（E-2），报告内 A4'查看证据链'的展示数据；残留类判定首条为 5.1 输出措辞"
         },
         "suggested_action": {
           "enum": ["A1", "A2", "A3", "A4", "A5"],
@@ -136,3 +142,4 @@
     }
   }
 }
+

@@ -365,3 +365,78 @@ def test_cluster_bytes_cached_and_fallback(monkeypatch):
     )
     monkeypatch.setattr(scanner, "_CLUSTER_CACHE", {})
     assert scanner._cluster_bytes(r"D:\x") == 4096  # 回退默认簇
+
+
+# ---------- C7 中止与部分结果（T2-05，X-2：统一"不完整"出口） ----------
+
+
+def test_normal_scan_not_incomplete(tmp_path):
+    """正常完成路径：incomplete=False，回归保障（验收②）。"""
+    _write(tmp_path / "a.bin", 10)
+    result = scan_path(str(tmp_path))
+    assert result.incomplete is False
+    assert result.to_json_dict()["incomplete"] is False
+
+
+def test_abort_check_marks_incomplete_and_keeps_partial(tmp_path):
+    """用户中止（停止信号）：部分结果保留 + incomplete 标记（验收①）。"""
+    for i in range(6):
+        _write(tmp_path / f"d{i}" / "f.bin", 10)
+    calls = {"n": 0}
+
+    def abort_check() -> bool:  # 首个目录展开后即中止
+        calls["n"] += 1
+        return calls["n"] > 1
+
+    result = scan_path(str(tmp_path), workers=2, abort_check=abort_check)
+    assert result.incomplete is True
+    assert result.stats.files < 6  # 部分结果：未扫完即停
+    payload = result.to_json_dict()
+    assert payload["incomplete"] is True
+
+
+def test_keyboard_interrupt_marks_incomplete(tmp_path):
+    """Ctrl+C（KeyboardInterrupt）同样走"不完整"出口（验收④触发一）。"""
+    _write(tmp_path / "d0" / "f.bin", 10)
+
+    def abort_check() -> bool:
+        raise KeyboardInterrupt
+
+    result = scan_path(str(tmp_path), workers=1, abort_check=abort_check)
+    assert result.incomplete is True
+    assert result.stats.files == 0  # 首个检查点即中止
+
+
+def test_unexpected_exception_marks_incomplete(tmp_path, monkeypatch):
+    """扫描中未预期异常：统一"不完整"出口，部分结果保留（验收④触发二）。"""
+    _write(tmp_path / "d0" / "f.bin", 10)
+    _write(tmp_path / "d1" / "f.bin", 10)
+    real_scandir = scanner._scandir
+    state = {"n": 0}
+
+    def fake_scandir(path):
+        state["n"] += 1
+        if state["n"] > 2:  # 前两次正常（root 展开与首个子目录），之后炸
+            raise RuntimeError("注入的未预期异常")
+        return real_scandir(path)
+
+    monkeypatch.setattr(scanner, "_scandir", fake_scandir)
+    result = scan_path(str(tmp_path), workers=1)
+    assert result.incomplete is True
+    assert result.stats.files >= 1  # 异常前已采集的文件保留
+
+
+def test_cli_scan_outputs_incomplete_marker(tmp_path, monkeypatch, capsys):
+    """CLI：中止后的 scan 输出含"不完整"标记且退出码 0（标记在带内）。"""
+    _write(tmp_path / "a.bin", 5)
+    real_scan_path = scanner.scan_path
+
+    def aborting_scan(path, workers=8):
+        result = real_scan_path(path, workers=workers)
+        result.incomplete = True
+        return result
+
+    monkeypatch.setattr("disk_audit.__main__.scan_path", aborting_scan)
+    assert cli_main(["scan", str(tmp_path)]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["incomplete"] is True
