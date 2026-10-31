@@ -1,9 +1,8 @@
 """T-09（待办 F1）报告 JSON Schema v1 草案单元测试。
 
-测试内实现一个支持 $defs/$ref 的 JSON Schema 子集校验器（开发期专用，
-不进运行时、不引第三方包）。覆盖验收①（合法完整样例，含受保护项与低置信项）、
+覆盖验收①（合法完整样例，含受保护项与低置信项）、
 ②（含"可回收"字段 / 缺 schema_version 的非法样例被拒绝）、Q3/Q7 负例与
-枚举完整性。
+枚举完整性。校验器实现抽至 tests/_mini_schema.py 共用（T2-02 判定引擎复用）。
 """
 from __future__ import annotations
 
@@ -12,86 +11,13 @@ from pathlib import Path
 
 import pytest
 
+from tests._mini_schema import mini_validate
+
 _REPO = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = _REPO / "docs" / "schemas" / "report-v1.schema.json"
 EXAMPLE_PATH = _REPO / "docs" / "schemas" / "report-v1.example.json"
 SCHEMA = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
 EXAMPLE = json.loads(EXAMPLE_PATH.read_text(encoding="utf-8"))
-
-
-# ---------- JSON Schema 子集校验器（开发期专用，支持本 schema 用到的关键字） ----------
-
-
-def _type_ok(instance, expected: str) -> bool:
-    if expected == "object":
-        return isinstance(instance, dict)
-    if expected == "array":
-        return isinstance(instance, list)
-    if expected == "string":
-        return isinstance(instance, str)
-    if expected == "integer":
-        return isinstance(instance, int) and not isinstance(instance, bool)
-    if expected == "number":
-        return isinstance(instance, (int, float)) and not isinstance(instance, bool)
-    if expected == "boolean":
-        return isinstance(instance, bool)
-    if expected == "null":
-        return instance is None
-    return False
-
-
-def _resolve_ref(schema: dict, ref: str) -> dict:
-    assert ref.startswith("#/"), f"仅支持文档内引用：{ref}"
-    node = schema
-    for part in ref[2:].split("/"):
-        node = node[part]
-    return node
-
-
-def mini_validate(instance, schema: dict, root: dict | None = None, path: str = "$") -> list[str]:
-    root = root or schema
-    errors: list[str] = []
-    if "$ref" in schema:
-        return mini_validate(instance, _resolve_ref(root, schema["$ref"]), root, path)
-    expected_types = schema.get("type")
-    if expected_types is not None:
-        types = expected_types if isinstance(expected_types, list) else [expected_types]
-        if not any(_type_ok(instance, t) for t in types):
-            errors.append(f"{path}：类型应为 {'/'.join(types)}")
-            return errors
-    if "const" in schema and instance != schema["const"]:
-        errors.append(f"{path}：{instance!r} ≠ 常量 {schema['const']!r}")
-    if "enum" in schema and instance not in schema["enum"]:
-        errors.append(f"{path}：{instance!r} 不在枚举 {schema['enum']}")
-    if isinstance(instance, str) and "minLength" in schema and len(instance) < schema["minLength"]:
-        errors.append(f"{path}：长度 < {schema['minLength']}")
-    if (
-        isinstance(instance, int)
-        and not isinstance(instance, bool)
-        and "minimum" in schema
-        and instance < schema["minimum"]
-    ):
-        errors.append(f"{path}：{instance} < 最小值 {schema['minimum']}")
-    if isinstance(instance, dict):
-        for key in schema.get("required", []):
-            if key not in instance:
-                errors.append(f"{path}：缺少必填字段 {key}")
-        properties = schema.get("properties", {})
-        if schema.get("additionalProperties") is False:
-            for key in instance:
-                if key not in properties:
-                    errors.append(f"{path}：出现未定义字段 {key}")
-        for key, value in instance.items():
-            if key in properties:
-                errors.extend(mini_validate(value, properties[key], root, f"{path}.{key}"))
-    if isinstance(instance, list):
-        if "minItems" in schema and len(instance) < schema["minItems"]:
-            errors.append(f"{path}：数组元素数 < {schema['minItems']}")
-        items = schema.get("items")
-        if isinstance(items, dict):
-            for i, item in enumerate(instance):
-                errors.extend(mini_validate(item, items, root, f"{path}[{i}]"))
-    return errors
 
 
 # ---------- 验收①：合法完整样例 ----------
