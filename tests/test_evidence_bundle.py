@@ -91,6 +91,26 @@ def test_collect_processes_degraded():
     assert "不可用" in result.reason
 
 
+def test_collect_processes_empty_stdout_disclosed():
+    """C5 新问题披露口径：rc=0 但空输出按不可用披露，不再静默 available=True + 0 条。"""
+    result = collect_processes(runner=_ok_runner(""))
+    assert result.available is False
+    assert result.paths == []
+    assert "空输出" in result.reason
+
+
+def test_collect_processes_gbk_bytes_no_crash():
+    """C5 新问题回归：中文路径 GBK 字节（前导句失效场景）不再崩读取线程、不静默为空。"""
+    stdout = "C:\\工具\\微信.exe\nC:\\a.exe\n".encode("gbk")
+
+    def runner(argv, **kwargs):
+        return types.SimpleNamespace(returncode=0, stdout=stdout, stderr=b"")
+
+    result = collect_processes(runner=runner)
+    assert result.available is True
+    assert len(result.paths) == 2  # 静默为空即回归
+
+
 def test_collect_autostart_registry_and_folders(tmp_path):
     fake = FakeRunWinreg()
     run_key = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
