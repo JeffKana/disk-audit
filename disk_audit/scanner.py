@@ -281,6 +281,7 @@ class ScanResult:
     seconds: float
     stats: ScanStats
     units: list[UnitStats] = field(default_factory=list)
+    incomplete: bool = False  # X-2：中止/异常统一"不完整"出口，totals 由该标记判无效
 
     def to_json_dict(self) -> dict:
         return {
@@ -303,7 +304,17 @@ class ScanResult:
                 "total": self.stats.skips.total,
             },
             "units": [u.to_json_dict() for u in self.units],
+            "incomplete": self.incomplete,
         }
+
+
+class _ScanAborted(Exception):
+    """内部中止信号：abort_check 触发（X-2 统一"不完整"出口，不对外抛出）。"""
+
+
+def _check_abort(abort_check) -> None:
+    if abort_check is not None and abort_check():
+        raise _ScanAborted
 
 
 def _classify_oserror(exc: OSError) -> str:
@@ -465,8 +476,10 @@ def _expand_dir(
     units: dict[str, UnitStats],
     sink: dict[str, UnitStats],
     parent_unit_path: str | None,
+    abort_check=None,
 ) -> None:
     """BFS 展开一个目录：目录计数、其中文件即层统计（W0 缺陷①修复）、子目录收集。"""
+    _check_abort(abort_check)
     stats.dirs += 1
     unit_path = directory if directory in units else parent_unit_path
     unit = _sink_get(sink, unit_path)
@@ -486,6 +499,7 @@ def _build_frontier(
     max_depth: int,
     stats: ScanStats,
     units: dict[str, UnitStats],
+    abort_check=None,
 ) -> tuple[list[tuple[str, str | None]], int]:
     """BFS 切出前沿目录集合；返回（前沿目录与所属单元路径列表, 深度）。
 
@@ -500,7 +514,7 @@ def _build_frontier(
     while depth < max_depth:
         next_level: list[tuple[str, str | None]] = []
         for directory, parent_unit_path in level:
-            _expand_dir(directory, next_level, stats, units, units, parent_unit_path)
+            _expand_dir(directory, next_level, stats, units, units, parent_unit_path, abort_check)
         if not next_level:
             frontier = []  # 该层已全部展开且无子目录：无剩余工作
             break
@@ -513,7 +527,9 @@ def _build_frontier(
 
 
 def _scan_tree(
-    item: tuple[str, str | None], units: dict[str, UnitStats]
+    item: tuple[str, str | None],
+    units: dict[str, UnitStats],
+    abort_check=None,
 ) -> tuple[ScanStats, dict[str, UnitStats]]:
     """叶级单线程递归统计（栈式迭代避免递归深度问题）；每个前沿子树独立聚合。
 
@@ -525,6 +541,7 @@ def _scan_tree(
     local_units: dict[str, UnitStats] = {}
     stack = [(root, unit_hint)]
     while stack:
+        _check_abort(abort_check)
         current, parent_unit_path = stack.pop()
         stats.dirs += 1
         unit_path = current if current in units else parent_unit_path
@@ -542,11 +559,16 @@ def _scan_tree(
     return stats, local_units
 
 
-def scan_path(root: str, workers: int = _DEFAULT_WORKERS) -> ScanResult:
-    """扫描一个目录树，返回双口径汇总、跳过统计与判定单元聚合。
+def scan_path(
+    root: str, workers: int = _DEFAULT_WORKERS, abort_check=None
+) -> ScanResult:
+    """扫描一个目录树，返回双口径汇总、跳过统计、判定单元聚合与完整性标记。
 
     线程模型（W0 实测定稿）：浅层 BFS 切分 + 每个前沿目录单线程递归，
     ThreadPoolExecutor.map 汇聚，全程无嵌套 submit。
+    中止安全（X-2/C7）：abort_check 周期性轮询（每个目录展开前调用一次），
+    返回 True 或抛 KeyboardInterrupt/任意异常 → 统一"不完整"出口：返回已采集
+    部分并置 incomplete=True（totals 由该标记判无效），不抛出、不产生半成品结论。
     """
     if workers < 1:
         raise ValueError("workers 必须 ≥ 1")
@@ -557,17 +579,28 @@ def scan_path(root: str, workers: int = _DEFAULT_WORKERS) -> ScanResult:
     start = time.perf_counter()
     units = _enumerate_units(root_abs)
     stats = ScanStats()
-    frontier, depth = _build_frontier(
-        root_abs, min_parts=workers * 3, max_depth=_FRONTIER_MAX_DEPTH, stats=stats, units=units
-    )
-    if frontier:
-        with ThreadPoolExecutor(max_workers=workers) as pool:
-            for part_stats, part_units in pool.map(
-                partial(_scan_tree, units=units), frontier
-            ):
-                stats.merge(part_stats)
-                for unit_path, delta in part_units.items():
-                    units[unit_path].merge(delta)
+    incomplete = False
+    frontier: list[tuple[str, str | None]] = []
+    depth = 0
+    try:
+        frontier, depth = _build_frontier(
+            root_abs,
+            min_parts=workers * 3,
+            max_depth=_FRONTIER_MAX_DEPTH,
+            stats=stats,
+            units=units,
+            abort_check=abort_check,
+        )
+        if frontier:
+            with ThreadPoolExecutor(max_workers=workers) as pool:
+                for part_stats, part_units in pool.map(
+                    partial(_scan_tree, units=units, abort_check=abort_check), frontier
+                ):
+                    stats.merge(part_stats)
+                    for unit_path, delta in part_units.items():
+                        units[unit_path].merge(delta)
+    except Exception:  # X-2：用户中止/异常统一"不完整"出口（细粒度失败仍由 X-1 披露）
+        incomplete = True
     return ScanResult(
         root=root_abs,
         workers=workers,
@@ -576,4 +609,5 @@ def scan_path(root: str, workers: int = _DEFAULT_WORKERS) -> ScanResult:
         seconds=time.perf_counter() - start,
         stats=stats,
         units=sorted(units.values(), key=lambda u: u.path),
+        incomplete=incomplete,
     )
