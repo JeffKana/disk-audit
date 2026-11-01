@@ -1,9 +1,12 @@
-"""DR-004 修订版探针测定脚本：各逻辑大小文件的占用空间（句柄实查 vs 三段推算）。
+"""DR-004 探针测定脚本：各逻辑大小文件的占用空间（句柄实查 vs align8/簇对齐推算）。
 
 依据：DR-004 2026-10-25 修订节探针条款（"探针（不同簇大小/NTFS 卷上 align8 vs
-句柄实查）沉淀为测试或 tools/ 测定脚本，防止环境差异回归"）。
-用途：在目标卷上测定 MFT 驻留上限与三段分流各段的表现，供容量偏差排查与
-DR-004 再裁决引用。只读 + 临时目录（用后即删），零第三方依赖。
+句柄实查）沉淀为测试或 tools/ 测定脚本，防止环境差异回归"）；2026-10-31 裁决节
+按其证据落地四段分流（≤600B align8 / 601B~<簇 句柄实查 / ≥簇 簇对齐）。
+用途：在目标卷上测定 MFT 驻留表现，供 DR-004 重开条件核对——**新卷部署前必跑**：
+若 ≤600B 出现 align8 与句柄实查不一致，或 600B 以上多次运行稳定一致，即偏离裁决
+前提（600B 稳定驻留上限），应停手上报重开 DR-004。
+只读 + 临时目录（用后即删），零第三方依赖。
 
 用法：python tools/probe_resident_allocation.py [样本目录]
 退出码：0=完成。
@@ -31,13 +34,16 @@ class _Stat:
 
 
 def main() -> int:
+    for stream in (sys.stdout, sys.stderr):  # 中文输出守卫（rules-map 编码模式）
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
     root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(tempfile.mkdtemp(prefix="diskaudit_probe_"))
     created = not any(root.iterdir()) if root.exists() else False
     root.mkdir(parents=True, exist_ok=True)
     cluster = _cluster_bytes(str(root))
     print(f"样本目录：{root}")
     print(f"簇大小：{cluster} B")
-    print(f"{'逻辑':>8} {'句柄实查':>10} {'三段推算':>10} {'差':>8}")
+    print(f"{'逻辑':>8} {'句柄实查':>10} {'推算':>10} {'差':>8}")
     try:
         for size in SIZES:
             probe = root / f"probe_{size}.bin"
@@ -49,6 +55,9 @@ def main() -> int:
                 else ((st.st_size + cluster - 1) // cluster) * cluster
             )
             print(f"{size:>8} {handle:>10} {estimated:>10} {handle - estimated:>8}")
+        print("注：推算列按 align8（<簇）/簇对齐（≥簇）计算，仅作驻留指示器——")
+        print("与句柄实查一致即常驻。实现口径见 DR-004 裁决节四段分流")
+        print("（601B~<簇 已改句柄实查，不依赖本列）；重开条件见本脚本 docstring。")
     finally:
         if created or "tempfile" in str(root):
             shutil.rmtree(root, ignore_errors=True)
