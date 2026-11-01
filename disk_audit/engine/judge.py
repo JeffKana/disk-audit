@@ -214,7 +214,10 @@ def _judge_kb_hit(
             chain += [
                 EvidenceItem("知识库", f"知识库标注已停止：{entry.product}"),
                 EvidenceItem("注册表卸载项", "注册表无卸载记录"),
-                EvidenceItem("进程服务", "无匹配进程/服务/自启动"),
+                # 来源为判定层"知识库"（schema 九值枚举；08 报告 §3 裁决 1）：
+                # "无匹配进程/服务/自启动"是知识库生命周期残留打分的缺席核验，
+                # 非进程/服务采集层产出的证据，不得标"进程服务"
+                EvidenceItem("知识库", "无匹配进程/服务/自启动"),
             ]
             if stale:
                 chain.append(EvidenceItem(
