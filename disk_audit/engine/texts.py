@@ -152,6 +152,24 @@ LAUNCHER_TEXTS: dict[str, str] = {
 }
 
 # ======================================================================
+# T3-07 证据来源枚举与渲染拒绝文案（08 报告 §3 裁决 1；P1 热修）。
+# 本区块 append-only：Sprint 3 多分支并行修改本文件，新增文案一律向文末追加，
+# 严禁改动上方既有内容。
+# ======================================================================
+# 证据来源九值枚举：逐字取自 docs/schemas/report-v1.schema.json 定稿
+# $defs.candidate.properties.evidence_chain.items.properties.source.enum
+# （六源 + 判定层三源，见 report-v1-字段对照表）；与 schema 的一致性由
+# tests/test_engine_render.py::test_evidence_source_enum_matches_schema 守卫。
+EVIDENCE_SOURCE_ENUM: tuple[str, ...] = (
+    "硬保护", "知识库", "注册表卸载项", "进程", "服务", "自启动",
+    "Appx", "启发式", "文件枚举",
+)
+# 渲染输入校验：证据链 source 不在九值枚举 → 拒绝渲染并披露
+# （拒绝并披露优于静默渲染；含非法值与期望枚举提示）
+RENDER_ERR_BAD_EVIDENCE_SOURCE = (
+    "候选条目 #{index} 证据链第 {position} 条证据来源非法：{source}"
+    "（合法来源为：{expected}）"
+)
 # G3 结果入口文案（T3-06；方案四节架构⑤"静态 HTML · 默认浏览器打开"、M2 闸①
 # "双击到看到报告 ≤3 步"）。本区块 append-only：新增文案一律向文末追加，
 # 严禁改动上方既有键值。
@@ -183,3 +201,5 @@ G2_TEXTS: dict[str, str] = {
         "未生成报告文件；可选择扫描范围后重新发起体检。"
     ),
 }
+
+

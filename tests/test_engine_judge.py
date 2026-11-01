@@ -12,6 +12,7 @@ from __future__ import annotations
 import inspect
 import json
 import os
+import time
 
 import pytest
 
@@ -253,6 +254,29 @@ def test_high_confidence_requires_all_five_evidences():
     ]
 
 
+def test_stopped_residual_chain_sources_in_schema_enum():
+    """T3-07（08 报告 §3 裁决 1）：KB"已停止"高档残留分支的证据链 source
+    必须全部落在定稿 schema 九值枚举内——该分支曾产出非法"进程服务"，
+    端到端夹具恰好未触达致 CI 未拦。判定源于知识库生命周期标注 → 证据
+    来源为判定层"知识库"（与 schema 枚举字符串及其他分支写法精确一致）。"""
+    v = judge_unit(_unit("oldapp", max_mtime=STALE), _bundle(), KB, now_ts=NOW_TS)
+    assert v.verdict_source == "知识库"
+    allowed_sources = set(
+        SCHEMA["$defs"]["candidate"]["properties"]["evidence_chain"]["items"]
+        ["properties"]["source"]["enum"]
+    )
+    allowed_verdict_sources = set(
+        SCHEMA["$defs"]["candidate"]["properties"]["verdict_source"]["enum"]
+    )
+    assert v.verdict_source in allowed_verdict_sources
+    for item in v.evidence_chain:
+        assert item.source in allowed_sources, f"非法证据来源：{item.source!r}"
+    # 逐条快照：缺席核验条目的来源已从非法"进程服务"修正为"知识库"
+    assert [e.source for e in v.evidence_chain] == [
+        "知识库", "知识库", "注册表卸载项", "知识库", "启发式",
+    ]
+
+
 @pytest.mark.parametrize("age_days,expected_confidence", [
     (180, "中"),    # 恰好 180 天：不满足"陈旧 >180 天" → 降中
     (181, "高"),    # 超过 180 天一天 → 五证据齐 → 高
@@ -374,6 +398,14 @@ def _scan_fixture(tmp_path):
     (tmp_path / "Microsoft" / "Protect").mkdir()
     (tmp_path / "zzz-unknown-tail").mkdir()
     (tmp_path / "zzz-unknown-tail" / "a.exe").write_bytes(b"x" * 10)
+    # T3-07（08 报告 §3 裁决 1）：KB"已停止"高档残留分支（5.1 五证据齐：
+    # oldapp 命中 KB 生命周期"已停止" + 无注册表/运行证据 + 目录陈旧 >180 天）。
+    # 陈旧度由 max_mtime 驱动（含单元目录自身），目录与文件一并回拨。
+    stale_ts = time.time() - 400 * 86400
+    (tmp_path / "oldapp").mkdir()
+    (tmp_path / "oldapp" / "main.exe").write_bytes(b"x" * 500)
+    os.utime(tmp_path / "oldapp", (stale_ts, stale_ts))
+    os.utime(tmp_path / "oldapp" / "main.exe", (stale_ts, stale_ts))
     result = scan_path(str(tmp_path))
     return result.to_json_dict()
 
@@ -389,6 +421,21 @@ def test_judge_scan_result_builds_draft_valid_report(tmp_path):
     assert report["totals"]["skipped_entries"] == 2
     confidences = {c["confidence"] for c in report["candidates"]}
     assert {"受保护", "高", "低"} <= confidences
+
+
+def test_judge_report_stopped_branch_passes_schema(tmp_path):
+    """T3-07（08 报告 §3 裁决 1）：KB"已停止"高档残留分支的真实 judge 输出
+    （dict）必须通过定稿 schema 校验——端到端夹具此前恰好未触达该分支，
+    真实扫描命中即产出 schema 非法报告。"""
+    scan = _scan_fixture(tmp_path)
+    report = judge_scan_result(scan, bundle=_bundle(), kb=KB)
+    assert mini_validate(report, SCHEMA) == []
+    stopped = next(
+        c for c in report["candidates"] if c["path"].endswith("oldapp")
+    )
+    assert stopped["verdict_source"] == "知识库"
+    assert stopped["confidence"] == "高"
+    assert stopped["suggested_action"] == "A2"
 
 
 def test_regenerable_two_buckets_separate(tmp_path):

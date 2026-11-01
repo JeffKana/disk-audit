@@ -66,6 +66,23 @@
 
 **负责人动作**：T2-09 子项③（VM 容量偏差复测）已随 #32 合入解锁——与执行侧按 vm-ops 技能补跑一次 acc 双机 `--baseline`（基准登记物需在 VM 内重建或比对宿主登记值），结果并入闸门①证据归档。
 
+### T3-07 执行记录（2026-11-01）
+
+**做了什么**：按 §3 裁决 1 完成 judge 枚举漏洞热修三件套——① 修正 KB"已停止"残留分支证据链来源：`disk_audit/engine/judge.py` `_judge_kb_hit` 中 `EvidenceItem("进程服务", "无匹配进程/服务/自启动")` 改为 `EvidenceItem("知识库", …)`（"进程服务"不在定稿 schema 九值枚举，该缺席核验源于知识库生命周期标注）；② 端到端夹具补"已停止"高档残留分支覆盖：`tests/test_engine_judge.py::_scan_fixture` 增 oldapp（KB 生命周期"已停止" + 目录/文件 utime 回拨 400 天触发高档），`tests/test_engine_render.py::test_judge_real_pipeline_output_renders` 夹具同步增该单元；③ 新增断言：KB"已停止"分支 judge 真实输出 dict 必须过 `tests/_mini_schema.py` 定稿 schema 校验（`test_judge_report_stopped_branch_passes_schema`）+ 证据链 source 逐条落在 schema 九值枚举内（`test_stopped_residual_chain_sources_in_schema_enum`）。渲染入口按裁决改"拒绝并披露"：`disk_audit/engine/render.py::_validate` 对证据链 source 不在九值枚举的输入抛 ValueError 拒绝渲染（枚举常量 `EVIDENCE_SOURCE_ENUM` 进 `disk_audit/engine/texts.py` 文末 append-only 区块，异常文案 `RENDER_ERR_BAD_EVIDENCE_SOURCE` 含非法值与合法枚举提示）；T3-02 的 `test_evidence_source_out_of_enum_still_renders` 改写为 `test_evidence_source_out_of_enum_rejected`（拒绝语义），另增 `test_evidence_source_enum_matches_schema` 防 texts 枚举与 schema 漂移。
+
+**实现决策及依据**：
+1. **缺陷位置裁定为证据链 `evidence_chain[].source` 而非 `verdict_source` 字段**：裁定文写 `verdict_source="进程服务"`，但 ① 其引用的九值枚举（硬保护/知识库/注册表卸载项/进程/服务/自启动/Appx/启发式/文件枚举）经对 `docs/schemas/report-v1.schema.json` 核实是 `evidence_chain[].source` 的枚举（`verdict_source` 为六值枚举且"进程服务"在列）；② `git log --follow` 核实该分支自 D1 首版（442befc）起 `verdict_source` 恒为合法的"知识库"，从不产出"进程服务"；③ T3-02 执行记录记 :217 即该 EvidenceItem 行（卡面注明行号漂移以 grep 为准，grep 现指 :217）。修复对象为 :217 证据链 source——这是唯一使"修后真实输出必须过定稿 schema 校验"可成立的解释。分支 `verdict_source="知识库"` 本已合法，不动。
+2. **KB"已停止"但不够陈旧（中档）子分支同链同修**：非法 source 位于高/中档共享的 chain 构造段，一处修正两分支同时合法（属同分支内修复，非扩范围）。
+3. **渲染拒绝的校验粒度**：仅对"item 为 dict 且含 source 键且值不在九值枚举"拒绝（卡面明确"只动 source 校验，不扩范围"）；非 dict 项/缺 source 项维持既有宽松展示行为不动。
+4. **枚举常量放 texts.py 而非 render.py**：render.py 有 AST 守卫禁止中文散落字面量（tests/test_engine_render.py::test_no_chinese_literals_in_renderer_module），九值为中文必入文案资源；配防漂移断言锁定与 schema 逐字一致。
+5. **T3-02 用例改拒绝语义**：卡面明示"这是裁决对本卡的要求，属修正 T3-02 防御行为，不是删用例换绿灯"；PR 描述中说明依据。
+
+**未尽事项/已知限制**：
+- `tests/test_engine_units.py:4` docstring 存在既有 SyntaxWarning（invalid escape sequence `\P`），非本卡引入、不影响判定，未顺手修（红线五，可另立 chore 卡）。
+- 渲染入口对缺 source 键/非 dict 证据项仍宽松展示（与 schema required 不完全对齐）——按卡面"只动 source 校验"未扩，如需收紧另立任务。
+
+**自测输出摘要**：`python -m pytest` 裸跑 **267 passed**（基线 264 + 净增 3：分支 source 枚举断言 / e2e schema 校验 / 枚举防漂移；T3-02 用例改名不改数），1 个既有 SyntaxWarning 与本次改动无关；`python -m disk_audit --selftest` **6/6 passed**（exit=0）。测试先行实证：修复前新增用例 5 红（schema 报 `evidence_chain[3].source：'进程服务' 不在枚举`），修复后全绿。
+
 ## 8. Sprint 3 进度数据（中期）
 
 - Wave 1 完成 4/8（T2-08/T2-09/T3-02/T3-04），100% 通过（1 有条件）；退回 0；**新增卡 3 张**（T3-07/08/09，两项为既有缺陷）。

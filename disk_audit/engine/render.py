@@ -55,6 +55,11 @@ _REQUIRED_CANDIDATE = (
 )
 _ACTION_KEYS = ("A1", "A2", "A3", "A4", "A5")  # 5.3 固定枚举，不新增
 
+# 证据链 source 九值枚举（docs/schemas/report-v1.schema.json 定稿，逐字常量
+# 维护在 texts.EVIDENCE_SOURCE_ENUM，tests 有防漂移对照断言）。T3-07（08 报告
+# §3 裁决 1）：source 不在枚举的输入拒绝渲染——拒绝并披露优于静默渲染。
+_ALLOWED_EVIDENCE_SOURCES = frozenset(texts.EVIDENCE_SOURCE_ENUM)
+
 # 置信度档位 → POC-4 配色类（映射随档位枚举维护在 texts.py，本模块零中文常量）
 _CONFIDENCE_CLASS = texts.CONFIDENCE_CSS_CLASSES
 
@@ -137,7 +142,8 @@ def _size_cell(n: int) -> str:
 
 
 def _validate(report: object) -> None:
-    """输入校验：与 report-v1 schema 必需字段对齐，不符抛 ValueError（中文）。"""
+    """输入校验：与 report-v1 schema 必需字段对齐，不符抛 ValueError（中文）；
+    证据链 source 不在九值枚举同样拒绝（T3-07，拒绝并披露优于静默渲染）。"""
     if not isinstance(report, dict):
         raise ValueError(texts.RENDER_ERR_NOT_OBJECT)
     missing = [key for key in _REQUIRED_TOP if key not in report]
@@ -163,6 +169,18 @@ def _validate(report: object) -> None:
             raise ValueError(
                 texts.RENDER_ERR_CANDIDATE_MISSING.format(index=index, fields="、".join(missing))
             )
+        chain = candidate["evidence_chain"]
+        if isinstance(chain, list):
+            for position, item in enumerate(chain, start=1):
+                if (
+                    isinstance(item, dict)
+                    and "source" in item
+                    and item["source"] not in _ALLOWED_EVIDENCE_SOURCES
+                ):
+                    raise ValueError(texts.RENDER_ERR_BAD_EVIDENCE_SOURCE.format(
+                        index=index, position=position, source=item["source"],
+                        expected="、".join(texts.EVIDENCE_SOURCE_ENUM),
+                    ))
 
 
 def _head(report: dict) -> str:
