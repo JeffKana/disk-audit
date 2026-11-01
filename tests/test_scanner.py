@@ -284,7 +284,7 @@ def test_compressed_sparse_files_use_handle_query(tmp_path, monkeypatch):
 
 
 def test_normal_files_never_open_handle(tmp_path, monkeypatch):
-    """未压缩且非稀疏的文件一律零句柄（DR-004 修订版，性能前提）。"""
+    """逻辑 ≥ 簇的未压缩非稀疏文件零句柄（DR-004 裁决节④；601B~<簇 段按裁决③须开句柄）。"""
     entries = {str(tmp_path): [_FakeEntry(str(tmp_path / "a.bin"), False, 5000)]}
     monkeypatch.setattr(scanner, "_scandir", lambda path: _FakeIter(entries[path]))
 
@@ -298,7 +298,7 @@ def test_normal_files_never_open_handle(tmp_path, monkeypatch):
 
 
 def test_align8_pure():
-    """逻辑 < 簇 → align8（MFT 驻留实占口径，DR-004 修订版；探针 100→104）。"""
+    """≤600B → align8（DR-004 裁决节②：600B 为本卷实测稳定驻留上限；探针 100→104）。"""
     assert scanner._align8(0) == 0
     assert scanner._align8(1) == 8
     assert scanner._align8(100) == 104
@@ -365,6 +365,60 @@ def test_cluster_bytes_cached_and_fallback(monkeypatch):
     )
     monkeypatch.setattr(scanner, "_CLUSTER_CACHE", {})
     assert scanner._cluster_bytes(r"D:\x") == 4096  # 回退默认簇
+
+
+# ---------- DR-004 裁决节四段分流（T2-08；验收④：600B/601B 边界 + 属性位） ----------
+
+
+def test_boundary_600_align8_601_handle(tmp_path, monkeypatch):
+    """裁决节②③边界：≤600B → align8 零句柄；601B~<簇 → 句柄实查。"""
+    entries = {
+        str(tmp_path): [
+            _FakeEntry(str(tmp_path / "a600.bin"), False, 600),
+            _FakeEntry(str(tmp_path / "b601.bin"), False, 601),
+        ],
+    }
+    monkeypatch.setattr(scanner, "_scandir", lambda path: _FakeIter(entries[path]))
+    called: list[str] = []
+
+    def spy_handle(path, st):
+        called.append(path)
+        return 1048  # 句柄实查替身回报值（非驻留实占由卷决定，单测不依赖具体值）
+
+    monkeypatch.setattr(scanner, "_allocated_size", spy_handle)
+    monkeypatch.setattr(scanner, "_cluster_bytes", lambda path: 4096)
+    result = scan_path(str(tmp_path), workers=2)
+    assert called == [str(tmp_path / "b601.bin")]  # 仅 601B 开句柄，600B 零句柄
+    assert result.stats.allocated_bytes == 600 + 1048  # 600B → align8(600)=600
+
+
+def test_segment3_handle_failure_counts_occupied(tmp_path, monkeypatch):
+    """裁决节③：601B~<簇 句柄实查失败 → X-1 计入 occupied（与压缩/稀疏同语义）。"""
+    entries = {str(tmp_path): [_FakeEntry(str(tmp_path / "m.bin"), False, 601)]}
+    monkeypatch.setattr(scanner, "_scandir", lambda path: _FakeIter(entries[path]))
+    monkeypatch.setattr(scanner, "_allocated_size", lambda path, st: None)
+    monkeypatch.setattr(scanner, "_cluster_bytes", lambda path: 4096)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.skips.occupied == 1
+    assert result.stats.files == 0
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="句柄实查仅 Windows")
+def test_gradient_mixed_vs_pure_handle_below_0_1pct(tmp_path):
+    """裁决节 ②'：混合夹具（0B/~100B/~600B/~1KB/~5KB 梯度）混合路径与纯句柄
+    路径的占用空间汇总偏差 <0.1%（选项 c 落地，预期 ~0.000%）。"""
+    sizes = [0, 100, 600, 1024, 5000]
+    files = []
+    for copy in range(3):
+        for size in sizes:
+            probe = tmp_path / f"g{copy}_{size}.bin"
+            probe.write_bytes(b"x" * size)
+            files.append(probe)
+    result = scan_path(str(tmp_path), workers=2)
+    pure = sum(scanner._allocated_size(str(f), f.stat()) for f in files)
+    assert pure > 0
+    deviation = abs(result.stats.allocated_bytes - pure) / pure
+    assert deviation < 0.001
 
 
 # ---------- C7 中止与部分结果（T2-05，X-2：统一"不完整"出口） ----------

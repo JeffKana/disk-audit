@@ -32,7 +32,11 @@
 - **实现约束**：600B 为本卷实测**稳定**驻留上限——若在新卷/其他盘测试，先跑 probe 核对，偏离即停手上报（DR-004 重开条件）；双口径语义与函数接口不变；601B~<簇 句柄实查失败按 X-1 计 occupied（与压缩/稀疏同语义）。
 - **验收标准**：①混合夹具（0B/~100B/~600B/~1KB/~5KB）混合 vs 纯句柄偏差 <0.1%（预期 ~0.000%）；②三目录基准复测全 <1% 且 Programs 收敛至 ~0.0x%（现 0.848%）；③Roaming scan 耗时增量 ≤0.5s（裁决估算 +0.4s，总耗 ~7s 在 2× 预算内）；④分流边界单测（属性位 monkeypatch + 600B/601B 边界值）；⑤远端 CI 绿。
 - **依赖**：无（Wave 1，**首位合入**）。
-- **执行记录**：
+- **执行记录**（2026-11-01，分支 `feature/T2-08-DR004选项c四段分流`）：
+    - **做了什么**：`disk_audit/scanner.py` `_account_file` 按裁决节改四段分流（①压缩/稀疏句柄实查 ②≤600B align8 ③601B~<簇句柄实查 ④≥簇簇对齐），新增 `_RESIDENT_LIMIT=600` 常量，①③ 句柄失败统一 X-1 计 occupied；`tests/test_scanner.py` 新增 3 用例（600/601 边界、段③失败计 occupied、②' 梯度混合 vs 纯句柄 <0.1%）并修正 2 处过时注释；`tools/probe_resident_allocation.py` docstring/列名对齐裁决节并补 UTF-8 输出守卫（重开条件核对指引）。关键文件：`disk_audit/scanner.py`、`tests/test_scanner.py`、`tools/probe_resident_allocation.py`。
+    - **实现决策及依据**：①None 检查收敛到 `_account_file` 尾部单点（①③ 两段共用，语义不变）——实现细节自决；②600B 上限以常量 `_RESIDENT_LIMIT` 锚定裁决节，新卷先跑 probe 的重开条件写入常量注释与 probe docstring——依据 DR-004 裁决节"新卷部署前应先跑 probe 核对"；③②' 梯度夹具落位 `tests/test_scanner.py`（CI 可执行）而非 `check_size_deviation.py --fixture`（后者语义是"≥簇 文件簇对齐公式自检"，与 ②' 混合 vs 纯句柄口径不同）——依据卡面验收①"单测"表述与 DR-004 ②'；④probe 补 reconfigure 守卫——rules-map 编码模式（该脚本本次实质编辑）。
+    - **未尽事项/已知限制**：Ⓐ **验收③未达成，待 PM 裁决**——同进程 A/B 交替实测（monkeypatch `_RESIDENT_LIMIT=4095` 模拟旧三段）：Roaming 旧 2.81~2.89s vs 新 4.77~4.87s，**增量 +1.9~2.1s > 0.5s**；根因是裁决节"Local 该段 ~12k 文件、+0.4s"估算与实测差一个数量级（实测段③ 601B~4095B：Roaming 67,035 / Local 163,238 个）。Local 改后 9.50~9.57s（裁决期 6.8~7.0s），Local+Roaming 合计 ~14.4s（原全句柄 25.27s 的 1.75×，但超 6s 预算 2× 线，R1 披露机制适用与否请 PM 一并裁）。选项：a 按实测段③规模修订单③数字（正确性不受影响，②' 已实测 <0.1%）；b 另立 DR 做段③性能优化（批量 API/缓存，结构性，需 DR）；c 其他。Ⓑ Tencent 复测 0.394%（原 0.138%）——10-31 基准刷新后目录仍活跃变化（聊天缓存），算法性收敛已由 Package Cache 0.011%→0.000% 与 Programs 0.848%→0.088% 证实；Ⓒ 段③句柄失败 X-1 计 occupied 新语义生效（Local 实测 occ=2，被锁文件，占比 2/33 万，符合裁决①③同语义）；Ⓓ `tools/check_size_deviation.py` 同样缺 stdout reconfigure 守卫（本卡未实质编辑该文件，不顺手修）。
+    - **自测输出摘要**：`python -m pytest` **218 passed**（215+3 新增，裸跑）；`python -m disk_audit --selftest` **6/6**；`tools/check_imports.py` 通过；probe 复跑本卷 0/1/100/600 逐字节一致、700+ 本次非驻留（与裁决"驻留不稳定窗口"一致）；三目录基准复测 Programs **0.088%** / Tencent 0.394% / Package Cache **0.000%** 全 <1%；②' 梯度夹具（0B/~100B/~600B/~1KB/~5KB ×3 真实句柄）通过（各段逐文件与句柄一致，汇总偏差 0.000%）；验收③未达（数据见未尽事项Ⓐ）。远端 CI 待跑。
 
 ---
 
@@ -92,6 +96,10 @@
 - **验收标准**：①版本不足拒绝路径单测（注入假版本）；②盘型置灰逻辑单测（驱动类型注入）；③本机启动实测：四预设与置灰状态正确（截图留档）；④CI 门禁④（引擎零 UI 依赖）不破；⑤远端 CI 绿。
 - **依赖**：无（Wave 1；T3-05/T3-06 栈其上）。
 - **执行记录**：
+  - **做了什么**：新增顶层独立入口 `launcher.py`（Tkinter 启动器骨架：P5 启动版本闸 + P6 盘符枚举 ctypes GetDriveTypeW / 不支持盘型置灰+原因 + P4 四预设单选 + 自定义文件夹 + 开始体检按钮，扫描/报告接线留 T3-05/T3-06）；`disk_audit/engine/texts.py` 文末追加 `LAUNCHER_TEXTS` 启动器文案区块（append-only，不动既有键值）；新增 `tests/test_launcher.py` 26 例（测试先行：先跑红 ModuleNotFoundError 再实现跑绿）。关键文件：`launcher.py`、`tests/test_launcher.py`、`disk_audit/engine/texts.py`、`docs/evidence/T3-04/launcher_scope_2026-11-01.png`。
+  - **实现决策及依据**：①UI 模块放仓库根 `launcher.py`（包外独立入口），未用卡内建议的 `disk_audit/launcher.py`/`disk_audit/ui/`——开发规范 §1 硬规则"`disk_audit` 包内任何模块不得 import tkinter（启动器在独立模块/入口）"与《项目治理》"disk_audit/ = 引擎与 CLI、零 UI 依赖"；治理文档优先级高于卡内建议（卡文明示"位置自决……在 PR 说明"），POC 先例 poc2_app.py 亦为独立入口脚本。②文案集中 `engine/texts.py` 文末独立区块而非 UI 模块内资源字典——方案 §1 语言行"文案集中在一份资源表内"（卡内两选项均合规，取资源表口径，append-only 规避并行分支冲突）。③tkinter 延迟导入：纯逻辑（版本闸/盘型/预设/文案）可无 Tk 环境加载与测试，Tk 根仅真实运行创建；CI 不起 mainloop（任务卡实现约束）。④可注入：build 探测与盘符枚举经 `run()` 参数注入（验收①②），默认实现 = `sys.getwindowsversion().build` 与 ctypes `GetLogicalDrives`+`GetDriveTypeW`（任务卡实现约束）。⑤"开始体检"按钮本卡仅确认所选范围（含存在性校验）并如实提示"扫描功能将在后续版本接入"，不发起扫描——U-1（未获用户显式选择前不读取文件系统路径）+ 不扩大方案范围（扫描接线归 T3-05/T3-06）；盘符枚举属 P6 明文规定的选择界面组成，不计为 U-1 的"读取路径"。⑥新增包内零 tkinter 的 AST 守卫测试（check_imports 白名单只禁第三方、不禁标准库 tkinter，规范 §1 的包内禁令由测试钉死，守住 M1 验收④语义）。
+  - **未尽事项/已知限制**：①本机 5 盘（C/D/E/H/I）实测全为固定本地盘，P6 置灰态无法在本机真实呈现——置灰逻辑由验收②注入式单测（UNKNOWN/NO_ROOT_DIR/可移动/网络/光驱/RAM 六类全覆盖）保证，真实置灰呈现留待 VM 或含可移动盘环境；②版本不足的图形提示（messagebox）路径未本机实测（无低版本环境），拒绝路径由注入假版本单测覆盖（验收①）；③窗口几何为固定 720x560 骨架值，T3-05 接进度 UI 时一并调整。
+  - **自测输出摘要**：`python -m pytest` 裸跑 **241 passed**（Sprint 2 基线 215 + 本卡 26；1 warning 为本机 site-packages 第三方 requests 版本提示，CI 全新环境不存在）；`python -m disk_audit --selftest` **6/6 passed**；本地门禁④ `python tools/check_imports.py` 通过。验收③本机真启动实测（build 26200 ≥ 22621）：四预设顺序与解析路径正确、5 盘均"固定本地盘"可选（本机无置灰盘）、自定义文件夹与开始体检按钮在位，截图留档 `docs/evidence/T3-04/launcher_scope_2026-11-01.png`（pwsh System.Drawing 全屏 2560x1440，截完已关窗、无残留进程）。
 
 ---
 

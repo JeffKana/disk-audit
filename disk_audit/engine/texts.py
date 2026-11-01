@@ -31,8 +31,7 @@ CONFIDENCE_HIGH_PARTS: tuple[str, str] = ("高度可能为残留", "删除前请
 REGENERABLE_WORDING = "可再生：应用会自行重建"
 REGENERABLE_CONFIRM_WORDING = "可再生但需确认：清理后需重新下载，可能影响离线构建"
 
-# ============================================================
-# F2 报告渲染文案（待办 F2，任务卡 T3-02；S3 追加区块——独立追加，勿改动上方既有内容）
+# =====================================================# F2 报告渲染文案（待办 F2，任务卡 T3-02；S3 追加区块——独立追加，勿改动上方既有内容）
 # 依据：方案 E-2、5.1~5.3、Q3、X-2/C7、U-2/U-4、R10（零假设原则：措辞保守宁少说）、
 # 产品待办 F2（概览/明细/证据链/建议动作四区）、POC-4 呈现基线。
 # ============================================================
@@ -119,3 +118,35 @@ RENDER_ERR_CANDIDATES_NOT_LIST = "报告 JSON candidates 应为数组"
 RENDER_ERR_CANDIDATE_NOT_OBJECT = "候选条目 #{index} 应为对象"
 RENDER_ERR_CANDIDATE_MISSING = "候选条目 #{index} 缺少必需字段：{fields}"
 RENDER_ERR_BAD_NUMBER = "报告数值字段不是合法整数"
+# ======================================================================
+# G1 启动器文案（T3-04；方案 P4 预设四目录 / P5 build 22621 门槛 / P6 置灰原因）。
+# 本区块 append-only：Sprint 3 多分支并行修改本文件，新增文案一律向文末追加，
+# 严禁改动上方既有键值（tests/test_engine_wording.py 对其逐字断言）。
+# ======================================================================
+LAUNCHER_TEXTS: dict[str, str] = {
+    "window_title": "磁盘体检 · 选择扫描范围",
+    "build_status_ok": "系统版本：Windows build {build}（满足最低要求 {min_build}）",
+    "build_unsupported_title": "系统版本不支持",
+    "build_unsupported": (
+        "本程序仅支持 Windows 11 22H2（build 22621）及以上。\n"
+        "当前系统 build 为 {build}，低于最低要求 {min_build}，程序即将退出。"
+    ),
+    "scope_group": "扫描范围",
+    "preset_label_appdata": "当前用户漫游数据（%APPDATA%）",
+    "preset_label_localappdata": "当前用户本地数据（%LOCALAPPDATA%）",
+    "preset_label_programdata": "全机共享数据（%PROGRAMDATA%）",
+    "preset_label_programfiles": "程序安装目录（C:\\Program Files）",
+    "custom_option": "自定义文件夹",
+    "custom_browse": "浏览…",
+    "drives_group": "磁盘驱动器（仅固定本地盘支持扫描）",
+    "drive_fixed": "固定本地盘",
+    "drive_reason_removable": "可移动盘：仅支持固定本地盘",
+    "drive_reason_remote": "网络盘：仅支持固定本地盘",
+    "drive_reason_cdrom": "光驱：仅支持固定本地盘",
+    "drive_reason_ramdisk": "RAM 盘：仅支持固定本地盘",
+    "drive_reason_unknown": "无法识别的盘型：仅支持固定本地盘",
+    "start_button": "开始体检",
+    "status_no_selection": "尚未选择扫描范围，请先在上方选择",
+    "status_selected": "已选择扫描范围：{path}；扫描功能将在后续版本接入",
+    "status_missing_folder": "所选文件夹不存在，请重新选择",
+}

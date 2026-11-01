@@ -112,9 +112,14 @@ def _long_path(path: str) -> str:
 _CLUSTER_DEFAULT = 4096
 _CLUSTER_CACHE: dict[str, int] = {}
 
+# DR-004 裁决节（2026-10-31）：600B 为本卷实测稳定 MFT 驻留上限（≤600B 样本
+# align8 与句柄实查逐字节一致；新卷部署前先跑 tools/probe_resident_allocation.py
+# 核对，偏离即触发 DR-004 重开条件）
+_RESIDENT_LIMIT = 600
+
 
 def _align8(size: int) -> int:
-    """8 字节向上对齐（NTFS MFT 驻留小文件的实占口径，DR-004 修订版三段分流②）。"""
+    """8 字节向上对齐（NTFS MFT 驻留小文件的实占口径，DR-004 裁决节②，≤600B 段）。"""
     return (size + 7) & ~7
 
 
@@ -349,13 +354,14 @@ def _reparse_or_symlink(st: os.stat_result) -> bool:
 def _account_file(
     path: str, name: str, st: os.stat_result, stats: ScanStats, unit: UnitStats | None
 ) -> None:
-    """文件计量（DR-004 修订版三段分流）：
+    """文件计量（DR-004 裁决节四段分流，2026-10-31）：
 
-    ① st_file_attributes 含压缩/稀疏 → 句柄实查（失败按 X-1 计入 occupied，
-       双口径一致，语义与既有实现不变）；
-    ② 逻辑 < 簇 → align8（MFT 驻留实占口径）；
-    ③ 逻辑 ≥ 簇 → 簇对齐（GetDiskFreeSpaceW 查询并缓存簇大小）。
-    非 Windows 开发降级不变（占用空间=逻辑大小，验收在 Windows）。
+    ① st_file_attributes 含压缩/稀疏 → 句柄实查；
+    ② 逻辑 ≤ 600B（_RESIDENT_LIMIT，本卷实测稳定驻留上限）→ align8；
+    ③ 601B ≤ 逻辑 < 簇 → 句柄实查（驻留与否均精确）；
+    ④ 逻辑 ≥ 簇 → 簇对齐（GetDiskFreeSpaceW 查询并缓存簇大小）。
+    ①③ 句柄实查失败按 X-1 计入 occupied（语义一致）；非 Windows 降级不变
+    （占用空间=逻辑大小，验收在 Windows）。
     """
     if _create_file_w is None:
         allocated = st.st_size
@@ -363,15 +369,17 @@ def _account_file(
         attrs = getattr(st, "st_file_attributes", 0)
         if attrs & (_FILE_ATTRIBUTE_COMPRESSED | _FILE_ATTRIBUTE_SPARSE_FILE):
             allocated = _allocated_size(path, st)
-            if allocated is None:
-                stats.skips.occupied += 1
-                return
+        elif st.st_size <= _RESIDENT_LIMIT:
+            allocated = _align8(st.st_size)
         else:
             cluster = _cluster_bytes(path)
             if st.st_size < cluster:
-                allocated = _align8(st.st_size)
+                allocated = _allocated_size(path, st)
             else:
                 allocated = ((st.st_size + cluster - 1) // cluster) * cluster
+        if allocated is None:
+            stats.skips.occupied += 1
+            return
     stats.files += 1
     stats.logical_bytes += st.st_size
     stats.allocated_bytes += allocated
