@@ -1,0 +1,2266 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-11-01T00:29:55+08:00",
+  "scan_root": "C:\\Users\\querkecor\\AppData\\Roaming",
+  "totals": {
+    "allocated_bytes": 24310345192,
+    "logical_bytes": 24137935589,
+    "regenerable_subtotal": 40187088,
+    "regenerable_confirm_subtotal": 2418670760,
+    "skipped_entries": 1
+  },
+  "candidates": [
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\360safe",
+      "logical_bytes": 8916,
+      "allocated_bytes": 11728,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：360安全卫士（残留候选·高置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\@deepseek-ai",
+      "logical_bytes": 20037828,
+      "allocated_bytes": 20246168,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：DeepSeek CLI/SDK（开发缓存；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\ACLOS",
+      "logical_bytes": 48551008,
+      "allocated_bytes": 48676384,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Adobe",
+      "logical_bytes": 396691986,
+      "allocated_bytes": 400262744,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Adobe 系（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Apowersoft",
+      "logical_bytes": 10918,
+      "allocated_bytes": 13736,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Apowersoft（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\AweSun",
+      "logical_bytes": 2985,
+      "allocated_bytes": 2992,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：AweSun 远程控制（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\BaiduYunGuanjia",
+      "logical_bytes": 5064332,
+      "allocated_bytes": 5067080,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：百度网盘管家（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\BaiduYunKernel",
+      "logical_bytes": 49420177,
+      "allocated_bytes": 49432248,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：百度网盘内核（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\BdTranslateClient",
+      "logical_bytes": 222991255,
+      "allocated_bytes": 223526064,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：百度翻译客户端（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\BitComet",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：比特彗星 BT 下载（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\BtLog",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：BT 下载日志（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\CC",
+      "logical_bytes": 146708,
+      "allocated_bytes": 151552,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明(疑似网易CC/Adobe CC)（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Clash Plus",
+      "logical_bytes": 87495856,
+      "allocated_bytes": 87511040,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Clash 代理客户端（使用中(无安装记录)）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Code",
+      "logical_bytes": 2916069264,
+      "allocated_bytes": 2919729008,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Visual Studio Code 用户数据（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\CodeBuddy CN",
+      "logical_bytes": 41394842,
+      "allocated_bytes": 41565992,
+      "confidence": "高",
+      "verdict_source": "注册表",
+      "evidence_chain": [
+        {
+          "source": "注册表卸载项",
+          "content": "注册表卸载记录：CodeBuddy CN (User)"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Comfy Desktop",
+      "logical_bytes": 53559967,
+      "allocated_bytes": 53877272,
+      "confidence": "高",
+      "verdict_source": "注册表",
+      "evidence_chain": [
+        {
+          "source": "注册表卸载项",
+          "content": "注册表卸载记录：Comfy Desktop 1.1.8"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\ContextMenuManager",
+      "logical_bytes": 189998,
+      "allocated_bytes": 194144,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明(疑似右键菜单管理工具)（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\DSH Desktop",
+      "logical_bytes": 66541523,
+      "allocated_bytes": 66865024,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：WorkBuddy/DSH 桌面端（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Daum",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：Daum(PotPlayer/Kakao)（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\DingTalk",
+      "logical_bytes": 12549,
+      "allocated_bytes": 16384,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：钉钉（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Docker",
+      "logical_bytes": 477932,
+      "allocated_bytes": 487480,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Docker Desktop（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Doubao",
+      "logical_bytes": 460,
+      "allocated_bytes": 464,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：豆包(字节 AI 助手)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\DrvMgr",
+      "logical_bytes": 430989,
+      "allocated_bytes": 434424,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：捆绑推广组件(驱动管理类)（残留候选·高置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Electron",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：Electron 框架运行缓存（缓存/转储；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Everything",
+      "logical_bytes": 229590,
+      "allocated_bytes": 234960,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Everything 搜索索引（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\FiraxisLive",
+      "logical_bytes": 2740,
+      "allocated_bytes": 2744,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：《文明》系列(FiraxisLive)（游戏数据；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\FortiClient",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：FortiClient VPN（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Geek Uninstaller",
+      "logical_bytes": 8320,
+      "allocated_bytes": 8792,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Geek Uninstaller(便携工具)（使用中(无安装记录)）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\GitHub CLI",
+      "logical_bytes": 1744,
+      "allocated_bytes": 1752,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：GitHub CLI(gh)（开发缓存；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Goldberg SteamEmu Saves",
+      "logical_bytes": 33,
+      "allocated_bytes": 48,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：Goldberg Steam 模拟器存档（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Google",
+      "logical_bytes": 9969646,
+      "allocated_bytes": 9989344,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Google(Chrome 等)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\HBuilder X",
+      "logical_bytes": 8722433,
+      "allocated_bytes": 8744416,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：HBuilderX(DCloud)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\IObit",
+      "logical_bytes": 737673,
+      "allocated_bytes": 764720,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：IObit 组件（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\IntelliJIdea",
+      "logical_bytes": 84596,
+      "allocated_bytes": 94360,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：IntelliJ IDEA 配置（开发缓存；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\JAM Software",
+      "logical_bytes": 528383,
+      "allocated_bytes": 534712,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：TreeSize(JAM Software)（使用中(无安装记录)）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\JetBrains",
+      "logical_bytes": 417650902,
+      "allocated_bytes": 418066984,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：JetBrains 全家桶（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\KOOK",
+      "logical_bytes": 52275144,
+      "allocated_bytes": 52801376,
+      "confidence": "高",
+      "verdict_source": "注册表",
+      "evidence_chain": [
+        {
+          "source": "注册表卸载项",
+          "content": "注册表卸载记录：KOOK"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\LGHUB_BKP",
+      "logical_bytes": 77824,
+      "allocated_bytes": 77824,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：罗技 G HUB 备份（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\LolAICoach",
+      "logical_bytes": 18369553,
+      "allocated_bytes": 18413784,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：LOL AI 教练（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Ludashi",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：鲁大师（残留候选·高置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Microsoft",
+      "logical_bytes": 48328721,
+      "allocated_bytes": 48808128,
+      "confidence": "受保护",
+      "verdict_source": "硬保护",
+      "evidence_chain": [
+        {
+          "source": "硬保护规则",
+          "content": "受保护，不可处理"
+        },
+        {
+          "source": "硬保护规则",
+          "content": "HARDPROTECT-SYSTEM：Microsoft 系统组件目录，属于系统数据"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Mozilla",
+      "logical_bytes": 111458536,
+      "allocated_bytes": 112911304,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Firefox(Mozilla)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\NVIDIA",
+      "logical_bytes": 36787804,
+      "allocated_bytes": 40187088,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：NVIDIA 着色器/驱动缓存（缓存/转储；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Netease",
+      "logical_bytes": 1911184,
+      "allocated_bytes": 1921256,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：网易系(云音乐等)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Notion",
+      "logical_bytes": 964117902,
+      "allocated_bytes": 984596688,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Notion（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\NuGet",
+      "logical_bytes": 210,
+      "allocated_bytes": 216,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：NuGet(Visual Studio)包缓存（开发缓存；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Nutstore",
+      "logical_bytes": 27181103,
+      "allocated_bytes": 27291352,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：坚果云（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\NutstoreClient",
+      "logical_bytes": 164332050,
+      "allocated_bytes": 165060320,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：坚果云（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\NutstoreInstaller",
+      "logical_bytes": 3758,
+      "allocated_bytes": 3768,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：坚果云安装器（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\OpenArk",
+      "logical_bytes": 23464039,
+      "allocated_bytes": 23466400,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：OpenArk(安全工具)（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Oray",
+      "logical_bytes": 7534732,
+      "allocated_bytes": 7615104,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：贝锐(向日葵远程)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\PLogs",
+      "logical_bytes": 2744,
+      "allocated_bytes": 2744,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：日志（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Paradox Interactive",
+      "logical_bytes": 609,
+      "allocated_bytes": 616,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：P社游戏(城市天际线等)（游戏数据；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\PixCake-qt_pro",
+      "logical_bytes": 166430936,
+      "allocated_bytes": 166543360,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：PixCake 修图软件（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\QQ",
+      "logical_bytes": 340990511,
+      "allocated_bytes": 341659976,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：QQ（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\QuarkCloudDrive",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：夸克网盘（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\RabbitMQ",
+      "logical_bytes": 4128615,
+      "allocated_bytes": 4148544,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：RabbitMQ（开发缓存；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\RenPy",
+      "logical_bytes": 26139715,
+      "allocated_bytes": 26331104,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：RenPy 引擎游戏存档（游戏数据；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\RtSubscribe",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：Realtek 订阅组件（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\SQLyog",
+      "logical_bytes": 14273178,
+      "allocated_bytes": 14303232,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：SQLyog（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Sekiro",
+      "logical_bytes": 23859100,
+      "allocated_bytes": 23865344,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：《只狼》游戏数据（游戏数据；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Stardock",
+      "logical_bytes": 3464886,
+      "allocated_bytes": 3503304,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Stardock 软件（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Sun",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：旧版 Sun Java(JRE/JDK)（残留候选·高置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\SystemBeautify",
+      "logical_bytes": 205,
+      "allocated_bytes": 208,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：系统美化工具（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\SystemKeys",
+      "logical_bytes": 36,
+      "allocated_bytes": 40,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\TDM",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：迅雷下载管理(TDM)（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\TPDownloadProxy",
+      "logical_bytes": 4148,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：下载组件(疑似迅雷系)（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Telegram A",
+      "logical_bytes": 78981346,
+      "allocated_bytes": 80391504,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Telegram(变体客户端)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Tencent",
+      "logical_bytes": 9702968505,
+      "allocated_bytes": 9735914104,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：腾讯系(QQ/微信聊天数据)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\The QuarkCloudDrive Authors",
+      "logical_bytes": 941,
+      "allocated_bytes": 944,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：夸克网盘(签名目录)（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Typora",
+      "logical_bytes": 62199407,
+      "allocated_bytes": 62964672,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Typora（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Updater",
+      "logical_bytes": 44846,
+      "allocated_bytes": 45056,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：泛用更新器(归属不明)（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Visual Studio Setup",
+      "logical_bytes": 131,
+      "allocated_bytes": 136,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Visual Studio 安装器（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\VoipNNModel",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：通话降噪 AI 模型（系统组件）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\WNS",
+      "logical_bytes": 113740,
+      "allocated_bytes": 118784,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：腾讯 WNS 推送通道（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\WXDrive",
+      "logical_bytes": 42947216,
+      "allocated_bytes": 42993200,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：微信文件/网盘组件（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\WeMeetApp",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：腾讯会议（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\WinRAR",
+      "logical_bytes": 12,
+      "allocated_bytes": 16,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：WinRAR（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\Wondershare",
+      "logical_bytes": 21147049,
+      "allocated_bytes": 21317768,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：万兴科技（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\WorkBuddy",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：WorkBuddy(AI 工作台)（使用中(无安装记录)）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\XMind",
+      "logical_bytes": 30301066,
+      "allocated_bytes": 30723216,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：XMind（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\ZCode",
+      "logical_bytes": 53111389,
+      "allocated_bytes": 53756120,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明(疑似 AI 编程工具)（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\aDrive",
+      "logical_bytes": 115,
+      "allocated_bytes": 120,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：阿里云盘(桌面端)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\alixby",
+      "logical_bytes": 8441541,
+      "allocated_bytes": 8482024,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：小白羊云盘(开源阿里云盘客户端)（残留候选·高置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\another-redis-desktop-manager",
+      "logical_bytes": 561770,
+      "allocated_bytes": 565544,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Another Redis Desktop Manager（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\antdownload",
+      "logical_bytes": 1851707,
+      "allocated_bytes": 1861888,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明(疑似下载组件)（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\apifox",
+      "logical_bytes": 24191560,
+      "allocated_bytes": 24598424,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Apifox（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\asus_framework",
+      "logical_bytes": 434,
+      "allocated_bytes": 440,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：华硕主板/奥创组件（系统组件）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\baidu",
+      "logical_bytes": 146118,
+      "allocated_bytes": 147456,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：百度系组件（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\baidunetdisk",
+      "logical_bytes": 247318242,
+      "allocated_bytes": 248593680,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：百度网盘（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\chat_pp",
+      "logical_bytes": 27,
+      "allocated_bytes": 32,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：捆绑推广组件（残留候选·高置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\cilizhai_pc",
+      "logical_bytes": 1453061,
+      "allocated_bytes": 1462608,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明(次梨宅?)（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\com.adobe.dunamis",
+      "logical_bytes": 157392078,
+      "allocated_bytes": 157453176,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Adobe Dunamis 遥测（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\com.bilingify.readest",
+      "logical_bytes": 8477223,
+      "allocated_bytes": 8551320,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Readest 阅读器（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\com.ccswitch.desktop",
+      "logical_bytes": 219,
+      "allocated_bytes": 232,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明(疑似 CCSwitch 桌面端)（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\com.example",
+      "logical_bytes": 24540,
+      "allocated_bytes": 24656,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：示例包名(调试残留)（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\com.follow",
+      "logical_bytes": 45577120,
+      "allocated_bytes": 45596672,
+      "confidence": "低",
+      "verdict_source": "启发式",
+      "evidence_chain": [
+        {
+          "source": "启发式",
+          "content": "归属未知，需人工判断"
+        },
+        {
+          "source": "启发式",
+          "content": "单元内无可执行文件（.exe）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\com.qytapp.clients.apex",
+      "logical_bytes": 20570066,
+      "allocated_bytes": 20578864,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：qyt 客户端（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\diagnostic-assistant",
+      "logical_bytes": 8261479,
+      "allocated_bytes": 8289216,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明(疑似诊断助手类工具)（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\dinglive",
+      "logical_bytes": 8913,
+      "allocated_bytes": 10200,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：钉钉直播组件（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\dzip_pp",
+      "logical_bytes": 27,
+      "allocated_bytes": 32,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：捆绑推广组件（残留候选·高置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\eCloudUpgrade",
+      "logical_bytes": 377,
+      "allocated_bytes": 384,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：天翼云盘升级组件（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\ichat",
+      "logical_bytes": 17782913,
+      "allocated_bytes": 18031304,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明(疑似 IM 类)（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\icreate-pc-lol",
+      "logical_bytes": 10543181,
+      "allocated_bytes": 10587056,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：iCreate 英雄联盟辅助（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\ip_royal_paws",
+      "logical_bytes": 26,
+      "allocated_bytes": 32,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：IPRoyal Pawns(闲置带宽共享)（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\isgpet",
+      "logical_bytes": 36746,
+      "allocated_bytes": 36864,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\jupyter",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：Jupyter 配置（开发缓存；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\kdesk",
+      "logical_bytes": 539,
+      "allocated_bytes": 552,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：K桌面(归属不明)（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\kingsoft",
+      "logical_bytes": 3760634762,
+      "allocated_bytes": 3783718784,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：金山 WPS（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\kwallpaper_sogou",
+      "logical_bytes": 7917,
+      "allocated_bytes": 11344,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：搜狗壁纸(推广组件)（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\lds",
+      "logical_bytes": 113,
+      "allocated_bytes": 120,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：捆绑推广组件（残留候选·高置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\leigod",
+      "logical_bytes": 293769702,
+      "allocated_bytes": 302758832,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：雷神加速器（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\leigod-bac20ba4",
+      "logical_bytes": 21222849,
+      "allocated_bytes": 21231432,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：雷神加速器(实例)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\luna_pc",
+      "logical_bytes": 6619,
+      "allocated_bytes": 9352,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\magpie-windows-amd64.exe",
+      "logical_bytes": 79626063,
+      "allocated_bytes": 79920200,
+      "confidence": "低",
+      "verdict_source": "启发式",
+      "evidence_chain": [
+        {
+          "source": "启发式",
+          "content": "归属未知，需人工判断"
+        },
+        {
+          "source": "启发式",
+          "content": "单元内无可执行文件（.exe）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\mssdk",
+      "logical_bytes": 469,
+      "allocated_bytes": 488,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明(疑似微软/MSDK)（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\nextjs-nodejs",
+      "logical_bytes": 185,
+      "allocated_bytes": 192,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：Next.js 编译缓存（开发缓存；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\npm",
+      "logical_bytes": 63278763,
+      "allocated_bytes": 68077632,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：npm 配置/全局包（开发缓存；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\npm-cache",
+      "logical_bytes": 1028941837,
+      "allocated_bytes": 1052879496,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：npm 下载缓存（开发缓存；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\obsidian",
+      "logical_bytes": 225142443,
+      "allocated_bytes": 225670224,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Obsidian（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\paradox-launcher-v2",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：Paradox 启动器 v2（游戏数据；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\pc",
+      "logical_bytes": 5168,
+      "allocated_bytes": 5192,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明(名称过短)（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\pip",
+      "logical_bytes": 80,
+      "allocated_bytes": 88,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：pip 下载缓存（开发缓存；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\qq_guild",
+      "logical_bytes": 113177260,
+      "allocated_bytes": 114972048,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：QQ频道（残留候选·高置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\tabx_pp",
+      "logical_bytes": 53,
+      "allocated_bytes": 56,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：捆绑推广组件（残留候选·高置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\tdcoresk",
+      "logical_bytes": 462,
+      "allocated_bytes": 472,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明(疑似迅雷系)（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\third_wpsdc",
+      "logical_bytes": 16777738,
+      "allocated_bytes": 16777744,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：WPS 第三方组件（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\thunder",
+      "logical_bytes": 20995462,
+      "allocated_bytes": 21145968,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：迅雷（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\thunderx",
+      "logical_bytes": 6373517,
+      "allocated_bytes": 6381640,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：迅雷X（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\tidalab",
+      "logical_bytes": 306798671,
+      "allocated_bytes": 307107408,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\utForpc",
+      "logical_bytes": 22062080,
+      "allocated_bytes": 22062080,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：归属不明(疑似加速器)（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\uv",
+      "logical_bytes": 1241239589,
+      "allocated_bytes": 1273222312,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：uv(Python 包管理)缓存（开发缓存；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\xlgame",
+      "logical_bytes": 5072677,
+      "allocated_bytes": 5076432,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：迅雷游戏（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\xmagic",
+      "logical_bytes": 13318,
+      "allocated_bytes": 16528,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：剪映/字节特效引擎(xmagic)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\xmp",
+      "logical_bytes": 6143205,
+      "allocated_bytes": 6146936,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：迅雷影音(XMP)（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\yxqxunyou",
+      "logical_bytes": 6466,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：迅游系加速器推广组件（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\yylive",
+      "logical_bytes": 419,
+      "allocated_bytes": 424,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：YY直播（残留候选·中置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\querkecor\\AppData\\Roaming\\{73A5C467-AD53-4C86-A16D-BE24B7A74E9C}",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：未知(哈希/GUID 命名)（残留候选·低置信；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    }
+  ]
+}

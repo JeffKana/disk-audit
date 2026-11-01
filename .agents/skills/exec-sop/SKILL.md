@@ -86,7 +86,7 @@ description: 磁盘体检（disk-audit）项目执行 Agent 的任务卡执行 S
 
 ## 九条红线（任何时候不得违反）
 
-1. 不 merge、不 push main、不 force push、不删远端分支——main 一切操作归负责人。
+1. 不 merge、不 push main、不 force push、不删远端分支——**PR 是否合入由 PM 验收后决定并执行（DR-006）**，main 一切操作归负责人。
 2. 不改任务卡验收标准——觉得有问题就回报，不改。
 3. 不改 `.github/workflows/`（卡内明确例外授权除外）；若授权拆分 CI 门禁出新 check，**必须在同 PR 登记必填检查列表**（CI-CD 规范 §2，否则新门禁不设防）。
 4. 不动 `%LOCALAPPDATA%\DiskAudit\` 之外的写入逻辑。
@@ -94,7 +94,7 @@ description: 磁盘体检（disk-audit）项目执行 Agent 的任务卡执行 S
 6. 不执行发布、提权、删除性命令。
 7. 不扩大方案范围；不接受口头扩范围（变更走《项目治理》§4）。
 8. 引用的数据（性能数字、结论）必须可追溯到方案定稿、DR 或归档物，不得凭空给出。
-9. 工作分支 push 与 PR 创建自办（代理 7890）；PR 只在 CI 绿后知会 PM 验收，merge 等负责人。
+9. 工作分支 push 与 PR 创建自办（SSH 直连，HTTPS 类失败再加代理）；PR 在 CI 绿后知会 PM 验收，**合入与否由 PM 决定并执行（DR-006）**，执行侧不参与 merge。
 
 ## 退回处理
 
