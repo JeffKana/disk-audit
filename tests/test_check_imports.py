@@ -93,8 +93,12 @@ def test_main_missing_root_fails(tmp_path):
 
 
 def test_real_package_passes():
-    """真实仓库 disk_audit/ 必须通过门禁（验收①）。"""
-    assert check_imports.main() == 0
+    """真实仓库 disk_audit/ 必须通过门禁（验收①）。
+
+    显式传 main([])：不传参会让 argparse 读到 pytest 自身的命令行参数
+    （-q/-v），本地带参运行必红（06 报告整改项 M-01）。
+    """
+    assert check_imports.main([]) == 0
 
 
 def test_gate_survives_non_utf8_stdout(tmp_path):
