@@ -159,9 +159,11 @@
   4. 报告 `incomplete` 仅在不完整时输出：定稿前草案 schema `additionalProperties:false` 不容新字段，正常报告保持草案合法；T2-07 定稿收录该可选字段。
   5. CLI 中止后退出码 0、标记在带内（部分结果属正常产物而非错误）。
 
-  **未尽事项/已知限制**：① 未预期异常的具体信息当前被吞（仅 incomplete 标记）——建议 T2-07/后续卡评估是否在 scan JSON 增 `errors` 披露；② UI 中止按钮接线在 G2（S3），本卡交付引擎侧机制（abort_check 供 UI/CLI 注入）。
+  **未尽事项/已知限制**：① 未预期异常的具体信息当前被吞（仅 incomplete 标记）——建议 T2-07/后续卡评估是否在 scan JSON 增 `errors` 披露；② UI 中止按钮接线在 G2（S3），本卡交付引擎侧机制（abort_check 供 UI/CLI 注入）；③ **【06 退回单 #21/#22 补记】** 真 `KeyboardInterrupt` 属 BaseException，`scan_path` 的 `except Exception` 接不住——UI/CLI 接线后若依赖"异常路径"传递真 KI，部分结果出口不生效（abort_check 返回 True 的路径不受影响）。产品设计被 PM 判"无恙"，本次仅按退回单改测试，产品侧缺口留待 G2 接线时定夺。
 
-  **自测输出摘要**：pytest 197 passed（新增 7 例：正常回归 1、abort_check 中止 1、KeyboardInterrupt 1、异常注入 1、CLI 标记 1、judge 消费 2）；`--selftest` 6/6，RC=0。
+  **退回修复（1/2 次退回）**：CI run 41189730605——197 passed 但进程 exit 1，`tests/test_scanner.py:403` 的真 KeyboardInterrupt 在 pwsh runner 会话层逃逸（本地控制台不触发的时序间歇雷）。修复：测试改抛非 KI 自定义异常 `_SimulatedCtrlC(Exception)`（走统一捕获区、行为确定），用例更名 `test_user_abort_exception_marks_incomplete`，docstring 记退回单依据；产品代码零改动（退回单判"产品设计无恙"）。
+
+  **自测输出摘要**：pytest 197 passed（新增 7 例：正常回归 1、abort_check 中止 1、中止异常模拟 1、异常注入 1、CLI 标记 1、judge 消费 2）；`--selftest` 6/6，RC=0。退回修复后复测：pytest 200 passed ×2 连跑，全程输出零 KeyboardInterrupt 痕迹。
 
 ---
 
