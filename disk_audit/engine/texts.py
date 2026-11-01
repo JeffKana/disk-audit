@@ -170,3 +170,36 @@ RENDER_ERR_BAD_EVIDENCE_SOURCE = (
     "候选条目 #{index} 证据链第 {position} 条证据来源非法：{source}"
     "（合法来源为：{expected}）"
 )
+# G3 结果入口文案（T3-06；方案四节架构⑤"静态 HTML · 默认浏览器打开"、M2 闸①
+# "双击到看到报告 ≤3 步"）。本区块 append-only：新增文案一律向文末追加，
+# 严禁改动上方既有键值。
+# ======================================================================
+G3_TEXTS: dict[str, str] = {
+    "status_scanning": "正在体检：{path}；完成后报告将自动在默认浏览器打开",
+    "status_report_opened": "体检完成，报告已保存并在默认浏览器打开：{path}",
+    "status_audit_failed": "体检未完成：{reason}",
+    "reports_err_bad_filename": "报告文件名不合法：{filename}",
+    "reports_err_outside_dir": "报告写入路径越界，已拒绝写入：{target}",
+    "reports_err_bad_keep": "报告保留份数必须为正整数：{keep}",
+}
+
+# ======================================================================
+# G2 进度与中止文案（T3-05；方案 E-1 实时进度 / X-2·C7 不完整出口 / R10 零假设）。
+# 本区块 append-only：新增文案一律向文末追加，严禁改动上方既有键值。
+# 进度三字段取 E-1 口径（已扫描条目数 / 当前路径 / 已用时）；
+# 中止路径不生成报告文件，横幅如实披露（"未生成报告"）。
+# ======================================================================
+G2_TEXTS: dict[str, str] = {
+    "progress_group": "体检进度",
+    "progress_status": "已扫描 {entries} 项 · 已用时 {seconds} 秒",
+    "progress_current_path": "当前路径：{path}",
+    "abort_button": "中止体检",
+    "status_aborting": "正在中止，请稍候…",
+    "status_incomplete": "体检未完成：结果不完整，未生成报告。",
+    "incomplete_banner": (
+        "不完整报告：本次体检已中止或未完成，已扫描的部分结果不作为体检结论，"
+        "未生成报告文件；可选择扫描范围后重新发起体检。"
+    ),
+}
+
+
