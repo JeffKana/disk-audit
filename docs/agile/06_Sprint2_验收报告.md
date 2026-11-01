@@ -82,3 +82,22 @@ git push origin docs/DR-005-虚拟化定档   # 本地仍存在（0122ae0）
 ```
 
 合入完成 + T2-08/T2-09 分发后，Sprint 2 正式关闭、Sprint 3（W3：C8/F2/G1~G3 启动器与报告 UI）开工。
+
+## 8. 合入执行记录与退回单（DR-006 后续补记 · 2026-10-31 深夜）
+
+**流程变更**：DR-006（PR#27 已合入）生效——执行侧 PR 由 PM 验收后直接合入；PM 产出 PR（本报告）交负责人把关。本报告 §6/§7 中"负责人 merge"的旧口径由本节取代。
+
+**已合入**：PR#27（DR-006 治理变更本身，PM 按负责人指示的显式委托代为合入，main=9fd08ad）。
+
+**退回单 ×2（执行侧 PR，CI 红灯，PM 验收不合入）**：
+
+| PR | 现象（远端 CI 实证） | 根因（PM 定位） | 修复方向 |
+| --- | --- | --- | --- |
+| #21（C7）/ #22（F1，栈） | run 41189730605：**197 passed 全过**，进程仍 exit 1——`KeyboardInterrupt` 在 `tests/test_scanner.py:403`（KI 模拟测试）逃逸到 pytest 会话层 | 测试用**真实 KeyboardInterrupt** 模拟 Ctrl+C；runner（pwsh）上 KI 在会话层面逃逸，属环境时序相关的间歇雷（本地控制台不触发）。产品设计（X-2 统一出口）无恙 | 测试改用**非 KI 的自定义异常**（如复用 `_ScanAborted` 或新建 `SimulatedCtrlC`）模拟中止；或确保 scanner 把 executor 关闭纳入捕获区。禁止在测试中抛真 KI |
+| #24（C5 修复） | run 41212836258：2 failed——`test_decode_gbk_fallback`（mbcs 无法编码中文）/ `test_decode_invalid_bytes_replaced_no_raise`（mbcs 成功解码出 `ÿþú`，replace 分支未命中） | 测试假设 `mbcs`=GBK（开发机 zh-CN）；en-US runner 上 mbcs=cp1252，解码行为分叉。**修复逻辑本身无恙**（decode 链在两种 locale 下都不抛异常） | 测试去 locale 化：decode 链的编码表改为可注入（测试注入 `("utf-8", "不存在编码")` 直达 replace 分支）；或构造在 utf-8 与 cp1252 下都非法的字节。禁止断言依赖系统 locale |
+
+**验收口径修正（自本报告起生效）**：执行侧 PR 的"分支测试全绿"以**远端 CI** 为准；本地测试只是开发自测。本次三 PR 均栽在"本地绿、CI 红"的环境差异上——门禁拦截有效，SOP 第 4 步（门禁核验）以远端为准的既有规定重申。
+
+**退回处理**：两单修复推回原分支 → CI 绿 → PM 复验后合入（DR-006）。退回计数各 1/2。
+
+**负责人待办（按 DR-006 第 2 条把关）**：本分支与 `docs/DR-005-虚拟化定档` 的 PR 合入（或显式委托 PM 代操作）。
