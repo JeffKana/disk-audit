@@ -21,3 +21,6 @@ docs/upstream/poc/dist/
 
 # 本机容量基准（含用户路径，数字留档验收报告，文件不入库）
 tools/baseline.json
+
+# 会话临时产物（PM 验收中间文件）不进仓库——PR#29 清理时发现已漏入 main，一并清除
+.sc_*
