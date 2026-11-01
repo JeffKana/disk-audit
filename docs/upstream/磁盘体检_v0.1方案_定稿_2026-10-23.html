@@ -207,7 +207,7 @@
 <h2>六、性能与数据预算</h2>
 <table>
   <tr><th style="width:180px">指标</th><th style="width:96px">v0.1 目标</th><th style="width:104px">实测</th><th>说明</th></tr>
-  <tr><td>AppData 全量扫描</td><td>≤ 6s</td><td><b style="color:#166534">4.79s</b></td><td>64.3 万项 / 53.9GB</td></tr>
+  <tr><td>AppData 全量扫描</td><td>≤ 6s</td><td><b style="color:#166534">4.79s</b>（POC 单口径）<br>双口径实测 ~14.4s（DR-004，2026-11-01）</td><td>64.3 万项 / 53.9GB</td></tr>
   <tr><td>全盘扫描（固定本地盘 SSD）</td><td>≤ 30s</td><td><b style="color:#166534">15.23s</b></td><td>137 万项；8 线程</td></tr>
   <tr><td>HDD / 大容量盘</td><td>不承诺</td><td>未测</td><td>选择界面按盘符类型提示预估耗时，超过 120s 预估时建议改用目录级</td></tr>
   <tr><td>峰值内存</td><td>≤ 150MB</td><td><b style="color:#166534">25.5MB</b></td><td>前提：流式聚合，不缓存全量条目</td></tr>
@@ -217,8 +217,8 @@
   <tr><td>冷启动</td><td>≤ 1.5s</td><td><b style="color:#166534">0.4~0.5s</b></td><td>打包产物实测</td></tr>
   <tr><td>包体（onedir 解压后）</td><td>≤ 40MB</td><td><b style="color:#166534">24.9MB</b></td><td>982 文件（含 Python 运行时 + Tcl/Tk）</td></tr>
   <tr><td>本地占用上限</td><td>≤ 50MB</td><td>—</td><td>报告 + 体检记录，保留最近 12 次，超出按时间淘汰</td></tr>
-  <tr><td><b>容量口径偏差</b></td><td><b>&lt; 1%</b></td><td>待 M1 验收</td><td>与资源管理器"占用空间"对比；W0 已发现并列切分漏算根级文件（少 14.76GB），M1 必修</td></tr>
-  <tr><td><b>自动归属率</b></td><td><b>≥ 75%</b></td><td>待 M4 验收</td><td>口径见 9.2，分母为全部判定单元</td></tr>
+  <tr><td><b>容量口径偏差</b></td><td><b>&lt; 1%</b></td><td><b style="color:#166534">0.088% / 0.345% / 0.000%</b>（三目录基准，2026-11-01，四段分流后；夹具 0.000%）</td><td>与资源管理器"占用空间"对比；W0 已发现并列切分漏算根级文件（少 14.76GB），M1 必修</td></tr>
+  <tr><td><b>自动归属率</b></td><td><b>≥ 75%</b></td><td><b style="color:#166534">96.15% / 95.45%</b>（M1 终闸 acc 双机 GT 实测，2026-11-01；M4 75% 闸待验）</td><td>口径见 9.2，分母为全部判定单元</td></tr>
   <tr><td><b>高置信档误判</b></td><td><b>0</b></td><td>待 M4 验收</td><td>对在用软件；出现任一即 P0</td></tr>
 </table>
 
