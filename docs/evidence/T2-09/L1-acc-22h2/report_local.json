@@ -1,0 +1,1786 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-11-01T18:12:57+08:00",
+  "scan_root": "C:\\Users\\qa\\AppData\\Local",
+  "totals": {
+    "allocated_bytes": 4944693416,
+    "logical_bytes": 4922525855,
+    "regenerable_subtotal": 194515944,
+    "regenerable_confirm_subtotal": 0,
+    "skipped_entries": 25
+  },
+  "candidates": [
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\CEF",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：CEF/Chromium 嵌入式框架缓存（系统组件）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Comms",
+      "logical_bytes": 18571268,
+      "allocated_bytes": 18571272,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：系统通信组件（系统组件）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\ConnectedDevicesPlatform",
+      "logical_bytes": 1129107,
+      "allocated_bytes": 1136272,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：系统设备平台（系统组件）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\D3DSCache",
+      "logical_bytes": 199836,
+      "allocated_bytes": 221208,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：DirectX 着色器缓存（缓存/转储；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Google",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Google(Chrome 等)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Microsoft",
+      "logical_bytes": 764978113,
+      "allocated_bytes": 767288096,
+      "confidence": "受保护",
+      "verdict_source": "硬保护",
+      "evidence_chain": [
+        {
+          "source": "硬保护",
+          "content": "受保护，不可处理"
+        },
+        {
+          "source": "硬保护",
+          "content": "HARDPROTECT-SYSTEM：Microsoft 系统组件目录，属于系统数据"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Mozilla",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Firefox(Mozilla)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\NetEase",
+      "logical_bytes": 9533799,
+      "allocated_bytes": 9606584,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：网易系(云音乐等)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\PackageManagement",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "低",
+      "verdict_source": "启发式",
+      "evidence_chain": [
+        {
+          "source": "启发式",
+          "content": "归属未知，需人工判断"
+        },
+        {
+          "source": "启发式",
+          "content": "无安装记录、无运行证据、无命名特征命中（未知长尾）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "容器目录（已下钻判定）：子项已单独成单元"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\1527c705-839a-4832-9118-54d4Bd6a0c89_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\ActiveSync",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "低",
+      "verdict_source": "启发式",
+      "evidence_chain": [
+        {
+          "source": "启发式",
+          "content": "归属未知，需人工判断"
+        },
+        {
+          "source": "启发式",
+          "content": "无安装记录、无运行证据、无命名特征命中（未知长尾）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Clipchamp.Clipchamp_yxz26nhyzhsrt",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Clipchamp.Clipchamp_4.7.10220.0_x64__yxz26nhyzhsrt"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\E2A4F912-2574-4A75-9BB0-0D023378592B_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：E2A4F912-2574-4A75-9BB0-0D023378592B_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\F46D4000-FD22-4DB4-AC8E-4E1DDDE828FE_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：F46D4000-FD22-4DB4-AC8E-4E1DDDE828FE_10.0.22621.1_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.549981C3F5F10_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.549981C3F5F10_3.2204.14815.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.AAD.BrokerPlugin_cw5n1h2txyewy",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.AAD.BrokerPlugin_1000.19580.1000.0_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.AccountsControl_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.AccountsControl_10.0.22621.1_neutral__cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.AsyncTextService_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.AsyncTextService_10.0.22621.1_neutral__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.BingNews_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.BingNews_1.0.1.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.BingWeather_8wekyb3d8bbwe",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.BingWeather_3.2.3.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.BioEnrollment_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.BioEnrollment_10.0.19587.1000_neutral__cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.CredDialogHost_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.CredDialogHost_10.0.19595.1001_neutral__cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe",
+      "logical_bytes": 75579,
+      "allocated_bytes": 75640,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.DesktopAppInstaller_1.17.10691.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.ECApp_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.ECApp_10.0.22621.1_neutral__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.GamingApp_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.GamingApp_2105.900.24.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.GetHelp_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.GetHelp_10.2201.421.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Getstarted_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Getstarted_10.2204.1.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.HEIFImageExtension_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.HEIFImageExtension_1.0.43012.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.HEVCVideoExtension_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.HEVCVideoExtension_1.0.50361.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.LanguageExperiencePackzh-CN_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.LanguageExperiencePackzh-CN_22621.140.456.0_neutral__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.LockApp_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.LockApp_10.0.22621.1_neutral__cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.MicrosoftEdge.Stable_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.MicrosoftEdge_44.22621.382.0_neutral__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.MicrosoftEdgeDevToolsClient_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.MicrosoftEdge_44.22621.382.0_neutral__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.MicrosoftEdge_8wekyb3d8bbwe",
+      "logical_bytes": 21365,
+      "allocated_bytes": 21416,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.MicrosoftEdge_44.22621.382.0_neutral__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.MicrosoftOfficeHub_18.2204.1141.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.MicrosoftSolitaireCollection_8wekyb3d8bbwe",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.MicrosoftSolitaireCollection_4.27.9181.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.MicrosoftStickyNotes_4.0.6104.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.NET.Native.Framework.2.2_8wekyb3d8bbwe",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.NET.Native.Framework.2.2_2.2.29512.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.NET.Native.Runtime.2.2_8wekyb3d8bbwe",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.NET.Native.Runtime.2.2_2.2.28604.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Paint_8wekyb3d8bbwe",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Paint_11.2605.81.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.People_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.People_10.1909.12456.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.PowerAutomateDesktop_1.0.219.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.RawImageExtension_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.RawImageExtension_2.1.30391.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.ScreenSketch_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.ScreenSketch_11.2201.12.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.SecHealthUI_8wekyb3d8bbwe",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.SecHealthUI_1000.29680.1000.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.StorePurchaseApp_8wekyb3d8bbwe",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.StorePurchaseApp_22608.1401.1.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Todos_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Todos_0.54.42772.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.UI.Xaml.2.4_8wekyb3d8bbwe",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.UI.Xaml.2.4_2.42007.9001.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.UI.Xaml.2.7_8wekyb3d8bbwe",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.UI.Xaml.2.7_7.2409.9001.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.UI.Xaml.2.8_8wekyb3d8bbwe",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.UI.Xaml.2.8_8.2511.26001.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.VCLibs.140.00.UWPDesktop_8wekyb3d8bbwe",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.VCLibs.140.00_14.0.30704.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.VCLibs.140.00_8wekyb3d8bbwe",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.VCLibs.140.00_14.0.30704.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.VP9VideoExtensions_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.VP9VideoExtensions_1.0.50901.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.VisualStudioCode_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.VisualStudioCode_1.0.141.2_neutral__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WebMediaExtensions_8wekyb3d8bbwe",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WebMediaExtensions_1.2.42.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WebpImageExtension_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WebpImageExtension_1.0.42351.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WidgetsPlatformRuntime_8wekyb3d8bbwe",
+      "logical_bytes": 49152,
+      "allocated_bytes": 49152,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WidgetsPlatformRuntime_1.6.19.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Win32WebViewHost_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Win32WebViewHost_10.0.22621.1_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WinAppRuntime.DDLM.5001.373.1736.0-x6_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WinAppRuntime.DDLM.5001.373.1736.0-x6_5001.373.1736.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WinAppRuntime.DDLM.5001.373.1736.0-x8_8wekyb3d8bbwe",
+      "logical_bytes": 40960,
+      "allocated_bytes": 40960,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WinAppRuntime.DDLM.5001.373.1736.0-x8_5001.373.1736.0_x86__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.Apprep.ChxApp_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.Apprep.ChxApp_1000.22621.1.0_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.AssignedAccessLockApp_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.AssignedAccessLockApp_1000.22621.1.0_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.CallingShellApp_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.CallingShellApp_1000.22621.1.0_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.CapturePicker_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.CapturePicker_10.0.19580.1000_neutral__cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.CloudExperienceHost_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.CloudExperienceHost_10.0.22621.1_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy",
+      "logical_bytes": 8755204,
+      "allocated_bytes": 8804872,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.ContentDeliveryManager_10.0.22621.1_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.NarratorQuickStart_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.NarratorQuickStart_10.0.22621.1_neutral_neutral_8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.ParentalControls_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.ParentalControls_1000.22621.1.0_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.PeopleExperienceHost_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.PeopleExperienceHost_10.0.22621.1_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.Photos_8wekyb3d8bbwe",
+      "logical_bytes": 1680584,
+      "allocated_bytes": 1683456,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.Photos_21.21030.25003.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.PinningConfirmationDialog_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.PinningConfirmationDialog_1000.22621.1.0_neutral__cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.PrintQueueActionCenter_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.PrintQueueActionCenter_1.0.1.0_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.SecureAssessmentBrowser_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.SecureAssessmentBrowser_10.0.22621.1_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.ShellExperienceHost_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.ShellExperienceHost_10.0.22621.317_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy",
+      "logical_bytes": 569098,
+      "allocated_bytes": 584064,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.StartMenuExperienceHost_10.0.22621.1_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.XGpuEjectDialog_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Windows.XGpuEjectDialog_10.0.22621.1_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsAlarms_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WindowsAlarms_1.0.75.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsAppRuntime.1.5_8wekyb3d8bbwe",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WindowsAppRuntime.1.5_5001.373.1736.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsAppRuntime.1.7_8wekyb3d8bbwe",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WindowsAppRuntime.1.7_7000.785.2325.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsAppRuntime.2_8wekyb3d8bbwe",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WindowsAppRuntime.2_2.5.1.0_x86__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsCalculator_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WindowsCalculator_10.2103.8.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsCamera_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WindowsCamera_2022.2201.4.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WindowsFeedbackHub_1.2201.61.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsMaps_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WindowsMaps_1.0.39.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsNotepad_8wekyb3d8bbwe",
+      "logical_bytes": 49152,
+      "allocated_bytes": 49152,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WindowsNotepad_11.2607.14.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WindowsSoundRecorder_1.0.42.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsStore_8wekyb3d8bbwe",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WindowsStore_22204.1400.4.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsTerminal_8wekyb3d8bbwe",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.WindowsTerminal_1.24.12741.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Xbox.TCUI_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.Xbox.TCUI_1.23.28004.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.XboxGameCallableUI_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.XboxGameCallableUI_1000.22621.1.0_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.XboxGameOverlay_8wekyb3d8bbwe",
+      "logical_bytes": 16946,
+      "allocated_bytes": 16960,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.XboxGameOverlay_1.54.4001.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.XboxGamingOverlay_8wekyb3d8bbwe",
+      "logical_bytes": 18414,
+      "allocated_bytes": 18416,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.XboxGamingOverlay_2.622.3232.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.XboxIdentityProvider_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.XboxIdentityProvider_12.50.6001.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.XboxSpeechToTextOverlay_8wekyb3d8bbwe",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.XboxSpeechToTextOverlay_1.21.13002.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.YourPhone_8wekyb3d8bbwe",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.YourPhone_0.25072.81.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.ZuneMusic_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.ZuneMusic_11.2202.46.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.ZuneVideo_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Microsoft.ZuneVideo_10.22020.10021.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\MicrosoftCorporationII.QuickAssist_8wekyb3d8bbwe",
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：MicrosoftCorporationII.QuickAssist_2.0.61.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\MicrosoftCorporationII.WinAppRuntime.Main.1.5_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：MicrosoftCorporationII.WinAppRuntime.Main.1.5_5001.373.1736.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\MicrosoftCorporationII.WinAppRuntime.Singleton_8wekyb3d8bbwe",
+      "logical_bytes": 49152,
+      "allocated_bytes": 49152,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：MicrosoftCorporationII.WinAppRuntime.Singleton_5001.373.1736.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy",
+      "logical_bytes": 28016042,
+      "allocated_bytes": 28186648,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：MicrosoftWindows.Client.CBS_1000.22632.1000.0_x64__cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy",
+      "logical_bytes": 74263087,
+      "allocated_bytes": 74616712,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：MicrosoftWindows.Client.WebExperience_526.21100.40.0_x64__cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\NcsiUwpApp_8wekyb3d8bbwe",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：NcsiUwpApp_1000.22621.1.0_neutral_neutral_8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\NotepadPlusPlus_2247w0b46hfww",
+      "logical_bytes": 49152,
+      "allocated_bytes": 49152,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：NotepadPlusPlus_1.0.0.0_neutral__2247w0b46hfww"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\QQExtension_fv0hcek9q9tbw",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：QQExtension_1.0.0.0_neutral__fv0hcek9q9tbw"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Windows.CBSPreview_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Windows.CBSPreview_10.0.19580.1000_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Windows.PrintDialog_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：Windows.PrintDialog_6.2.2.0_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\c5e2524a-ea46-4f67-841f-6a9465d9d515_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.22621.1_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\microsoft.windowscommunicationsapps_8wekyb3d8bbwe",
+      "logical_bytes": 4359962,
+      "allocated_bytes": 4359984,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：microsoft.windowscommunicationsapps_16005.14326.20544.0_x64__8wekyb3d8bbwe"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\windows.immersivecontrolpanel_cw5n1h2txyewy",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：windows.immersivecontrolpanel_10.0.6.1000_neutral_neutral_cw5n1h2txyewy"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\windows_ie_ac_001",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "低",
+      "verdict_source": "启发式",
+      "evidence_chain": [
+        {
+          "source": "启发式",
+          "content": "归属未知，需人工判断"
+        },
+        {
+          "source": "启发式",
+          "content": "无安装记录、无运行证据、无命名特征命中（未知长尾）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\wpsappext1_kbyyjmwk2spaw",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：wpsappext1_1.0.0.2_neutral__kbyyjmwk2spaw"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\wpsappext2_kbyyjmwk2spaw",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：wpsappext2_1.0.0.2_neutral__kbyyjmwk2spaw"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\wpsappext3_kbyyjmwk2spaw",
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "confidence": "中",
+      "verdict_source": "Appx",
+      "evidence_chain": [
+        {
+          "source": "Appx",
+          "content": "Appx 注册包匹配：wpsappext3_1.0.0.2_neutral__kbyyjmwk2spaw"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\PeerDistRepub",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "低",
+      "verdict_source": "启发式",
+      "evidence_chain": [
+        {
+          "source": "启发式",
+          "content": "归属未知，需人工判断"
+        },
+        {
+          "source": "启发式",
+          "content": "无安装记录、无运行证据、无命名特征命中（未知长尾）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\PlaceholderTileLogoFolder",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：系统磁贴缓存（系统组件）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Programs",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "容器目录（已下钻判定）：子项已单独成单元"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Programs\\Microsoft VS Code",
+      "logical_bytes": 1082314874,
+      "allocated_bytes": 1085820336,
+      "confidence": "低",
+      "verdict_source": "启发式",
+      "evidence_chain": [
+        {
+          "source": "启发式",
+          "content": "归属未知，需人工判断"
+        },
+        {
+          "source": "启发式",
+          "content": "无安装记录、无运行证据、无命名特征命中（未知长尾）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Publishers",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：系统 COM 事件发布（系统组件）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Steam",
+      "logical_bytes": 5020632,
+      "allocated_bytes": 5056288,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：Steam 平台（游戏数据；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Temp",
+      "logical_bytes": 192958750,
+      "allocated_bytes": 194294736,
+      "confidence": "中",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "疑似残留，建议核对证据"
+        },
+        {
+          "source": "知识库",
+          "content": "知识库命中：系统临时文件（缓存/转储；生命周期未知，缺公开下线依据）"
+        }
+      ],
+      "suggested_action": "A2"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\VirtualStore",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：UAC 文件虚拟化(系统)（系统组件）"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\kingsoft",
+      "logical_bytes": 2729033935,
+      "allocated_bytes": 2743318744,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：金山 WPS（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    }
+  ]
+}

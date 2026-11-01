@@ -1,0 +1,118 @@
+===== L1-acc-22h2 =====
+[%LOCALAPPDATA%] 单元总数=124 分子(受保护/高/中)=119 分母=124 归属率=95.97% scan_root=C:\Users\qa\AppData\Local
+  按置信度: {'高': 12, '中': 106, '受保护': 1, '低': 5}
+  按判定来源: {'知识库': 15, '硬保护': 1, '启发式': 5, 'Appx': 103}
+[%APPDATA%] 单元总数=6 分子(受保护/高/中)=6 分母=6 归属率=100.00% scan_root=C:\Users\qa\AppData\Roaming
+  按置信度: {'高': 5, '受保护': 1}
+  按判定来源: {'知识库': 5, '硬保护': 1}
+[L1-acc-22h2 双范围合计] 单元总数=130 分子=125 归属率=96.15%
+[L1-acc-22h2 高置信残留单元] 0 个: []
+===== L1-acc-24h2 =====
+[%LOCALAPPDATA%] 单元总数=105 分子(受保护/高/中)=100 分母=105 归属率=95.24% scan_root=C:\Users\qa\AppData\Local
+  按置信度: {'高': 12, '中': 87, '受保护': 1, '低': 5}
+  按判定来源: {'知识库': 15, '硬保护': 1, '启发式': 5, 'Appx': 84}
+[%APPDATA%] 单元总数=5 分子(受保护/高/中)=5 分母=5 归属率=100.00% scan_root=C:\Users\qa\AppData\Roaming
+  按置信度: {'高': 4, '受保护': 1}
+  按判定来源: {'知识库': 4, '硬保护': 1}
+[L1-acc-24h2 双范围合计] 单元总数=110 分子=105 归属率=95.45%
+[L1-acc-24h2 高置信残留单元] 0 个: []
+
+===== GT 11 件逐一核对（关键词命中单元，判定不得为高置信残留） =====
+
+--- Chrome (2 个命中单元) ---
+  [L1-acc-22h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Google | 置信=高 来源=知识库
+      证据: 知识库命中：Google(Chrome 等)（已安装应用）
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Google | 置信=高 来源=知识库
+      证据: 知识库命中：Google(Chrome 等)（已安装应用）
+
+--- Firefox (4 个命中单元) ---
+  [L1-acc-22h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Mozilla | 置信=高 来源=知识库
+      证据: 知识库命中：Firefox(Mozilla)（已安装应用）
+  [L1-acc-22h2/%APPDATA%] C:\Users\qa\AppData\Roaming\Mozilla | 置信=高 来源=知识库
+      证据: 知识库命中：Firefox(Mozilla)（已安装应用）
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Mozilla | 置信=高 来源=知识库
+      证据: 知识库命中：Firefox(Mozilla)（已安装应用）
+  [L1-acc-24h2/%APPDATA%] C:\Users\qa\AppData\Roaming\Mozilla | 置信=高 来源=知识库
+      证据: 知识库命中：Firefox(Mozilla)（已安装应用）
+
+--- 7-Zip (0 个命中单元) ---
+  (扫描范围内无关键词命中单元)
+
+--- Notepad++ (4 个命中单元) ---
+  [L1-acc-22h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\Microsoft.WindowsNotepad_8wekyb3d8bbwe | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：Microsoft.WindowsNotepad_11.2607.14.0_x64__8wekyb3d8bbwe
+  [L1-acc-22h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\NotepadPlusPlus_2247w0b46hfww | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：NotepadPlusPlus_1.0.0.0_neutral__2247w0b46hfww
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\Microsoft.WindowsNotepad_8wekyb3d8bbwe | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：Microsoft.WindowsNotepad_11.2607.14.0_x64__8wekyb3d8bbwe
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\NotepadPlusPlus_2247w0b46hfww | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：NotepadPlusPlus_1.0.0.0_neutral__2247w0b46hfww
+
+--- Git (0 个命中单元) ---
+  (扫描范围内无关键词命中单元)
+
+--- VS Code (6 个命中单元) ---
+  [L1-acc-22h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\Microsoft.VisualStudioCode_8wekyb3d8bbwe | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：Microsoft.VisualStudioCode_1.0.141.2_neutral__8wekyb3d8bbwe
+  [L1-acc-22h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Programs\Microsoft VS Code | 置信=低 来源=启发式
+      证据: 归属未知，需人工判断; 无安装记录、无运行证据、无命名特征命中（未知长尾）
+  [L1-acc-22h2/%APPDATA%] C:\Users\qa\AppData\Roaming\Code | 置信=高 来源=知识库
+      证据: 知识库命中：Visual Studio Code 用户数据（已安装应用）
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\Microsoft.AVCEncoderVideoExtension_8wekyb3d8bbwe | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：Microsoft.AVCEncoderVideoExtension_1.1.47.0_x64__8wekyb3d8bbwe
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\Microsoft.VisualStudioCode_8wekyb3d8bbwe | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：Microsoft.VisualStudioCode_1.0.141.2_neutral__8wekyb3d8bbwe
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Programs\Microsoft VS Code | 置信=低 来源=启发式
+      证据: 归属未知，需人工判断; 无安装记录、无运行证据、无命名特征命中（未知长尾）
+
+--- 微信 (2 个命中单元) ---
+  [L1-acc-22h2/%APPDATA%] C:\Users\qa\AppData\Roaming\Tencent | 置信=高 来源=知识库
+      证据: 知识库命中：腾讯系(QQ/微信聊天数据)（已安装应用）
+  [L1-acc-24h2/%APPDATA%] C:\Users\qa\AppData\Roaming\Tencent | 置信=高 来源=知识库
+      证据: 知识库命中：腾讯系(QQ/微信聊天数据)（已安装应用）
+
+--- QQ NT (4 个命中单元) ---
+  [L1-acc-22h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\QQExtension_fv0hcek9q9tbw | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：QQExtension_1.0.0.0_neutral__fv0hcek9q9tbw
+  [L1-acc-22h2/%APPDATA%] C:\Users\qa\AppData\Roaming\Tencent | 置信=高 来源=知识库
+      证据: 知识库命中：腾讯系(QQ/微信聊天数据)（已安装应用）
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\QQExtension_fv0hcek9q9tbw | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：QQExtension_1.0.0.0_neutral__fv0hcek9q9tbw
+  [L1-acc-24h2/%APPDATA%] C:\Users\qa\AppData\Roaming\Tencent | 置信=高 来源=知识库
+      证据: 知识库命中：腾讯系(QQ/微信聊天数据)（已安装应用）
+
+--- WPS (10 个命中单元) ---
+  [L1-acc-22h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\wpsappext1_kbyyjmwk2spaw | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：wpsappext1_1.0.0.2_neutral__kbyyjmwk2spaw
+  [L1-acc-22h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\wpsappext2_kbyyjmwk2spaw | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：wpsappext2_1.0.0.2_neutral__kbyyjmwk2spaw
+  [L1-acc-22h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\wpsappext3_kbyyjmwk2spaw | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：wpsappext3_1.0.0.2_neutral__kbyyjmwk2spaw
+  [L1-acc-22h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\kingsoft | 置信=高 来源=知识库
+      证据: 知识库命中：金山 WPS（已安装应用）
+  [L1-acc-22h2/%APPDATA%] C:\Users\qa\AppData\Roaming\kingsoft | 置信=高 来源=知识库
+      证据: 知识库命中：金山 WPS（已安装应用）
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\wpsappext1_kbyyjmwk2spaw | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：wpsappext1_1.0.0.2_neutral__kbyyjmwk2spaw
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\wpsappext2_kbyyjmwk2spaw | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：wpsappext2_1.0.0.2_neutral__kbyyjmwk2spaw
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\wpsappext3_kbyyjmwk2spaw | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：wpsappext3_1.0.0.2_neutral__kbyyjmwk2spaw
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\kingsoft | 置信=高 来源=知识库
+      证据: 知识库命中：金山 WPS（已安装应用）
+  [L1-acc-24h2/%APPDATA%] C:\Users\qa\AppData\Roaming\kingsoft | 置信=高 来源=知识库
+      证据: 知识库命中：金山 WPS（已安装应用）
+
+--- 网易云音乐 (2 个命中单元) ---
+  [L1-acc-22h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\NetEase | 置信=高 来源=知识库
+      证据: 知识库命中：网易系(云音乐等)（已安装应用）
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\NetEase | 置信=高 来源=知识库
+      证据: 知识库命中：网易系(云音乐等)（已安装应用）
+
+--- Steam (3 个命中单元) ---
+  [L1-acc-22h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Steam | 置信=中 来源=知识库
+      证据: 疑似残留，建议核对证据; 知识库命中：Steam 平台（游戏数据；生命周期未知，缺公开下线依据）
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Packages\MSTeams_8wekyb3d8bbwe | 置信=中 来源=Appx
+      证据: Appx 注册包匹配：MSTeams_26260.1717.5229.7049_x64__8wekyb3d8bbwe
+  [L1-acc-24h2/%LOCALAPPDATA%] C:\Users\qa\AppData\Local\Steam | 置信=中 来源=知识库
+      证据: 疑似残留，建议核对证据; 知识库命中：Steam 平台（游戏数据；生命周期未知，缺公开下线依据）

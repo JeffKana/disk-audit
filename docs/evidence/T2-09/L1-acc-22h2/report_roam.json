@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-11-01T18:13:02+08:00",
+  "scan_root": "C:\\Users\\qa\\AppData\\Roaming",
+  "totals": {
+    "allocated_bytes": 734103984,
+    "logical_bytes": 733233491,
+    "regenerable_subtotal": 0,
+    "regenerable_confirm_subtotal": 0,
+    "skipped_entries": 1
+  },
+  "candidates": [
+    {
+      "path": "C:\\Users\\qa\\AppData\\Roaming\\Adobe",
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Adobe 系（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Roaming\\Code",
+      "logical_bytes": 23485207,
+      "allocated_bytes": 23533616,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Visual Studio Code 用户数据（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Roaming\\Microsoft",
+      "logical_bytes": 375188,
+      "allocated_bytes": 394104,
+      "confidence": "受保护",
+      "verdict_source": "硬保护",
+      "evidence_chain": [
+        {
+          "source": "硬保护",
+          "content": "受保护，不可处理"
+        },
+        {
+          "source": "硬保护",
+          "content": "HARDPROTECT-SYSTEM：Microsoft 系统组件目录，属于系统数据"
+        }
+      ],
+      "suggested_action": "A5"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Roaming\\Mozilla",
+      "logical_bytes": 5913,
+      "allocated_bytes": 5928,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：Firefox(Mozilla)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Roaming\\Tencent",
+      "logical_bytes": 247398,
+      "allocated_bytes": 249856,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：腾讯系(QQ/微信聊天数据)（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Roaming\\kingsoft",
+      "logical_bytes": 709119785,
+      "allocated_bytes": 709920480,
+      "confidence": "高",
+      "verdict_source": "知识库",
+      "evidence_chain": [
+        {
+          "source": "知识库",
+          "content": "知识库命中：金山 WPS（已安装应用）"
+        }
+      ],
+      "suggested_action": "A3"
+    }
+  ]
+}

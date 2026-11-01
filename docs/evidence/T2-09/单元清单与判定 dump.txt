@@ -1,0 +1,244 @@
+===== L1-acc-22h2 / report_local.json / units=124 =====
+  CEF                                              conf=高    src=知识库   | 知识库命中：CEF/Chromium 嵌入式框架缓存（系统组件）
+  Comms                                            conf=高    src=知识库   | 知识库命中：系统通信组件（系统组件）
+  ConnectedDevicesPlatform                         conf=高    src=知识库   | 知识库命中：系统设备平台（系统组件）
+  D3DSCache                                        conf=中    src=知识库   | 疑似残留，建议核对证据
+  Google                                           conf=高    src=知识库   | 知识库命中：Google(Chrome 等)（已安装应用）
+  Microsoft                                        conf=受保护  src=硬保护   | 受保护，不可处理
+  Mozilla                                          conf=高    src=知识库   | 知识库命中：Firefox(Mozilla)（已安装应用）
+  NetEase                                          conf=高    src=知识库   | 知识库命中：网易系(云音乐等)（已安装应用）
+  PackageManagement                                conf=低    src=启发式   | 归属未知，需人工判断
+  Packages                                         conf=高    src=知识库   | 容器目录（已下钻判定）：子项已单独成单元
+  1527c705-839a-4832-9118-54d4Bd6a0c89_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1
+  ActiveSync                                       conf=低    src=启发式   | 归属未知，需人工判断
+  Clipchamp.Clipchamp_yxz26nhyzhsrt                conf=中    src=Appx  | Appx 注册包匹配：Clipchamp.Clipchamp_4.7.10220.0_x64__yxz26nhyzhsr
+  E2A4F912-2574-4A75-9BB0-0D023378592B_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：E2A4F912-2574-4A75-9BB0-0D023378592B_10.0.19640.1
+  F46D4000-FD22-4DB4-AC8E-4E1DDDE828FE_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：F46D4000-FD22-4DB4-AC8E-4E1DDDE828FE_10.0.22621.1
+  Microsoft.549981C3F5F10_8wekyb3d8bbwe            conf=中    src=Appx  | Appx 注册包匹配：Microsoft.549981C3F5F10_3.2204.14815.0_x64__8weky
+  Microsoft.AAD.BrokerPlugin_cw5n1h2txyewy         conf=中    src=Appx  | Appx 注册包匹配：Microsoft.AAD.BrokerPlugin_1000.19580.1000.0_neut
+  Microsoft.AccountsControl_cw5n1h2txyewy          conf=中    src=Appx  | Appx 注册包匹配：Microsoft.AccountsControl_10.0.22621.1_neutral__c
+  Microsoft.AsyncTextService_8wekyb3d8bbwe         conf=中    src=Appx  | Appx 注册包匹配：Microsoft.AsyncTextService_10.0.22621.1_neutral__
+  Microsoft.BingNews_8wekyb3d8bbwe                 conf=中    src=Appx  | Appx 注册包匹配：Microsoft.BingNews_1.0.1.0_x64__8wekyb3d8bbwe
+  Microsoft.BingWeather_8wekyb3d8bbwe              conf=中    src=Appx  | Appx 注册包匹配：Microsoft.BingWeather_3.2.3.0_x64__8wekyb3d8bbwe
+  Microsoft.BioEnrollment_cw5n1h2txyewy            conf=中    src=Appx  | Appx 注册包匹配：Microsoft.BioEnrollment_10.0.19587.1000_neutral__
+  Microsoft.CredDialogHost_cw5n1h2txyewy           conf=中    src=Appx  | Appx 注册包匹配：Microsoft.CredDialogHost_10.0.19595.1001_neutral_
+  Microsoft.DesktopAppInstaller_8wekyb3d8bbwe      conf=中    src=Appx  | Appx 注册包匹配：Microsoft.DesktopAppInstaller_1.17.10691.0_x64__8
+  Microsoft.ECApp_8wekyb3d8bbwe                    conf=中    src=Appx  | Appx 注册包匹配：Microsoft.ECApp_10.0.22621.1_neutral__8wekyb3d8bb
+  Microsoft.GamingApp_8wekyb3d8bbwe                conf=中    src=Appx  | Appx 注册包匹配：Microsoft.GamingApp_2105.900.24.0_x64__8wekyb3d8b
+  Microsoft.GetHelp_8wekyb3d8bbwe                  conf=中    src=Appx  | Appx 注册包匹配：Microsoft.GetHelp_10.2201.421.0_x64__8wekyb3d8bbw
+  Microsoft.Getstarted_8wekyb3d8bbwe               conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Getstarted_10.2204.1.0_x64__8wekyb3d8bb
+  Microsoft.HEIFImageExtension_8wekyb3d8bbwe       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.HEIFImageExtension_1.0.43012.0_x64__8we
+  Microsoft.HEVCVideoExtension_8wekyb3d8bbwe       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.HEVCVideoExtension_1.0.50361.0_x64__8we
+  Microsoft.LanguageExperiencePackzh-CN_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.LanguageExperiencePackzh-CN_22621.140.4
+  Microsoft.LockApp_cw5n1h2txyewy                  conf=中    src=Appx  | Appx 注册包匹配：Microsoft.LockApp_10.0.22621.1_neutral__cw5n1h2tx
+  Microsoft.MicrosoftEdge.Stable_8wekyb3d8bbwe     conf=中    src=Appx  | Appx 注册包匹配：Microsoft.MicrosoftEdge_44.22621.382.0_neutral__8
+  Microsoft.MicrosoftEdgeDevToolsClient_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.MicrosoftEdge_44.22621.382.0_neutral__8
+  Microsoft.MicrosoftEdge_8wekyb3d8bbwe            conf=中    src=Appx  | Appx 注册包匹配：Microsoft.MicrosoftEdge_44.22621.382.0_neutral__8
+  Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.MicrosoftOfficeHub_18.2204.1141.0_x64__
+  Microsoft.MicrosoftSolitaireCollection_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.MicrosoftSolitaireCollection_4.27.9181.
+  Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe     conf=中    src=Appx  | Appx 注册包匹配：Microsoft.MicrosoftStickyNotes_4.0.6104.0_x64__8w
+  Microsoft.NET.Native.Framework.2.2_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.NET.Native.Framework.2.2_2.2.29512.0_x6
+  Microsoft.NET.Native.Runtime.2.2_8wekyb3d8bbwe   conf=中    src=Appx  | Appx 注册包匹配：Microsoft.NET.Native.Runtime.2.2_2.2.28604.0_x64_
+  Microsoft.Paint_8wekyb3d8bbwe                    conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Paint_11.2605.81.0_x64__8wekyb3d8bbwe
+  Microsoft.People_8wekyb3d8bbwe                   conf=中    src=Appx  | Appx 注册包匹配：Microsoft.People_10.1909.12456.0_x64__8wekyb3d8bb
+  Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe     conf=中    src=Appx  | Appx 注册包匹配：Microsoft.PowerAutomateDesktop_1.0.219.0_x64__8we
+  Microsoft.RawImageExtension_8wekyb3d8bbwe        conf=中    src=Appx  | Appx 注册包匹配：Microsoft.RawImageExtension_2.1.30391.0_x64__8wek
+  Microsoft.ScreenSketch_8wekyb3d8bbwe             conf=中    src=Appx  | Appx 注册包匹配：Microsoft.ScreenSketch_11.2201.12.0_x64__8wekyb3d
+  Microsoft.SecHealthUI_8wekyb3d8bbwe              conf=中    src=Appx  | Appx 注册包匹配：Microsoft.SecHealthUI_1000.29680.1000.0_x64__8wek
+  Microsoft.StorePurchaseApp_8wekyb3d8bbwe         conf=中    src=Appx  | Appx 注册包匹配：Microsoft.StorePurchaseApp_22608.1401.1.0_x64__8w
+  Microsoft.Todos_8wekyb3d8bbwe                    conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Todos_0.54.42772.0_x64__8wekyb3d8bbwe
+  Microsoft.UI.Xaml.2.4_8wekyb3d8bbwe              conf=中    src=Appx  | Appx 注册包匹配：Microsoft.UI.Xaml.2.4_2.42007.9001.0_x64__8wekyb3
+  Microsoft.UI.Xaml.2.7_8wekyb3d8bbwe              conf=中    src=Appx  | Appx 注册包匹配：Microsoft.UI.Xaml.2.7_7.2409.9001.0_x64__8wekyb3d
+  Microsoft.UI.Xaml.2.8_8wekyb3d8bbwe              conf=中    src=Appx  | Appx 注册包匹配：Microsoft.UI.Xaml.2.8_8.2511.26001.0_x64__8wekyb3
+  Microsoft.VCLibs.140.00.UWPDesktop_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.VCLibs.140.00_14.0.30704.0_x64__8wekyb3
+  Microsoft.VCLibs.140.00_8wekyb3d8bbwe            conf=中    src=Appx  | Appx 注册包匹配：Microsoft.VCLibs.140.00_14.0.30704.0_x64__8wekyb3
+  Microsoft.VP9VideoExtensions_8wekyb3d8bbwe       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.VP9VideoExtensions_1.0.50901.0_x64__8we
+  Microsoft.VisualStudioCode_8wekyb3d8bbwe         conf=中    src=Appx  | Appx 注册包匹配：Microsoft.VisualStudioCode_1.0.141.2_neutral__8we
+  Microsoft.WebMediaExtensions_8wekyb3d8bbwe       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WebMediaExtensions_1.2.42.0_x64__8wekyb
+  Microsoft.WebpImageExtension_8wekyb3d8bbwe       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WebpImageExtension_1.0.42351.0_x64__8we
+  Microsoft.WidgetsPlatformRuntime_8wekyb3d8bbwe   conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WidgetsPlatformRuntime_1.6.19.0_x64__8w
+  Microsoft.Win32WebViewHost_cw5n1h2txyewy         conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Win32WebViewHost_10.0.22621.1_neutral_n
+  Microsoft.WinAppRuntime.DDLM.5001.373.1736.0-x6_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WinAppRuntime.DDLM.5001.373.1736.0-x6_5
+  Microsoft.WinAppRuntime.DDLM.5001.373.1736.0-x8_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WinAppRuntime.DDLM.5001.373.1736.0-x8_5
+  Microsoft.Windows.Apprep.ChxApp_cw5n1h2txyewy    conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.Apprep.ChxApp_1000.22621.1.0_ne
+  Microsoft.Windows.AssignedAccessLockApp_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.AssignedAccessLockApp_1000.2262
+  Microsoft.Windows.CallingShellApp_cw5n1h2txyewy  conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.CallingShellApp_1000.22621.1.0_
+  Microsoft.Windows.CapturePicker_cw5n1h2txyewy    conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.CapturePicker_10.0.19580.1000_n
+  Microsoft.Windows.CloudExperienceHost_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.CloudExperienceHost_10.0.22621.
+  Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.ContentDeliveryManager_10.0.226
+  Microsoft.Windows.NarratorQuickStart_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.NarratorQuickStart_10.0.22621.1
+  Microsoft.Windows.ParentalControls_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.ParentalControls_1000.22621.1.0
+  Microsoft.Windows.PeopleExperienceHost_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.PeopleExperienceHost_10.0.22621
+  Microsoft.Windows.Photos_8wekyb3d8bbwe           conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.Photos_21.21030.25003.0_x64__8w
+  Microsoft.Windows.PinningConfirmationDialog_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.PinningConfirmationDialog_1000.
+  Microsoft.Windows.PrintQueueActionCenter_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.PrintQueueActionCenter_1.0.1.0_
+  Microsoft.Windows.SecureAssessmentBrowser_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.SecureAssessmentBrowser_10.0.22
+  Microsoft.Windows.ShellExperienceHost_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.ShellExperienceHost_10.0.22621.
+  Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.StartMenuExperienceHost_10.0.22
+  Microsoft.Windows.XGpuEjectDialog_cw5n1h2txyewy  conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.XGpuEjectDialog_10.0.22621.1_ne
+  Microsoft.WindowsAlarms_8wekyb3d8bbwe            conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsAlarms_1.0.75.0_x64__8wekyb3d8bb
+  Microsoft.WindowsAppRuntime.1.5_8wekyb3d8bbwe    conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsAppRuntime.1.5_5001.373.1736.0_x
+  Microsoft.WindowsAppRuntime.1.7_8wekyb3d8bbwe    conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsAppRuntime.1.7_7000.785.2325.0_x
+  Microsoft.WindowsAppRuntime.2_8wekyb3d8bbwe      conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsAppRuntime.2_2.5.1.0_x86__8wekyb
+  Microsoft.WindowsCalculator_8wekyb3d8bbwe        conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsCalculator_10.2103.8.0_x64__8wek
+  Microsoft.WindowsCamera_8wekyb3d8bbwe            conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsCamera_2022.2201.4.0_x64__8wekyb
+  Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsFeedbackHub_1.2201.61.0_x64__8we
+  Microsoft.WindowsMaps_8wekyb3d8bbwe              conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsMaps_1.0.39.0_x64__8wekyb3d8bbwe
+  Microsoft.WindowsNotepad_8wekyb3d8bbwe           conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsNotepad_11.2607.14.0_x64__8wekyb
+  Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe     conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsSoundRecorder_1.0.42.0_x64__8wek
+  Microsoft.WindowsStore_8wekyb3d8bbwe             conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsStore_22204.1400.4.0_x64__8wekyb
+  Microsoft.WindowsTerminal_8wekyb3d8bbwe          conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsTerminal_1.24.12741.0_x64__8weky
+  Microsoft.Xbox.TCUI_8wekyb3d8bbwe                conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Xbox.TCUI_1.23.28004.0_x64__8wekyb3d8bb
+  Microsoft.XboxGameCallableUI_cw5n1h2txyewy       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.XboxGameCallableUI_1000.22621.1.0_neutr
+  Microsoft.XboxGameOverlay_8wekyb3d8bbwe          conf=中    src=Appx  | Appx 注册包匹配：Microsoft.XboxGameOverlay_1.54.4001.0_x64__8wekyb
+  Microsoft.XboxGamingOverlay_8wekyb3d8bbwe        conf=中    src=Appx  | Appx 注册包匹配：Microsoft.XboxGamingOverlay_2.622.3232.0_x64__8we
+  Microsoft.XboxIdentityProvider_8wekyb3d8bbwe     conf=中    src=Appx  | Appx 注册包匹配：Microsoft.XboxIdentityProvider_12.50.6001.0_x64__
+  Microsoft.XboxSpeechToTextOverlay_8wekyb3d8bbwe  conf=中    src=Appx  | Appx 注册包匹配：Microsoft.XboxSpeechToTextOverlay_1.21.13002.0_x6
+  Microsoft.YourPhone_8wekyb3d8bbwe                conf=中    src=Appx  | Appx 注册包匹配：Microsoft.YourPhone_0.25072.81.0_x64__8wekyb3d8bb
+  Microsoft.ZuneMusic_8wekyb3d8bbwe                conf=中    src=Appx  | Appx 注册包匹配：Microsoft.ZuneMusic_11.2202.46.0_x64__8wekyb3d8bb
+  Microsoft.ZuneVideo_8wekyb3d8bbwe                conf=中    src=Appx  | Appx 注册包匹配：Microsoft.ZuneVideo_10.22020.10021.0_x64__8wekyb3
+  MicrosoftCorporationII.QuickAssist_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：MicrosoftCorporationII.QuickAssist_2.0.61.0_x64__
+  MicrosoftCorporationII.WinAppRuntime.Main.1.5_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：MicrosoftCorporationII.WinAppRuntime.Main.1.5_500
+  MicrosoftCorporationII.WinAppRuntime.Singleton_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：MicrosoftCorporationII.WinAppRuntime.Singleton_50
+  MicrosoftWindows.Client.CBS_cw5n1h2txyewy        conf=中    src=Appx  | Appx 注册包匹配：MicrosoftWindows.Client.CBS_1000.22632.1000.0_x64
+  MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：MicrosoftWindows.Client.WebExperience_526.21100.4
+  NcsiUwpApp_8wekyb3d8bbwe                         conf=中    src=Appx  | Appx 注册包匹配：NcsiUwpApp_1000.22621.1.0_neutral_neutral_8wekyb3
+  NotepadPlusPlus_2247w0b46hfww                    conf=中    src=Appx  | Appx 注册包匹配：NotepadPlusPlus_1.0.0.0_neutral__2247w0b46hfww
+  QQExtension_fv0hcek9q9tbw                        conf=中    src=Appx  | Appx 注册包匹配：QQExtension_1.0.0.0_neutral__fv0hcek9q9tbw
+  Windows.CBSPreview_cw5n1h2txyewy                 conf=中    src=Appx  | Appx 注册包匹配：Windows.CBSPreview_10.0.19580.1000_neutral_neutra
+  Windows.PrintDialog_cw5n1h2txyewy                conf=中    src=Appx  | Appx 注册包匹配：Windows.PrintDialog_6.2.2.0_neutral_neutral_cw5n1
+  c5e2524a-ea46-4f67-841f-6a9465d9d515_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.22621.1
+  microsoft.windowscommunicationsapps_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：microsoft.windowscommunicationsapps_16005.14326.2
+  windows.immersivecontrolpanel_cw5n1h2txyewy      conf=中    src=Appx  | Appx 注册包匹配：windows.immersivecontrolpanel_10.0.6.1000_neutral
+  windows_ie_ac_001                                conf=低    src=启发式   | 归属未知，需人工判断
+  wpsappext1_kbyyjmwk2spaw                         conf=中    src=Appx  | Appx 注册包匹配：wpsappext1_1.0.0.2_neutral__kbyyjmwk2spaw
+  wpsappext2_kbyyjmwk2spaw                         conf=中    src=Appx  | Appx 注册包匹配：wpsappext2_1.0.0.2_neutral__kbyyjmwk2spaw
+  wpsappext3_kbyyjmwk2spaw                         conf=中    src=Appx  | Appx 注册包匹配：wpsappext3_1.0.0.2_neutral__kbyyjmwk2spaw
+  PeerDistRepub                                    conf=低    src=启发式   | 归属未知，需人工判断
+  PlaceholderTileLogoFolder                        conf=高    src=知识库   | 知识库命中：系统磁贴缓存（系统组件）
+  Programs                                         conf=高    src=知识库   | 容器目录（已下钻判定）：子项已单独成单元
+  Microsoft VS Code                                conf=低    src=启发式   | 归属未知，需人工判断
+  Publishers                                       conf=高    src=知识库   | 知识库命中：系统 COM 事件发布（系统组件）
+  Steam                                            conf=中    src=知识库   | 疑似残留，建议核对证据
+  Temp                                             conf=中    src=知识库   | 疑似残留，建议核对证据
+  VirtualStore                                     conf=高    src=知识库   | 知识库命中：UAC 文件虚拟化(系统)（系统组件）
+  kingsoft                                         conf=高    src=知识库   | 知识库命中：金山 WPS（已安装应用）
+===== L1-acc-22h2 / report_roam.json / units=6 =====
+  Adobe                                            conf=高    src=知识库   | 知识库命中：Adobe 系（已安装应用）
+  Code                                             conf=高    src=知识库   | 知识库命中：Visual Studio Code 用户数据（已安装应用）
+  Microsoft                                        conf=受保护  src=硬保护   | 受保护，不可处理
+  Mozilla                                          conf=高    src=知识库   | 知识库命中：Firefox(Mozilla)（已安装应用）
+  Tencent                                          conf=高    src=知识库   | 知识库命中：腾讯系(QQ/微信聊天数据)（已安装应用）
+  kingsoft                                         conf=高    src=知识库   | 知识库命中：金山 WPS（已安装应用）
+===== L1-acc-24h2 / report_local.json / units=105 =====
+  CEF                                              conf=高    src=知识库   | 知识库命中：CEF/Chromium 嵌入式框架缓存（系统组件）
+  Comms                                            conf=高    src=知识库   | 知识库命中：系统通信组件（系统组件）
+  ConnectedDevicesPlatform                         conf=高    src=知识库   | 知识库命中：系统设备平台（系统组件）
+  D3DSCache                                        conf=中    src=知识库   | 疑似残留，建议核对证据
+  Google                                           conf=高    src=知识库   | 知识库命中：Google(Chrome 等)（已安装应用）
+  Microsoft                                        conf=受保护  src=硬保护   | 受保护，不可处理
+  Mozilla                                          conf=高    src=知识库   | 知识库命中：Firefox(Mozilla)（已安装应用）
+  NetEase                                          conf=高    src=知识库   | 知识库命中：网易系(云音乐等)（已安装应用）
+  PackageManagement                                conf=低    src=启发式   | 归属未知，需人工判断
+  Packages                                         conf=高    src=知识库   | 容器目录（已下钻判定）：子项已单独成单元
+  ActiveSync                                       conf=低    src=启发式   | 归属未知，需人工判断
+  Clipchamp.Clipchamp_yxz26nhyzhsrt                conf=中    src=Appx  | Appx 注册包匹配：Clipchamp.Clipchamp_3.0.10220.0_neutral__yxz26nhy
+  MSTeams_8wekyb3d8bbwe                            conf=中    src=Appx  | Appx 注册包匹配：MSTeams_26260.1717.5229.7049_x64__8wekyb3d8bbwe
+  Microsoft.AAD.BrokerPlugin_cw5n1h2txyewy         conf=中    src=Appx  | Appx 注册包匹配：Microsoft.AAD.BrokerPlugin_1000.19580.1000.2_neut
+  Microsoft.AV1VideoExtension_8wekyb3d8bbwe        conf=中    src=Appx  | Appx 注册包匹配：Microsoft.AV1VideoExtension_1.1.61781.0_x64__8wek
+  Microsoft.AVCEncoderVideoExtension_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.AVCEncoderVideoExtension_1.1.47.0_x64__
+  Microsoft.ApplicationCompatibilityEnhancements_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.ApplicationCompatibilityEnhancements_1.
+  Microsoft.BingNews_8wekyb3d8bbwe                 conf=中    src=Appx  | Appx 注册包匹配：Microsoft.BingNews_1.0.2.0_x64__8wekyb3d8bbwe
+  Microsoft.BingSearch_8wekyb3d8bbwe               conf=中    src=Appx  | Appx 注册包匹配：Microsoft.BingSearch_1.1.43.0_x64__8wekyb3d8bbwe
+  Microsoft.BingWeather_8wekyb3d8bbwe              conf=中    src=Appx  | Appx 注册包匹配：Microsoft.BingWeather_3.2.9.0_x64__8wekyb3d8bbwe
+  Microsoft.Copilot_8wekyb3d8bbwe                  conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Copilot_1.25121.84.0_x64__8wekyb3d8bbwe
+  Microsoft.DesktopAppInstaller_8wekyb3d8bbwe      conf=中    src=Appx  | Appx 注册包匹配：Microsoft.DesktopAppInstaller_1.29.379.0_x64__8we
+  Microsoft.ECApp_8wekyb3d8bbwe                    conf=中    src=Appx  | Appx 注册包匹配：Microsoft.ECApp_10.0.26100.9549_neutral__8wekyb3d
+  Microsoft.GamingApp_8wekyb3d8bbwe                conf=中    src=Appx  | Appx 注册包匹配：Microsoft.GamingApp_2402.900.28.0_x64__8wekyb3d8b
+  Microsoft.GetHelp_8wekyb3d8bbwe                  conf=中    src=Appx  | Appx 注册包匹配：Microsoft.GetHelp_10.2302.10601.0_x64__8wekyb3d8b
+  Microsoft.HEIFImageExtension_8wekyb3d8bbwe       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.HEIFImageExtension_1.0.63001.0_x64__8we
+  Microsoft.HEVCVideoExtension_8wekyb3d8bbwe       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.HEVCVideoExtension_2.0.61931.0_x64__8we
+  Microsoft.MPEG2VideoExtension_8wekyb3d8bbwe      conf=中    src=Appx  | Appx 注册包匹配：Microsoft.MPEG2VideoExtension_1.0.61931.0_x64__8w
+  Microsoft.MicrosoftEdge.Stable_8wekyb3d8bbwe     conf=中    src=Appx  | Appx 注册包匹配：Microsoft.MicrosoftEdge.Stable_156.0.4314.42_neut
+  Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.MicrosoftOfficeHub_18.2308.1034.0_x64__
+  Microsoft.MicrosoftSolitaireCollection_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.MicrosoftSolitaireCollection_4.19.3190.
+  Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe     conf=中    src=Appx  | Appx 注册包匹配：Microsoft.MicrosoftStickyNotes_4.0.6104.0_x64__8w
+  Microsoft.NET.Native.Framework.2.2_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.NET.Native.Framework.2.2_2.2.29512.0_x6
+  Microsoft.NET.Native.Runtime.2.2_8wekyb3d8bbwe   conf=中    src=Appx  | Appx 注册包匹配：Microsoft.NET.Native.Runtime.2.2_2.2.28604.0_x64_
+  Microsoft.OutlookForWindows_8wekyb3d8bbwe        conf=中    src=Appx  | Appx 注册包匹配：Microsoft.OutlookForWindows_1.2026.1013.100_x64__
+  Microsoft.Paint_8wekyb3d8bbwe                    conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Paint_11.2605.81.0_x64__8wekyb3d8bbwe
+  Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe     conf=中    src=Appx  | Appx 注册包匹配：Microsoft.PowerAutomateDesktop_1.0.1080.0_x64__8w
+  Microsoft.RawImageExtension_8wekyb3d8bbwe        conf=中    src=Appx  | Appx 注册包匹配：Microsoft.RawImageExtension_2.3.171.0_x64__8wekyb
+  Microsoft.ScreenSketch_8wekyb3d8bbwe             conf=中    src=Appx  | Appx 注册包匹配：Microsoft.ScreenSketch_11.2608.41.0_x64__8wekyb3d
+  Microsoft.SecHealthUI_8wekyb3d8bbwe              conf=中    src=Appx  | Appx 注册包匹配：Microsoft.SecHealthUI_1000.29628.1000.0_x64__8wek
+  Microsoft.StartExperiencesApp_8wekyb3d8bbwe      conf=中    src=Appx  | Appx 注册包匹配：Microsoft.StartExperiencesApp_1.380.0.0_x64__8wek
+  Microsoft.StorePurchaseApp_8wekyb3d8bbwe         conf=中    src=Appx  | Appx 注册包匹配：Microsoft.StorePurchaseApp_22312.1400.6.0_x64__8w
+  Microsoft.Todos_8wekyb3d8bbwe                    conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Todos_0.104.62421.0_x64__8wekyb3d8bbwe
+  Microsoft.UI.Xaml.2.8_8wekyb3d8bbwe              conf=中    src=Appx  | Appx 注册包匹配：Microsoft.UI.Xaml.2.8_8.2511.26001.0_x64__8wekyb3
+  Microsoft.VCLibs.140.00.UWPDesktop_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.VCLibs.140.00_14.0.33519.0_x64__8wekyb3
+  Microsoft.VCLibs.140.00_8wekyb3d8bbwe            conf=中    src=Appx  | Appx 注册包匹配：Microsoft.VCLibs.140.00_14.0.33519.0_x64__8wekyb3
+  Microsoft.VP9VideoExtensions_8wekyb3d8bbwe       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.VP9VideoExtensions_1.2.20.0_x64__8wekyb
+  Microsoft.VisualStudioCode_8wekyb3d8bbwe         conf=中    src=Appx  | Appx 注册包匹配：Microsoft.VisualStudioCode_1.0.141.2_neutral__8we
+  Microsoft.WebMediaExtensions_8wekyb3d8bbwe       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WebMediaExtensions_1.0.62931.0_x64__8we
+  Microsoft.WebpImageExtension_8wekyb3d8bbwe       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WebpImageExtension_1.0.62681.0_x64__8we
+  Microsoft.WidgetsPlatformRuntime_8wekyb3d8bbwe   conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WidgetsPlatformRuntime_1.6.19.0_x64__8w
+  Microsoft.Win32WebViewHost_cw5n1h2txyewy         conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Win32WebViewHost_10.0.26100.1_neutral_n
+  Microsoft.WinAppRuntime.DDLM.5001.373.1736.0-x6_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WinAppRuntime.DDLM.5001.373.1736.0-x6_5
+  Microsoft.WinAppRuntime.DDLM.5001.373.1736.0-x8_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WinAppRuntime.DDLM.5001.373.1736.0-x8_5
+  Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.ContentDeliveryManager_10.0.261
+  Microsoft.Windows.DevHome_8wekyb3d8bbwe          conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.DevHome_0.0.0.0_x64__8wekyb3d8b
+  Microsoft.Windows.NarratorQuickStart_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.NarratorQuickStart_10.0.26100.1
+  Microsoft.Windows.Photos_8wekyb3d8bbwe           conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.Photos_24.24010.29003.0_x64__8w
+  Microsoft.Windows.ShellExperienceHost_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.ShellExperienceHost_10.0.26100.
+  Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Windows.StartMenuExperienceHost_10.0.26
+  Microsoft.WindowsAlarms_8wekyb3d8bbwe            conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsAlarms_1.0.188.0_x64__8wekyb3d8b
+  Microsoft.WindowsAppRuntime.1.3_8wekyb3d8bbwe    conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsAppRuntime.1.3_3000.934.1904.0_x
+  Microsoft.WindowsAppRuntime.1.5_8wekyb3d8bbwe    conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsAppRuntime.1.5_5001.373.1736.0_x
+  Microsoft.WindowsAppRuntime.1.8_8wekyb3d8bbwe    conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsAppRuntime.1.8_8000.994.2142.0_x
+  Microsoft.WindowsAppRuntime.2_8wekyb3d8bbwe      conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsAppRuntime.2_2.5.1.0_x86__8wekyb
+  Microsoft.WindowsCalculator_8wekyb3d8bbwe        conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsCalculator_11.2311.0.0_x64__8wek
+  Microsoft.WindowsCamera_8wekyb3d8bbwe            conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsCamera_2023.2312.3.0_x64__8wekyb
+  Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe       conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsFeedbackHub_1.2401.20253.0_x64__
+  Microsoft.WindowsNotepad_8wekyb3d8bbwe           conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsNotepad_11.2607.14.0_x64__8wekyb
+  Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe     conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsSoundRecorder_1.0.76.0_x64__8wek
+  Microsoft.WindowsStore_8wekyb3d8bbwe             conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsStore_22609.1401.6.0_x64__8wekyb
+  Microsoft.WindowsTerminal_8wekyb3d8bbwe          conf=中    src=Appx  | Appx 注册包匹配：Microsoft.WindowsTerminal_1.18.10301.0_x64__8weky
+  Microsoft.Winget.Source_8wekyb3d8bbwe            conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Winget.Source_2026.1025.1910.28_neutral
+  Microsoft.Xbox.TCUI_8wekyb3d8bbwe                conf=中    src=Appx  | Appx 注册包匹配：Microsoft.Xbox.TCUI_1.23.28005.0_x64__8wekyb3d8bb
+  Microsoft.XboxGamingOverlay_8wekyb3d8bbwe        conf=中    src=Appx  | Appx 注册包匹配：Microsoft.XboxGamingOverlay_2.624.1111.0_x64__8we
+  Microsoft.XboxIdentityProvider_8wekyb3d8bbwe     conf=中    src=Appx  | Appx 注册包匹配：Microsoft.XboxIdentityProvider_12.110.15002.0_x64
+  Microsoft.XboxSpeechToTextOverlay_8wekyb3d8bbwe  conf=中    src=Appx  | Appx 注册包匹配：Microsoft.XboxSpeechToTextOverlay_1.97.17002.0_x6
+  Microsoft.YourPhone_8wekyb3d8bbwe                conf=中    src=Appx  | Appx 注册包匹配：Microsoft.YourPhone_0.24012.105.0_x64__8wekyb3d8b
+  Microsoft.ZuneMusic_8wekyb3d8bbwe                conf=中    src=Appx  | Appx 注册包匹配：Microsoft.ZuneMusic_11.2312.8.0_x64__8wekyb3d8bbw
+  MicrosoftCorporationII.QuickAssist_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：MicrosoftCorporationII.QuickAssist_2.0.29.0_x64__
+  MicrosoftCorporationII.WinAppRuntime.Main.1.5_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：MicrosoftCorporationII.WinAppRuntime.Main.1.5_500
+  MicrosoftCorporationII.WinAppRuntime.Singleton_8wekyb3d8bbwe conf=中    src=Appx  | Appx 注册包匹配：MicrosoftCorporationII.WinAppRuntime.Singleton_50
+  MicrosoftWindows.Client.CBS_cw5n1h2txyewy        conf=中    src=Appx  | Appx 注册包匹配：MicrosoftWindows.Client.CBS_1000.26100.372.0_x64_
+  MicrosoftWindows.Client.CoreAI_cw5n1h2txyewy     conf=中    src=Appx  | Appx 注册包匹配：MicrosoftWindows.Client.CoreAI_1000.26100.9711.0_
+  MicrosoftWindows.Client.Core_cw5n1h2txyewy       conf=中    src=Appx  | Appx 注册包匹配：MicrosoftWindows.Client.Core_1000.26100.134.0_x64
+  MicrosoftWindows.Client.OOBE_cw5n1h2txyewy       conf=中    src=Appx  | Appx 注册包匹配：MicrosoftWindows.Client.OOBE_1000.26100.60.0_x64_
+  MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy conf=中    src=Appx  | Appx 注册包匹配：MicrosoftWindows.Client.WebExperience_526.21100.4
+  MicrosoftWindows.CrossDevice_cw5n1h2txyewy       conf=中    src=Appx  | Appx 注册包匹配：MicrosoftWindows.CrossDevice_0.23101.22.0_x64__cw
+  NotepadPlusPlus_2247w0b46hfww                    conf=中    src=Appx  | Appx 注册包匹配：NotepadPlusPlus_1.0.0.0_neutral__2247w0b46hfww
+  QQExtension_fv0hcek9q9tbw                        conf=中    src=Appx  | Appx 注册包匹配：QQExtension_1.0.0.0_neutral__fv0hcek9q9tbw
+  cr.sb.odmF5200EAFD3AD904629CBB0F87A78A3C7211081FE conf=低    src=启发式   | 归属未知，需人工判断
+  ksystemsharehostenUS_kbyyjmwk2spaw               conf=中    src=Appx  | Appx 注册包匹配：ksystemsharehostenUS_1.0.0.0_x86__kbyyjmwk2spaw
+  windows.immersivecontrolpanel_cw5n1h2txyewy      conf=中    src=Appx  | Appx 注册包匹配：windows.immersivecontrolpanel_10.0.8.1000_neutral
+  windows_ie_ac_001                                conf=低    src=启发式   | 归属未知，需人工判断
+  wpsappext1_kbyyjmwk2spaw                         conf=中    src=Appx  | Appx 注册包匹配：wpsappext1_1.0.0.2_neutral__kbyyjmwk2spaw
+  wpsappext2_kbyyjmwk2spaw                         conf=中    src=Appx  | Appx 注册包匹配：wpsappext2_1.0.0.2_neutral__kbyyjmwk2spaw
+  wpsappext3_kbyyjmwk2spaw                         conf=中    src=Appx  | Appx 注册包匹配：wpsappext3_1.0.0.2_neutral__kbyyjmwk2spaw
+  PlaceholderTileLogoFolder                        conf=高    src=知识库   | 知识库命中：系统磁贴缓存（系统组件）
+  Programs                                         conf=高    src=知识库   | 容器目录（已下钻判定）：子项已单独成单元
+  Microsoft VS Code                                conf=低    src=启发式   | 归属未知，需人工判断
+  Publishers                                       conf=高    src=知识库   | 知识库命中：系统 COM 事件发布（系统组件）
+  Steam                                            conf=中    src=知识库   | 疑似残留，建议核对证据
+  Temp                                             conf=中    src=知识库   | 疑似残留，建议核对证据
+  VirtualStore                                     conf=高    src=知识库   | 知识库命中：UAC 文件虚拟化(系统)（系统组件）
+  kingsoft                                         conf=高    src=知识库   | 知识库命中：金山 WPS（已安装应用）
+===== L1-acc-24h2 / report_roam.json / units=5 =====
+  Adobe                                            conf=高    src=知识库   | 知识库命中：Adobe 系（已安装应用）
+  Microsoft                                        conf=受保护  src=硬保护   | 受保护，不可处理
+  Mozilla                                          conf=高    src=知识库   | 知识库命中：Firefox(Mozilla)（已安装应用）
+  Tencent                                          conf=高    src=知识库   | 知识库命中：腾讯系(QQ/微信聊天数据)（已安装应用）
+  kingsoft                                         conf=高    src=知识库   | 知识库命中：金山 WPS（已安装应用）

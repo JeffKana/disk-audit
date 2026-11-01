@@ -1,0 +1,1103 @@
+{
+  "root": "C:\\Users\\qa\\AppData\\Local",
+  "workers": 8,
+  "seconds": 0.51,
+  "frontier_parts": 146,
+  "frontier_depth": 2,
+  "files": 20950,
+  "dirs": 7515,
+  "entries": 28465,
+  "logical_bytes": 4914756733,
+  "allocated_bytes": 4935837104,
+  "skipped": {
+    "permission": 0,
+    "occupied": 0,
+    "too_long": 0,
+    "reparse": 25,
+    "other": 0,
+    "total": 25
+  },
+  "units": [
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\CEF",
+      "files": 0,
+      "dirs": 3,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1793527361.1411934,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Comms",
+      "files": 9,
+      "dirs": 4,
+      "logical_bytes": 18571268,
+      "allocated_bytes": 18571272,
+      "max_mtime": 1793527815.0034015,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\ConnectedDevicesPlatform",
+      "files": 7,
+      "dirs": 2,
+      "logical_bytes": 1129107,
+      "allocated_bytes": 1136272,
+      "max_mtime": 1793527358.2597635,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\D3DSCache",
+      "files": 9,
+      "dirs": 4,
+      "logical_bytes": 199836,
+      "allocated_bytes": 221208,
+      "max_mtime": 1793527519.7371814,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Google",
+      "files": 0,
+      "dirs": 3,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1793527329.643428,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Microsoft",
+      "files": 3731,
+      "dirs": 659,
+      "logical_bytes": 762754977,
+      "allocated_bytes": 765063968,
+      "max_mtime": 1793527871.8646617,
+      "exe_files": 16
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Mozilla",
+      "files": 0,
+      "dirs": 2,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1793527823.0384462,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\NetEase",
+      "files": 99,
+      "dirs": 35,
+      "logical_bytes": 9057618,
+      "allocated_bytes": 9131424,
+      "max_mtime": 1793527838.7603767,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\PackageManagement",
+      "files": 0,
+      "dirs": 2,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792947240.5564647,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages",
+      "files": 0,
+      "dirs": 1,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1793527825.4506068,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\1527c705-839a-4832-9118-54d4Bd6a0c89_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939467.1419837,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\ActiveSync",
+      "files": 0,
+      "dirs": 3,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792938586.3560326,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Clipchamp.Clipchamp_yxz26nhyzhsrt",
+      "files": 4,
+      "dirs": 13,
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "max_mtime": 1792958087.080663,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\E2A4F912-2574-4A75-9BB0-0D023378592B_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939468.190967,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\F46D4000-FD22-4DB4-AC8E-4E1DDDE828FE_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939468.6348064,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.549981C3F5F10_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792938489.7873187,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.AAD.BrokerPlugin_cw5n1h2txyewy",
+      "files": 4,
+      "dirs": 13,
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "max_mtime": 1793527343.9386752,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.AccountsControl_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939468.9958906,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.AsyncTextService_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939469.3753047,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.BingNews_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939493.6613498,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.BingWeather_8wekyb3d8bbwe",
+      "files": 4,
+      "dirs": 13,
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "max_mtime": 1792961490.9245813,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.BioEnrollment_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792938480.2110817,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.CredDialogHost_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939465.16745,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe",
+      "files": 38,
+      "dirs": 23,
+      "logical_bytes": 75579,
+      "allocated_bytes": 75640,
+      "max_mtime": 1792957551.9848788,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.ECApp_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939461.7478209,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.GamingApp_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939491.74277,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.GetHelp_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939491.0702984,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Getstarted_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792938495.158486,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.HEIFImageExtension_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939490.6172132,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.HEVCVideoExtension_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939490.226061,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.LanguageExperiencePackzh-CN_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792954404.9941008,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.LockApp_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939463.8929021,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.MicrosoftEdge.Stable_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939471.7679675,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.MicrosoftEdgeDevToolsClient_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939464.3093977,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.MicrosoftEdge_8wekyb3d8bbwe",
+      "files": 10,
+      "dirs": 18,
+      "logical_bytes": 21365,
+      "allocated_bytes": 21416,
+      "max_mtime": 1792938514.3544219,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe",
+      "files": 4,
+      "dirs": 13,
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "max_mtime": 1792956002.5048468,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.MicrosoftSolitaireCollection_8wekyb3d8bbwe",
+      "files": 4,
+      "dirs": 13,
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "max_mtime": 1792957865.1694665,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe",
+      "files": 4,
+      "dirs": 13,
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "max_mtime": 1792960453.9318092,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.NET.Native.Framework.2.2_8wekyb3d8bbwe",
+      "files": 0,
+      "dirs": 6,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792938489.667519,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.NET.Native.Runtime.2.2_8wekyb3d8bbwe",
+      "files": 0,
+      "dirs": 6,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792938489.4735086,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Paint_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792938596.1975694,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.People_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939487.2877572,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939486.4237592,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.RawImageExtension_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939485.9024687,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.ScreenSketch_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792938599.8284476,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.SecHealthUI_8wekyb3d8bbwe",
+      "files": 4,
+      "dirs": 13,
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "max_mtime": 1792949551.7270722,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.StorePurchaseApp_8wekyb3d8bbwe",
+      "files": 4,
+      "dirs": 13,
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "max_mtime": 1792961223.4185352,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Todos_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939474.6686742,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.UI.Xaml.2.4_8wekyb3d8bbwe",
+      "files": 0,
+      "dirs": 6,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792939482.9055634,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.UI.Xaml.2.7_8wekyb3d8bbwe",
+      "files": 0,
+      "dirs": 6,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792938494.9913855,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.UI.Xaml.2.8_8wekyb3d8bbwe",
+      "files": 0,
+      "dirs": 6,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792949550.5358856,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.VCLibs.140.00.UWPDesktop_8wekyb3d8bbwe",
+      "files": 0,
+      "dirs": 6,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792938489.0225713,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.VCLibs.140.00_8wekyb3d8bbwe",
+      "files": 0,
+      "dirs": 6,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792938489.228315,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.VP9VideoExtensions_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939473.606596,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.VisualStudioCode_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 14,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792960906.5028489,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WebMediaExtensions_8wekyb3d8bbwe",
+      "files": 4,
+      "dirs": 13,
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "max_mtime": 1792957037.3039796,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WebpImageExtension_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939484.4726138,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WidgetsPlatformRuntime_8wekyb3d8bbwe",
+      "files": 8,
+      "dirs": 23,
+      "logical_bytes": 49152,
+      "allocated_bytes": 49152,
+      "max_mtime": 1793527340.090621,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Win32WebViewHost_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939464.7313535,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WinAppRuntime.DDLM.5001.373.1736.0-x6_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1793527473.9323146,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WinAppRuntime.DDLM.5001.373.1736.0-x8_8wekyb3d8bbwe",
+      "files": 8,
+      "dirs": 21,
+      "logical_bytes": 40960,
+      "allocated_bytes": 40960,
+      "max_mtime": 1793527476.1023722,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.Apprep.ChxApp_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939465.5683239,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.AssignedAccessLockApp_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939466.0073378,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.CallingShellApp_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939466.4210188,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.CapturePicker_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939466.7683623,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.CloudExperienceHost_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792938480.2332263,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy",
+      "files": 113,
+      "dirs": 60,
+      "logical_bytes": 8722436,
+      "allocated_bytes": 8772104,
+      "max_mtime": 1793527819.4469733,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.NarratorQuickStart_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939469.7520516,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.ParentalControls_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939470.2126856,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.PeopleExperienceHost_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939467.857215,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.Photos_8wekyb3d8bbwe",
+      "files": 8,
+      "dirs": 14,
+      "logical_bytes": 1680584,
+      "allocated_bytes": 1683456,
+      "max_mtime": 1792953005.1147952,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.PinningConfirmationDialog_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939470.6161485,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.PrintQueueActionCenter_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939471.0130844,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.SecureAssessmentBrowser_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939471.3747816,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.ShellExperienceHost_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792938483.6502848,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy",
+      "files": 31,
+      "dirs": 21,
+      "logical_bytes": 568954,
+      "allocated_bytes": 579968,
+      "max_mtime": 1793527556.4881063,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Windows.XGpuEjectDialog_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939463.5319414,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsAlarms_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939472.9972434,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsAppRuntime.1.5_8wekyb3d8bbwe",
+      "files": 0,
+      "dirs": 6,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1793527466.2574987,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsAppRuntime.1.7_8wekyb3d8bbwe",
+      "files": 0,
+      "dirs": 6,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792957864.2818499,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsAppRuntime.2_8wekyb3d8bbwe",
+      "files": 0,
+      "dirs": 6,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792957864.5536313,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsCalculator_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939483.0005362,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsCamera_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939482.229846,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsFeedbackHub_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939481.559188,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsMaps_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939480.836201,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsNotepad_8wekyb3d8bbwe",
+      "files": 10,
+      "dirs": 14,
+      "logical_bytes": 49152,
+      "allocated_bytes": 49152,
+      "max_mtime": 1792960906.3746493,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsSoundRecorder_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939480.1546683,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsStore_8wekyb3d8bbwe",
+      "files": 4,
+      "dirs": 13,
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "max_mtime": 1792947286.0345662,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.WindowsTerminal_8wekyb3d8bbwe",
+      "files": 4,
+      "dirs": 13,
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "max_mtime": 1792957059.70503,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.Xbox.TCUI_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939478.9539685,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.XboxGameCallableUI_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939463.12379,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.XboxGameOverlay_8wekyb3d8bbwe",
+      "files": 6,
+      "dirs": 14,
+      "logical_bytes": 16946,
+      "allocated_bytes": 16960,
+      "max_mtime": 1793527702.4449277,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.XboxGamingOverlay_8wekyb3d8bbwe",
+      "files": 5,
+      "dirs": 15,
+      "logical_bytes": 18414,
+      "allocated_bytes": 18416,
+      "max_mtime": 1792954817.9142816,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.XboxIdentityProvider_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792938499.0345743,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.XboxSpeechToTextOverlay_8wekyb3d8bbwe",
+      "files": 4,
+      "dirs": 13,
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "max_mtime": 1792961507.5118277,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.YourPhone_8wekyb3d8bbwe",
+      "files": 4,
+      "dirs": 13,
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "max_mtime": 1792957865.8315308,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.ZuneMusic_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792938597.6216862,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Microsoft.ZuneVideo_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939475.8199575,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\MicrosoftCorporationII.QuickAssist_8wekyb3d8bbwe",
+      "files": 4,
+      "dirs": 13,
+      "logical_bytes": 16384,
+      "allocated_bytes": 16384,
+      "max_mtime": 1792961262.4481122,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\MicrosoftCorporationII.WinAppRuntime.Main.1.5_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1793527471.6164465,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\MicrosoftCorporationII.WinAppRuntime.Singleton_8wekyb3d8bbwe",
+      "files": 10,
+      "dirs": 21,
+      "logical_bytes": 49152,
+      "allocated_bytes": 49152,
+      "max_mtime": 1793527476.73142,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy",
+      "files": 145,
+      "dirs": 45,
+      "logical_bytes": 28016042,
+      "allocated_bytes": 28186648,
+      "max_mtime": 1793527806.4766936,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy",
+      "files": 400,
+      "dirs": 108,
+      "logical_bytes": 74263087,
+      "allocated_bytes": 74616712,
+      "max_mtime": 1793527643.4016478,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\NcsiUwpApp_8wekyb3d8bbwe",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939462.592413,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\NotepadPlusPlus_2247w0b46hfww",
+      "files": 10,
+      "dirs": 21,
+      "logical_bytes": 49152,
+      "allocated_bytes": 49152,
+      "max_mtime": 1793527338.096764,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\QQExtension_fv0hcek9q9tbw",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792960800.484282,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Windows.CBSPreview_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939461.1365883,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\Windows.PrintDialog_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939462.1286705,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\c5e2524a-ea46-4f67-841f-6a9465d9d515_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 13,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792939467.4791615,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\microsoft.windowscommunicationsapps_8wekyb3d8bbwe",
+      "files": 30,
+      "dirs": 31,
+      "logical_bytes": 4359962,
+      "allocated_bytes": 4359984,
+      "max_mtime": 1793527765.52118,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\windows.immersivecontrolpanel_cw5n1h2txyewy",
+      "files": 2,
+      "dirs": 9,
+      "logical_bytes": 8192,
+      "allocated_bytes": 8192,
+      "max_mtime": 1792938484.2767725,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Packages\\windows_ie_ac_001",
+      "files": 0,
+      "dirs": 6,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792938480.942555,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\PeerDistRepub",
+      "files": 0,
+      "dirs": 1,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792955097.5357404,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\PlaceholderTileLogoFolder",
+      "files": 0,
+      "dirs": 1,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1793527338.6935828,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Programs",
+      "files": 0,
+      "dirs": 1,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792960649.8810625,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Programs\\Microsoft VS Code",
+      "files": 3243,
+      "dirs": 641,
+      "logical_bytes": 1082314874,
+      "allocated_bytes": 1085820336,
+      "max_mtime": 1792960749.5539484,
+      "exe_files": 22
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Publishers",
+      "files": 0,
+      "dirs": 7,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792961223.504958,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\Temp",
+      "files": 190,
+      "dirs": 76,
+      "logical_bytes": 192958750,
+      "allocated_bytes": 193246160,
+      "max_mtime": 1793527869.076612,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\VirtualStore",
+      "files": 0,
+      "dirs": 1,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792960906.528039,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Local\\kingsoft",
+      "files": 12651,
+      "dirs": 4581,
+      "logical_bytes": 2729050442,
+      "allocated_bytes": 2743336216,
+      "max_mtime": 1793527859.4247236,
+      "exe_files": 68
+    }
+  ],
+  "incomplete": false
+}
