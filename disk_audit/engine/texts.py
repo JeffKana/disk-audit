@@ -150,3 +150,14 @@ LAUNCHER_TEXTS: dict[str, str] = {
     "status_selected": "已选择扫描范围：{path}；扫描功能将在后续版本接入",
     "status_missing_folder": "所选文件夹不存在，请重新选择",
 }
+
+# =====================================================#
+# F5 报告筛选文案（待办 F5，任务卡 T3-03；S3 追加区块——独立追加，勿改动上方既有内容）
+# 依据：方案第六节性能预算（5000 行 ≤5MB / 首屏 ≤1s / 筛选 ≤150ms）、POC-4
+# 筛选基线（原生 JS display 切换，poc4_gen_bigreport.py）、U-2/U-4（纯展示
+# 页面：input 为文本筛选框非按钮，不提供任何处理动作）、R10（零假设原则）。
+# ============================================================
+REPORT_FILTER_LABEL = "筛选"
+REPORT_FILTER_PLACEHOLDER = "输入路径关键词，如 tencent"
+REPORT_FILTER_COUNT_FMT = "共 {count} 行"
+REPORT_FILTER_MATCHED_FMT = "筛选后 {count} 行"
