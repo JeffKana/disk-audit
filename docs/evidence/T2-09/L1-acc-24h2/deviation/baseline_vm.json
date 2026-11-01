@@ -1,0 +1,38 @@
+[
+    {
+        "path":  "C:\\Users\\qa\\AppData\\Roaming\\Tencent",
+        "explorer_allocated_bytes":  249856,
+        "method":  "pure_handle_allocation_size_sum_rebuilt_in_vm",
+        "n_files":  2,
+        "n_dirs":  8,
+        "n_fail":  0,
+        "n_reparse":  0
+    },
+    {
+        "path":  "C:\\Users\\qa\\AppData\\Local\\Programs",
+        "explorer_allocated_bytes":  1088187368,
+        "method":  "pure_handle_allocation_size_sum_rebuilt_in_vm",
+        "n_files":  3243,
+        "n_dirs":  642,
+        "n_fail":  0,
+        "n_reparse":  0
+    },
+    {
+        "path":  "C:\\Users\\qa\\AppData\\Local\\kingsoft",
+        "explorer_allocated_bytes":  2797782696,
+        "method":  "pure_handle_allocation_size_sum_rebuilt_in_vm",
+        "n_files":  12654,
+        "n_dirs":  4576,
+        "n_fail":  0,
+        "n_reparse":  0
+    },
+    {
+        "path":  "C:\\Users\\qa\\AppData\\Local\\Google",
+        "explorer_allocated_bytes":  0,
+        "method":  "pure_handle_allocation_size_sum_rebuilt_in_vm",
+        "n_files":  0,
+        "n_dirs":  3,
+        "n_fail":  0,
+        "n_reparse":  0
+    }
+]
