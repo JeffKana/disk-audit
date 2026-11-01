@@ -92,6 +92,10 @@
 - **验收标准**：①版本不足拒绝路径单测（注入假版本）；②盘型置灰逻辑单测（驱动类型注入）；③本机启动实测：四预设与置灰状态正确（截图留档）；④CI 门禁④（引擎零 UI 依赖）不破；⑤远端 CI 绿。
 - **依赖**：无（Wave 1；T3-05/T3-06 栈其上）。
 - **执行记录**：
+  - **做了什么**：新增顶层独立入口 `launcher.py`（Tkinter 启动器骨架：P5 启动版本闸 + P6 盘符枚举 ctypes GetDriveTypeW / 不支持盘型置灰+原因 + P4 四预设单选 + 自定义文件夹 + 开始体检按钮，扫描/报告接线留 T3-05/T3-06）；`disk_audit/engine/texts.py` 文末追加 `LAUNCHER_TEXTS` 启动器文案区块（append-only，不动既有键值）；新增 `tests/test_launcher.py` 26 例（测试先行：先跑红 ModuleNotFoundError 再实现跑绿）。关键文件：`launcher.py`、`tests/test_launcher.py`、`disk_audit/engine/texts.py`、`docs/evidence/T3-04/launcher_scope_2026-11-01.png`。
+  - **实现决策及依据**：①UI 模块放仓库根 `launcher.py`（包外独立入口），未用卡内建议的 `disk_audit/launcher.py`/`disk_audit/ui/`——开发规范 §1 硬规则"`disk_audit` 包内任何模块不得 import tkinter（启动器在独立模块/入口）"与《项目治理》"disk_audit/ = 引擎与 CLI、零 UI 依赖"；治理文档优先级高于卡内建议（卡文明示"位置自决……在 PR 说明"），POC 先例 poc2_app.py 亦为独立入口脚本。②文案集中 `engine/texts.py` 文末独立区块而非 UI 模块内资源字典——方案 §1 语言行"文案集中在一份资源表内"（卡内两选项均合规，取资源表口径，append-only 规避并行分支冲突）。③tkinter 延迟导入：纯逻辑（版本闸/盘型/预设/文案）可无 Tk 环境加载与测试，Tk 根仅真实运行创建；CI 不起 mainloop（任务卡实现约束）。④可注入：build 探测与盘符枚举经 `run()` 参数注入（验收①②），默认实现 = `sys.getwindowsversion().build` 与 ctypes `GetLogicalDrives`+`GetDriveTypeW`（任务卡实现约束）。⑤"开始体检"按钮本卡仅确认所选范围（含存在性校验）并如实提示"扫描功能将在后续版本接入"，不发起扫描——U-1（未获用户显式选择前不读取文件系统路径）+ 不扩大方案范围（扫描接线归 T3-05/T3-06）；盘符枚举属 P6 明文规定的选择界面组成，不计为 U-1 的"读取路径"。⑥新增包内零 tkinter 的 AST 守卫测试（check_imports 白名单只禁第三方、不禁标准库 tkinter，规范 §1 的包内禁令由测试钉死，守住 M1 验收④语义）。
+  - **未尽事项/已知限制**：①本机 5 盘（C/D/E/H/I）实测全为固定本地盘，P6 置灰态无法在本机真实呈现——置灰逻辑由验收②注入式单测（UNKNOWN/NO_ROOT_DIR/可移动/网络/光驱/RAM 六类全覆盖）保证，真实置灰呈现留待 VM 或含可移动盘环境；②版本不足的图形提示（messagebox）路径未本机实测（无低版本环境），拒绝路径由注入假版本单测覆盖（验收①）；③窗口几何为固定 720x560 骨架值，T3-05 接进度 UI 时一并调整。
+  - **自测输出摘要**：`python -m pytest` 裸跑 **241 passed**（Sprint 2 基线 215 + 本卡 26；1 warning 为本机 site-packages 第三方 requests 版本提示，CI 全新环境不存在）；`python -m disk_audit --selftest` **6/6 passed**；本地门禁④ `python tools/check_imports.py` 通过。验收③本机真启动实测（build 26200 ≥ 22621）：四预设顺序与解析路径正确、5 盘均"固定本地盘"可选（本机无置灰盘）、自定义文件夹与开始体检按钮在位，截图留档 `docs/evidence/T3-04/launcher_scope_2026-11-01.png`（pwsh System.Drawing 全屏 2560x1440，截完已关窗、无残留进程）。
 
 ---
 
