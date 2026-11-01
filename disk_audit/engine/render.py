@@ -8,9 +8,11 @@ R10（零假设原则：可能被非开发者误解的措辞一律保守，宁�
 
 渲染为纯函数：render_report(report: dict) -> str，无 I/O、无全局状态、不修改
 输入；JSON 文本解析由调用方承担（CLI render 子命令 / T3-06 结果入口），与
-开发规范 §1"I/O 与纯函数分离"同构。单文件内联 CSS，零 JS、零外链（无
-http(s) 引用、无 src/href 属性——M2 闸②"断网完整"的结构性保障；明细筛选等
-交互由 T3-03 叠加原生 JS 实现）。配色与表格基线沿用 POC-4
+开发规范 §1"I/O 与纯函数分离"同构。单文件内联 CSS + 内联零外链 JS（待办 F5，
+任务卡 T3-03：明细筛选为 POC-4 同款原生 display 切换；script 无 src、无
+http(s) 引用、无网络 API——M2 闸②"断网完整"的结构性保障口径由"零 JS"演进
+为"零外链"，tests/test_engine_render.py 属性白名单不含 src/href 守住）。
+配色与表格基线沿用 POC-4
 （docs/upstream/poc/poc4_gen_bigreport.py 的 CLS 四色与表格样式）。
 
 四区结构：
@@ -28,6 +30,7 @@ http(s) 引用、无 src/href 属性——M2 闸②"断网完整"的结构性保
 from __future__ import annotations
 
 import html
+import json
 
 from . import texts
 
@@ -101,6 +104,7 @@ _CSS = (
     "summary{cursor:pointer}"
     ".src{display:inline-block;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:4px;"
     "padding:0 6px;margin-right:6px;font-size:12px}"
+    "input{padding:6px 10px;border:1px solid #cbd5e1;border-radius:6px;width:280px;font:inherit}"
     "footer{color:#6b7280;font-size:12.8px;margin-top:16px}"
 )
 
@@ -273,10 +277,17 @@ def _details(candidates: list) -> str:
         parts.append(f'<p class="note">{_e(texts.REPORT_NO_CANDIDATES)}</p>')
         parts.append("</section>")
         return "".join(parts)
+    # F5 明细筛选栏：文本输入框（非按钮，不产生任何处理动作——U-2/U-4）；
+    # 无候选时不渲染（空态无表可筛，亦避免 JS 空引用）。
+    parts.append(
+        f'<p>{_e(texts.REPORT_FILTER_LABEL)} '
+        f'<input id="q" type="text" placeholder="{_e(texts.REPORT_FILTER_PLACEHOLDER)}"> '
+        f'<span id="cnt" class="note"></span></p>'
+    )
     parts.append("<table><thead><tr>")
     for key in _DETAIL_COLUMNS:
         parts.append(f"<th>{_e(texts.DETAIL_COLUMNS[key])}</th>")
-    parts.append("</tr></thead><tbody>")
+    parts.append("</tr></thead><tbody id=\"dt\">")
     for candidate in candidates:
         parts.append(_detail_row(candidate))
     parts.append("</tbody></table></section>")
@@ -347,6 +358,37 @@ def _footer() -> str:
     return f"<footer>{_e(texts.REPORT_OFFLINE_NOTICE)}</footer>"
 
 
+# 明细筛选脚本（F5，POC-4 同款原生 display 切换）：内联无 src、零网络 API；
+# 锚定明细表 tbody（id=dt，四区多表不能泛匹配）。文案常量经 json.dumps
+# （ensure_ascii）注入 JS 字符串字面量——转义安全且渲染模块零中文硬编码。
+_JS_BODY = (
+    "(function(){"
+    "var q=document.getElementById('q'),b=document.getElementById('dt'),"
+    "cnt=document.getElementById('cnt');"
+    "if(!q||!b||!cnt){return}"
+    "var trs=[].slice.call(b.rows),FT={FT},FM={FM};"
+    "cnt.textContent=FT.replace('{count}',trs.length);"
+    "q.addEventListener('input',function(){"
+    "var s=q.value.toLowerCase(),vis=0;"
+    "for(var i=0;i<trs.length;i++){"
+    "var r=trs[i],show=!s||r.cells[0].textContent.toLowerCase().indexOf(s)>-1;"
+    "r.style.display=show?'':'none';"
+    "if(show){vis++}"
+    "}"
+    "cnt.textContent=FM.replace('{count}',vis);"
+    "});"
+    "})()"
+)
+
+
+def _filter_script() -> str:
+    """内联筛选 <script>（仅明细区有候选时输出）。"""
+    fmt_total = json.dumps(texts.REPORT_FILTER_COUNT_FMT, ensure_ascii=True)
+    fmt_matched = json.dumps(texts.REPORT_FILTER_MATCHED_FMT, ensure_ascii=True)
+    body = _JS_BODY.replace("{FT}", fmt_total).replace("{FM}", fmt_matched)
+    return f"<script>{body}</script>"
+
+
 def render_report(report: dict) -> str:
     """report-v1 报告 dict → 离线单文件 HTML 文本（纯函数，无 I/O）。
 
@@ -365,6 +407,9 @@ def render_report(report: dict) -> str:
         _evidence(candidates),
         _actions(candidates),
         _footer(),
+        # F5：明细筛选脚本放 body 尾部（DOMContentLoaded 前同步执行，绑定即完，
+        # 不阻塞首屏解析以外的资源——单文件无其他资源可阻塞）
+        _filter_script() if candidates else "",
         "</body>\n</html>",
     ]
     return "".join(parts)

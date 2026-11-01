@@ -21,6 +21,7 @@ import pytest
 
 from disk_audit.engine import render, texts
 from disk_audit.engine.report import judge_scan_result
+from tests._bigreport_sample import build_big_report
 from tests.test_engine_judge import KB, STALE, _bundle
 
 _REPO = Path(__file__).resolve().parents[1]
@@ -58,11 +59,15 @@ _ALLOWED_TAGS = frozenset(
         "header", "h1", "h2", "p", "span", "section",
         "table", "thead", "tbody", "tr", "th", "td",
         "details", "summary", "ul", "li", "footer",
+        # T3-03（待办 F5）测试口径演进：零 JS → 内联零外链 JS（明细筛选）。
+        # script 仅允许内联（无 src 属性，属性白名单未含 src 守住）；input
+        # 仅允许文本筛选框（type=text，非按钮，不产生任何处理动作）。
+        "script", "input",
     }
 )
-_ALLOWED_ATTRS = frozenset({"id", "class", "title", "charset", "lang"})
+_ALLOWED_ATTRS = frozenset({"id", "class", "title", "charset", "lang", "type", "placeholder"})
 _FORBIDDEN_TAGS = frozenset(
-    {"script", "link", "iframe", "embed", "object", "base", "form", "button", "input"}
+    {"link", "iframe", "embed", "object", "base", "form", "button"}
 )
 
 
@@ -330,7 +335,12 @@ def test_invalid_inputs_raise_valueerror():
 
 
 def test_hostile_strings_are_escaped():
-    """路径/证据含 HTML 敏感字符时转义，不产生可执行标记（R10/安全底线）。"""
+    """路径/证据含 HTML 敏感字符时转义，不产生可执行标记（R10/安全底线）。
+
+    T3-03 口径演进：渲染器自带一个内联筛选 <script>，故此处改为断言
+    敌意输入被转义成文本实体 + 全文档真实 script 标签恰好 1 个（筛选 JS），
+    敌意内容不进入任何 script 上下文。
+    """
     data = copy.deepcopy(EXAMPLE)
     data["candidates"] = [
         {
@@ -344,8 +354,7 @@ def test_hostile_strings_are_escaped():
         }
     ]
     out = render.render_report(data)
-    assert "<script>" not in out
-    assert "<script" not in out
+    assert out.count("<script>") == 1  # 仅筛选 JS 一处，敌意输入不产生标签
     assert "&lt;script&gt;" in out
     assert "alert(&quot;x&quot;)" in out
 
@@ -437,3 +446,62 @@ def test_evidence_source_out_of_enum_rejected():
     assert "候选条目 #0" in message
     for expected in texts.EVIDENCE_SOURCE_ENUM:  # 期望枚举提示
         assert expected in message
+
+
+
+# ---------- T3-03（待办 F5）：明细筛选（内联零外链 JS）与 5000 行性能预算 ----------
+
+
+def test_details_filter_input_and_inline_script_present():
+    """明细区提供筛选输入框（input 文本框，非按钮）与内联筛选脚本（POC-4 同款）。"""
+    out = render.render_report(_fixture_report())
+    assert 'id="q"' in out
+    assert "<input" in out
+    assert 'type="text"' in out
+    assert texts.REPORT_FILTER_LABEL in out
+    assert texts.REPORT_FILTER_PLACEHOLDER in out
+    assert out.count("<script>") == 1  # 内联脚本，无 src（POC 同款原生 JS）
+    assert "style.display" in out  # display 切换
+    # 计数/匹配文案经 json.dumps(ensure_ascii) 注入 JS 字符串（渲染模块零中文硬编码）
+    import json as _json
+
+    assert _json.dumps(texts.REPORT_FILTER_COUNT_FMT, ensure_ascii=True) in out
+    assert _json.dumps(texts.REPORT_FILTER_MATCHED_FMT, ensure_ascii=True) in out
+
+
+def test_filter_script_inline_zero_external_and_no_network_api():
+    """筛选脚本结构性约束：恰 1 个内联 script、无 src 属性、无网络 API、无外链字样。"""
+    out = render.render_report(_fixture_report())
+    dom = _dom(out)
+    assert dom.tags.count("script") == 1
+    assert "src" not in dom.attr_names  # 内联，零外链（M2 闸②口径延续）
+    start = out.index("<script>")
+    end = out.index("</script>", start)
+    js = out[start:end]
+    for banned in ("fetch(", "XMLHttpRequest", "WebSocket", "import(", "http"):
+        assert banned not in js
+
+
+def test_filter_targets_details_tbody_and_shows_count():
+    """筛选定位明细表 tbody（id 守住），计数文案来自 texts（不散落硬编码）。"""
+    out = render.render_report(_fixture_report())
+    assert 'id="dt"' in out  # 明细表 tbody 锚点（四区多表不能 querySelector 泛匹配）
+    assert 'id="cnt"' in out
+
+
+def test_no_candidates_has_no_filter_ui():
+    """空态不渲染筛选输入框与脚本（防 JS 空引用），空态文案保留。"""
+    data = copy.deepcopy(EXAMPLE)
+    data["candidates"] = []
+    out = render.render_report(data)
+    assert "<input" not in out
+    assert "<script" not in out
+    assert texts.REPORT_NO_CANDIDATES in out
+
+
+def test_big_report_5000_rows_within_5mb_budget():
+    """验收①固化：POC-4 同分布 5000 候选渲染产物 ≤5MB（UTF-8 字节硬数字口径）。"""
+    report = build_big_report(5000)
+    out = render.render_report(report)
+    size = len(out.encode("utf-8"))
+    assert size <= 5_000_000, f"5000 行渲染产物 {size} 字节，超出 5MB 预算"
