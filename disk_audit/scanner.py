@@ -9,13 +9,18 @@ W0 实测报告缺陷①修复——前沿切分必须补算"前沿之上"层级
 X-1：权限不足/超长/占用/reparse point 一律跳过+计数+继续，不中断扫描。
 约束：浅层切分 + 叶级单线程递归，禁止线程池内嵌套 submit（W0 实测死锁）；
 流式聚合，不缓存全量条目；纯引擎、零 UI 依赖（待办 C2，任务卡 T-02/T2-01）。
+C8/E-1：可选线程安全进度回调 progress_cb（已扫描条目数/当前路径/已用时，
+双阈值节流 ≥500ms 或 2 万条目；回调异常按 X-1 计 other 不中断扫描；
+None 默认零开销路径；UI 侧自行调度主线程——待办 C8，任务卡 T3-01）。
 """
 from __future__ import annotations
 
 import ctypes
 import os
 import stat as _stat
+import threading
 import time
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from functools import partial
@@ -34,6 +39,15 @@ _DEFAULT_WORKERS = 8
 _FRONTIER_MAX_DEPTH = 4
 # 判定单元下钻容器（9.2 + 原型 drill_programs/drill_packages 口径，大小写不敏感）
 _CONTAINER_NAMES = frozenset({"programs", "packages"})
+
+# C8/E-1 进度节流双阈值：距上次触发 ≥ 时间阈值 或 全局新增 ≥ 条目阈值 才触发回调。
+# 时间阈值取 E-1 上限 500ms；条目阈值自决 2 万（万级）：Roaming 实测 ~24.2 万项/4.8s
+# ≈ 5 万项/s，满速下 ≈0.4s 一触发，与时间阈值同量级，事件总量 ≈ 条目数/2万 + 时长×2。
+# CHECK_STEP 为目录内逐条目探测步长（仅控制阈值探测频率——探测含锁，避免逐条目加锁
+# 竞争；1024 项 ≈ 20ms@满速，慢速盘下时间阈值活性 ≤ 1024 项/盘速）。
+_PROGRESS_MIN_INTERVAL = 0.5
+_PROGRESS_ENTRY_STEP = 20000
+_PROGRESS_CHECK_STEP = 1024
 
 # 模块级间接层：供测试 monkeypatch 替换，不污染全局 os
 _scandir = os.scandir
@@ -313,6 +327,93 @@ class ScanResult:
         }
 
 
+@dataclass(frozen=True)
+class ProgressEvent:
+    """E-1 实时进度事件快照（待办 C8）：已扫描条目数 / 当前路径 / 已用时。
+
+    frozen 只读：回调在工作线程触发（T3-05 UI 侧自行经 after() 调度主线程），
+    事件对象跨线程传递无共享可变状态。entries 与 ScanResult.to_json_dict()
+    ["entries"] 同口径（files+dirs 累计，跳过项不计入）。
+    """
+
+    entries: int  # 已扫描条目数（文件+目录累计）
+    path: str  # 当前路径（最近处理的文件/目录）
+    elapsed: float  # 已用时（秒，time.monotonic 口径）
+
+
+class _ProgressTracker:
+    """线程安全进度聚合器（C8/E-1）：各工作线程聚合本地计数，触发点加锁合并。
+
+    无锁热路径：tick 只由各计数源自己的线程调用（BFS 段=主线程一个源，并行段=
+    每个工作线程一个源），本地增量在触发探测点才入锁合并；双阈值（时间或条目）
+    满足其一才触发回调。回调在锁内串行触发——保证回调观察到的 entries/elapsed
+    单调不减（T3-05 消费前提）。回调异常按 X-1 捕获计入调用方 stats.skips.other
+    （不中断扫描、不进 X-2）；progress_cb=None 时不实例化本类（零节流聚合计算）。
+    """
+
+    def __init__(self, callback: Callable[[ProgressEvent], None]) -> None:
+        self._cb = callback
+        self._lock = threading.Lock()
+        self._start = time.monotonic()
+        self._entries = 0  # 已合并的全局条目数
+        self._fired_entries = 0  # 上次触发时的全局条目数
+        self._last_fire = self._start
+        # {id(stats): (stats 本体强引用, 上次已合并的本地计数)}——强引用防 id
+        # 复用误配（并行段 part_stats 合并后被回收，地址可能被新任务复用）
+        self._sources: dict[int, tuple[ScanStats, int]] = {}
+
+    def tick(self, stats: ScanStats, path: str) -> None:
+        """合并调用方本地增量并按双阈值触发回调（仅计数源属主线程调用）。"""
+        local_total = stats.files + stats.dirs
+        with self._lock:
+            now = time.monotonic()  # 锁内取时：触发序=锁序 → elapsed 单调不减
+            record = self._sources.get(id(stats))
+            last = record[1] if record is not None and record[0] is stats else 0
+            if local_total > last:
+                self._entries += local_total - last
+                self._sources[id(stats)] = (stats, local_total)
+            if (
+                now - self._last_fire < _PROGRESS_MIN_INTERVAL
+                and self._entries - self._fired_entries < _PROGRESS_ENTRY_STEP
+            ):
+                return
+            self._fired_entries = self._entries
+            self._last_fire = now
+            event = ProgressEvent(self._entries, path, now - self._start)
+            try:
+                self._cb(event)
+            except Exception:  # X-1：回调异常计 other，不中断扫描
+                stats.skips.other += 1
+
+    def settle(self, stats: ScanStats) -> None:
+        """结清一个计数源的尾差（scan_path 串行汇合点调用，不触发回调）。
+
+        工作线程 tick 只合并到其最后一次探测为止，分片末尾未探测的增量在此
+        结清，保证终态事件条目数精确。BFS 源在前沿切分完成后结清一次——此后
+        并行段汇合直接 stats.merge 进全局 stats，不再经本跟踪器对全局记账
+        （否则 worker 增量被双计）。
+        """
+        local_total = stats.files + stats.dirs
+        with self._lock:
+            record = self._sources.get(id(stats))
+            last = record[1] if record is not None and record[0] is stats else 0
+            if local_total > last:
+                self._entries += local_total - last
+                self._sources[id(stats)] = (stats, local_total)
+
+    def finish(self, path: str, stats: ScanStats) -> None:
+        """终态事件（不受节流）：汇报已合并的全局条目数；回调异常计 other。"""
+        with self._lock:
+            now = time.monotonic()
+            self._fired_entries = self._entries
+            self._last_fire = now
+            event = ProgressEvent(self._entries, path, now - self._start)
+            try:
+                self._cb(event)
+            except Exception:  # X-1：回调异常计 other，不中断扫描
+                stats.skips.other += 1
+
+
 class _ScanAborted(Exception):
     """内部中止信号：abort_check 触发（X-2 统一"不完整"出口，不对外抛出）。"""
 
@@ -485,6 +586,7 @@ def _expand_dir(
     sink: dict[str, UnitStats],
     parent_unit_path: str | None,
     abort_check=None,
+    progress: _ProgressTracker | None = None,
 ) -> None:
     """BFS 展开一个目录：目录计数、其中文件即层统计（W0 缺陷①修复）、子目录收集。"""
     _check_abort(abort_check)
@@ -493,12 +595,20 @@ def _expand_dir(
     unit = _sink_get(sink, unit_path)
     if unit is not None:
         unit.dirs += 1  # 目录计数归展开时解析出的单元（含单元目录自身）
+    if progress is not None:
+        progress.tick(stats, directory)  # 目录边界探测（空目录树也保活，C8）
     iterator = _open_dir(directory, stats)
     if iterator is None:
         return
     with iterator:
+        seen = 0  # 目录内探测步长计数（C8：仅控制探测频率，非计量口径）
         for entry in iterator:
             _handle_entry(entry, stats, subdirs, units, sink, unit_path)
+            if progress is not None:
+                seen += 1
+                if seen >= _PROGRESS_CHECK_STEP:
+                    seen = 0
+                    progress.tick(stats, entry.path)
 
 
 def _build_frontier(
@@ -508,6 +618,7 @@ def _build_frontier(
     stats: ScanStats,
     units: dict[str, UnitStats],
     abort_check=None,
+    progress: _ProgressTracker | None = None,
 ) -> tuple[list[tuple[str, str | None]], int]:
     """BFS 切出前沿目录集合；返回（前沿目录与所属单元路径列表, 深度）。
 
@@ -522,7 +633,10 @@ def _build_frontier(
     while depth < max_depth:
         next_level: list[tuple[str, str | None]] = []
         for directory, parent_unit_path in level:
-            _expand_dir(directory, next_level, stats, units, units, parent_unit_path, abort_check)
+            _expand_dir(
+                directory, next_level, stats, units, units, parent_unit_path,
+                abort_check, progress,
+            )
         if not next_level:
             frontier = []  # 该层已全部展开且无子目录：无剩余工作
             break
@@ -538,11 +652,13 @@ def _scan_tree(
     item: tuple[str, str | None],
     units: dict[str, UnitStats],
     abort_check=None,
+    progress: _ProgressTracker | None = None,
 ) -> tuple[ScanStats, dict[str, UnitStats]]:
     """叶级单线程递归统计（栈式迭代避免递归深度问题）；每个前沿子树独立聚合。
 
     并行段不写共享 UnitStats：单元增量先记入本子树局部字典，由 scan_path
     在汇合时串行合并（多前沿可属同一单元，避免线程竞争）。
+    进度（C8）：本函数的 stats 为本工作线程私有计数源，tick 只合并自身增量。
     """
     root, unit_hint = item
     stats = ScanStats()
@@ -556,19 +672,30 @@ def _scan_tree(
         unit = _sink_get(local_units, unit_path)
         if unit is not None:
             unit.dirs += 1
+        if progress is not None:
+            progress.tick(stats, current)  # 目录边界探测（C8）
         iterator = _open_dir(current, stats)
         if iterator is None:
             continue
         subdirs: list[tuple[str, str | None]] = []
+        seen = 0  # 目录内探测步长计数（C8：仅控制探测频率，非计量口径）
         with iterator:
             for entry in iterator:
                 _handle_entry(entry, stats, subdirs, units, local_units, unit_path)
+                if progress is not None:
+                    seen += 1
+                    if seen >= _PROGRESS_CHECK_STEP:
+                        seen = 0
+                        progress.tick(stats, entry.path)
         stack.extend(subdirs)
     return stats, local_units
 
 
 def scan_path(
-    root: str, workers: int = _DEFAULT_WORKERS, abort_check=None
+    root: str,
+    workers: int = _DEFAULT_WORKERS,
+    abort_check=None,
+    progress_cb: Callable[[ProgressEvent], None] | None = None,
 ) -> ScanResult:
     """扫描一个目录树，返回双口径汇总、跳过统计、判定单元聚合与完整性标记。
 
@@ -577,6 +704,14 @@ def scan_path(
     中止安全（X-2/C7）：abort_check 周期性轮询（每个目录展开前调用一次），
     返回 True 或抛 KeyboardInterrupt/任意异常 → 统一"不完整"出口：返回已采集
     部分并置 incomplete=True（totals 由该标记判无效），不抛出、不产生半成品结论。
+    进度回调（C8/E-1）：progress_cb 非 None 时，工作线程以 ProgressEvent
+    （entries=已扫描条目数、path=当前路径、elapsed=已用时秒）通知进度，
+    双阈值节流（距上次触发 ≥500ms 或全局新增 ≥2 万条目，刷新 ≤500ms）；
+    回调在工作线程触发（零 UI 依赖，UI 侧自行调度主线程，T3-05），锁内串行
+    触发保证 entries/elapsed 单调不减；回调异常按 X-1 计 skips.other 不中断
+    扫描（abort_check 命中仍走 X-2 既有出口，优先级高于进度触发）；扫描结束
+    （含中止）追加一次不受节流的终态事件。progress_cb=None（默认）为零开销
+    路径：不做任何节流聚合计算。
     """
     if workers < 1:
         raise ValueError("workers 必须 ≥ 1")
@@ -590,6 +725,7 @@ def scan_path(
     incomplete = False
     frontier: list[tuple[str, str | None]] = []
     depth = 0
+    progress = None if progress_cb is None else _ProgressTracker(progress_cb)
     try:
         frontier, depth = _build_frontier(
             root_abs,
@@ -598,17 +734,27 @@ def scan_path(
             stats=stats,
             units=units,
             abort_check=abort_check,
+            progress=progress,
         )
+        if progress is not None:
+            progress.settle(stats)  # 结清 BFS 段尾差（并行段汇合不再对全局记账）
         if frontier:
             with ThreadPoolExecutor(max_workers=workers) as pool:
                 for part_stats, part_units in pool.map(
-                    partial(_scan_tree, units=units, abort_check=abort_check), frontier
+                    partial(
+                        _scan_tree, units=units, abort_check=abort_check, progress=progress
+                    ),
+                    frontier,
                 ):
                     stats.merge(part_stats)
                     for unit_path, delta in part_units.items():
                         units[unit_path].merge(delta)
+                    if progress is not None:
+                        progress.settle(part_stats)  # 结清该分片未探测的尾差
     except Exception:  # X-2：用户中止/异常统一"不完整"出口（细粒度失败仍由 X-1 披露）
         incomplete = True
+    if progress is not None:
+        progress.finish(root_abs, stats)  # 终态事件（不受节流，C8）
     return ScanResult(
         root=root_abs,
         workers=workers,

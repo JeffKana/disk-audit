@@ -507,3 +507,109 @@ def test_cli_scan_outputs_incomplete_marker(tmp_path, monkeypatch, capsys):
     assert cli_main(["scan", str(tmp_path)]) == 0
     payload = json.loads(capsys.readouterr().out)
     assert payload["incomplete"] is True
+
+
+# ---------- C8 实时进度事件（T3-01，E-1：线程安全进度回调） ----------
+
+
+def test_progress_events_fields_monotonic_throttled(tmp_path, monkeypatch):
+    """验收①：节流后事件含 entries/path/elapsed，entries 与 elapsed 单调不减，
+    事件次数远小于条目数（双阈值节流生效）；终态事件给出精确全量条目数。"""
+    # 屏蔽时间阈值（1000s 内不触发），仅条目阈值参与，计数确定性
+    monkeypatch.setattr(scanner, "_PROGRESS_MIN_INTERVAL", 1000.0)
+    monkeypatch.setattr(scanner, "_PROGRESS_ENTRY_STEP", 5)
+    monkeypatch.setattr(scanner, "_PROGRESS_CHECK_STEP", 4)
+    for i in range(8):
+        for j in range(10):
+            _write(tmp_path / f"d{i}" / f"f{j}.bin", 10)
+    events: list[scanner.ProgressEvent] = []
+    result = scan_path(str(tmp_path), workers=2, progress_cb=events.append)
+    total = result.stats.files + result.stats.dirs
+    assert total == 89  # 80 文件 + 8 子目录 + 根
+    assert len(events) > 1  # 扫描中途确有事件（非仅终态一次）
+    assert len(events) < total // 3  # 节流生效：事件次数远小于条目数
+    for event in events:
+        assert isinstance(event.entries, int) and event.entries >= 1
+        assert isinstance(event.path, str) and event.path
+        assert event.path.startswith(str(tmp_path))
+        assert isinstance(event.elapsed, float) and event.elapsed >= 0.0
+    entries_seq = [e.entries for e in events]
+    elapsed_seq = [e.elapsed for e in events]
+    assert entries_seq == sorted(entries_seq)  # 单调不减
+    assert elapsed_seq == sorted(elapsed_seq)  # 单调不减
+    assert events[-1].entries == total  # 终态事件 = 精确全量
+
+
+def test_progress_default_thresholds_small_scan(tmp_path):
+    """默认双阈值（500ms/2 万条目）下小快扫描仅终态事件级少量事件。"""
+    for i in range(3):
+        _write(tmp_path / f"d{i}" / "f.bin", 10)
+    events: list[scanner.ProgressEvent] = []
+    result = scan_path(str(tmp_path), workers=1, progress_cb=events.append)
+    total = result.stats.files + result.stats.dirs
+    assert total == 7  # 3 文件 + 3 子目录 + 根
+    assert 1 <= len(events) <= 3  # 默认阈值下不逐条目轰炸
+    assert all(e.entries <= total for e in events)
+    assert events[-1].entries == total
+
+
+def test_progress_callback_exception_bfs_phase(tmp_path):
+    """验收②：回调抛异常 → 扫描正常完成（incomplete=False）、计 other、结果完整。"""
+    for i in range(4):
+        _write(tmp_path / f"d{i}" / "f.bin", 10)
+
+    def boom(event):
+        raise RuntimeError("注入的回调异常")
+
+    result = scan_path(str(tmp_path), workers=2, progress_cb=boom)
+    assert result.incomplete is False
+    assert result.stats.files == 4
+    assert result.stats.dirs == 5
+    assert result.stats.skips.other >= 1
+
+
+def test_progress_callback_exception_parallel_phase(tmp_path, monkeypatch):
+    """验收②（并行段）：工作线程内回调异常同样计 other 且不中断扫描。"""
+    monkeypatch.setattr(scanner, "_PROGRESS_MIN_INTERVAL", 1000.0)
+    monkeypatch.setattr(scanner, "_PROGRESS_ENTRY_STEP", 2)
+    monkeypatch.setattr(scanner, "_PROGRESS_CHECK_STEP", 2)
+    for i in range(8):
+        _write(tmp_path / f"d{i}" / "f.bin", 10)
+
+    def boom(event):
+        raise RuntimeError("注入的回调异常")
+
+    result = scan_path(str(tmp_path), workers=2, progress_cb=boom)
+    assert result.incomplete is False
+    assert result.stats.files == 8
+    assert result.stats.skips.other >= 1
+
+
+def test_progress_none_default_zero_overhead_equivalent(tmp_path):
+    """progress_cb=None（默认）与不传回调行为一致（零开销路径回归）。"""
+    for i in range(6):
+        _write(tmp_path / f"d{i}" / "f.bin", 10)
+    r1 = scan_path(str(tmp_path), workers=2)
+    r2 = scan_path(str(tmp_path), workers=2, progress_cb=None)
+    d1, d2 = r1.to_json_dict(), r2.to_json_dict()
+    d1.pop("seconds"), d2.pop("seconds")  # 耗时天然不同，不比较
+    assert d1 == d2
+
+
+def test_progress_multithread_monotonic(tmp_path, monkeypatch):
+    """多线程段（workers=4）进度仍单调：锁内串行触发保证观察序。"""
+    monkeypatch.setattr(scanner, "_PROGRESS_MIN_INTERVAL", 1000.0)
+    monkeypatch.setattr(scanner, "_PROGRESS_ENTRY_STEP", 7)
+    monkeypatch.setattr(scanner, "_PROGRESS_CHECK_STEP", 3)
+    for i in range(16):
+        for j in range(3):
+            _write(tmp_path / f"d{i}" / f"f{j}.bin", 10)
+    events: list[scanner.ProgressEvent] = []
+    result = scan_path(str(tmp_path), workers=4, progress_cb=events.append)
+    total = result.stats.files + result.stats.dirs
+    assert total == 65  # 48 文件 + 16 子目录 + 根
+    assert len(events) >= 2
+    for prev, curr in zip(events, events[1:]):
+        assert curr.entries >= prev.entries  # 多线程下 entries 单调不减
+        assert curr.elapsed >= prev.elapsed  # 多线程下 elapsed 单调不减
+    assert events[-1].entries == total
