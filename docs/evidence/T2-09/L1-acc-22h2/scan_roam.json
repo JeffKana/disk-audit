@@ -1,0 +1,77 @@
+{
+  "root": "C:\\Users\\qa\\AppData\\Roaming",
+  "workers": 8,
+  "seconds": 0.15,
+  "frontier_parts": 36,
+  "frontier_depth": 2,
+  "files": 851,
+  "dirs": 399,
+  "entries": 1250,
+  "logical_bytes": 733233491,
+  "allocated_bytes": 734103984,
+  "skipped": {
+    "permission": 0,
+    "occupied": 0,
+    "too_long": 0,
+    "reparse": 1,
+    "other": 0,
+    "total": 1
+  },
+  "units": [
+    {
+      "path": "C:\\Users\\qa\\AppData\\Roaming\\Adobe",
+      "files": 0,
+      "dirs": 3,
+      "logical_bytes": 0,
+      "allocated_bytes": 0,
+      "max_mtime": 1792938480.922903,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Roaming\\Code",
+      "files": 103,
+      "dirs": 59,
+      "logical_bytes": 23485207,
+      "allocated_bytes": 23533616,
+      "max_mtime": 1792961910.4867861,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Roaming\\Microsoft",
+      "files": 87,
+      "dirs": 54,
+      "logical_bytes": 375188,
+      "allocated_bytes": 394104,
+      "max_mtime": 1793527955.125602,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Roaming\\Mozilla",
+      "files": 9,
+      "dirs": 21,
+      "logical_bytes": 5913,
+      "allocated_bytes": 5928,
+      "max_mtime": 1793527822.6863396,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Roaming\\Tencent",
+      "files": 2,
+      "dirs": 8,
+      "logical_bytes": 247398,
+      "allocated_bytes": 249856,
+      "max_mtime": 1792960798.562122,
+      "exe_files": 0
+    },
+    {
+      "path": "C:\\Users\\qa\\AppData\\Roaming\\kingsoft",
+      "files": 650,
+      "dirs": 253,
+      "logical_bytes": 709119785,
+      "allocated_bytes": 709920480,
+      "max_mtime": 1793527966.4081495,
+      "exe_files": 4
+    }
+  ],
+  "incomplete": false
+}
