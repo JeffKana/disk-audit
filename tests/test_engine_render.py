@@ -363,9 +363,9 @@ def test_empty_candidates_renders_empty_note():
 def test_judge_real_pipeline_output_renders():
     """scan dict → judge（注入罐装证据/知识库）→ schema 校验 → 渲染成功。
 
-    夹具取 updater（更新缓存）/受保护/未知长尾三条路径——均为判定输出过定稿
-    schema 的干净分支；真实本机 scan→judge 的渲染验证在任务卡执行时单独留档
-    （真实路径不进 git）。
+    夹具取 updater（更新缓存）/受保护/未知长尾/oldapp（KB"已停止"高档残留，
+    T3-07 补触达）四条路径——判定输出全部过定稿 schema 后再渲染；真实本机
+    scan→judge 的渲染验证在任务卡执行时单独留档（真实路径不进 git）。
     """
     from tests._mini_schema import mini_validate
 
@@ -387,9 +387,14 @@ def test_judge_real_pipeline_output_renders():
                 "files": 8, "dirs": 3, "logical_bytes": 40960,
                 "allocated_bytes": 45056, "max_mtime": STALE, "exe_files": 1,
             },
+            {
+                "path": r"C:\Users\u\AppData\Roaming\oldapp",
+                "files": 3, "dirs": 1, "logical_bytes": 8192,
+                "allocated_bytes": 12288, "max_mtime": STALE, "exe_files": 1,
+            },
         ],
-        "allocated_bytes": 2170880,
-        "logical_bytes": 2131712,
+        "allocated_bytes": 2182912,
+        "logical_bytes": 2141696,
         "skipped": {"total": 3},
     }
     report = judge_scan_result(scan, bundle=_bundle(), kb=KB)
@@ -404,12 +409,31 @@ def test_judge_real_pipeline_output_renders():
     assert not _FORBIDDEN_TAGS & set(dom.tags)
 
 
-def test_evidence_source_out_of_enum_still_renders():
-    """防御性渲染：证据链 source 不在 schema 枚举（如 judge.py 已停止分支现产出的
-    "进程服务"，见执行记录未尽事项）时照常展示，不崩溃——渲染器不做枚举强校验。"""
+def test_evidence_source_enum_matches_schema():
+    """texts.EVIDENCE_SOURCE_ENUM 与定稿 schema 九值枚举逐字一致（防漂移）。"""
+    schema = json.loads(
+        (_REPO / "docs" / "schemas" / "report-v1.schema.json").read_text(encoding="utf-8")
+    )
+    schema_enum = (
+        schema["$defs"]["candidate"]["properties"]["evidence_chain"]["items"]
+        ["properties"]["source"]["enum"]
+    )
+    assert list(texts.EVIDENCE_SOURCE_ENUM) == schema_enum
+
+
+def test_evidence_source_out_of_enum_rejected():
+    """T3-07（08 报告 §3 裁决 1）：证据链 source 不在 schema 九值枚举的输入
+    **拒绝渲染**并披露非法值与合法枚举——拒绝并披露优于静默渲染。本用例
+    原为 T3-02 的"照常展示"防御（test_evidence_source_out_of_enum_still_renders），
+    按裁决修正为拒绝语义（修正防御行为，非删用例换绿灯）。"""
     data = copy.deepcopy(EXAMPLE)
     data["candidates"][0]["evidence_chain"].append(
         {"source": "进程服务", "content": "无匹配进程/服务/自启动"}
     )
-    out = render.render_report(data)
-    assert "无匹配进程/服务/自启动" in "".join(_dom(out).text)
+    with pytest.raises(ValueError) as exc:
+        render.render_report(data)
+    message = str(exc.value)
+    assert "进程服务" in message  # 非法值披露
+    assert "候选条目 #0" in message
+    for expected in texts.EVIDENCE_SOURCE_ENUM:  # 期望枚举提示
+        assert expected in message
