@@ -445,3 +445,24 @@ def test_cli_judge_rejects_bad_input(tmp_path, capsys):
     err = capsys.readouterr().err
     assert rc == 2
     assert "判定失败" in err
+
+
+# ---------- C7（T2-05）：部分结果消费与"不完整"标记 ----------
+
+
+def test_judge_scan_result_marks_incomplete(tmp_path):
+    """中止/异常产生的扫描结果（incomplete=true）可被 judge 消费并同样标记（验收③）。"""
+    scan = _scan_fixture(tmp_path)
+    scan["incomplete"] = True
+    report = judge_scan_result(scan, bundle=_bundle(), kb=KB)
+    assert report["incomplete"] is True
+    # 定稿前的草案 schema 不含该字段 → 校验拒绝；T2-07 定稿将收录（X-2）
+    assert mini_validate(report, SCHEMA) != []
+
+
+def test_normal_report_has_no_incomplete_key(tmp_path):
+    """正常完成路径不受影响：报告无 incomplete 键，草案校验通过（回归）。"""
+    scan = _scan_fixture(tmp_path)
+    report = judge_scan_result(scan, bundle=_bundle(), kb=KB)
+    assert "incomplete" not in report
+    assert mini_validate(report, SCHEMA) == []
