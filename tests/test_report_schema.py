@@ -144,3 +144,57 @@ def test_regenerable_two_buckets_present():
 def test_candidate_enum_and_constraint_violations_rejected(mutate):
     data = _clone_with_candidate_mutated(mutate)
     assert mini_validate(data, SCHEMA) != []
+
+
+# ---------- F1 定稿（T2-07）：枚举收紧 / incomplete / 版本语义 ----------
+
+
+def test_finalized_schema_not_draft():
+    assert "草案" not in SCHEMA["title"]
+
+
+def test_evidence_source_enum_aligned_with_evidence_v1():
+    """证据链 source 收紧为枚举（与 evidence.v1 六源对齐 + 判定层三源）。
+
+    evidence.v1 六源映射：注册表卸载项↔uninstall、Appx↔appx、进程↔processes、
+    服务↔services、自启动↔autostart、文件枚举↔文件枚举器（9.2 大小/陈旧度依据）；
+    硬保护/知识库/启发式为架构③判定层依据来源。
+    """
+    enum = SCHEMA["$defs"]["candidate"]["properties"]["evidence_chain"]["items"][
+        "properties"
+    ]["source"]["enum"]
+    assert enum == [
+        "硬保护", "知识库", "注册表卸载项", "进程", "服务", "自启动",
+        "Appx", "启发式", "文件枚举",
+    ]
+
+
+def test_illegal_evidence_source_rejected():
+    data = _clone_with_candidate_mutated(
+        lambda c: c["evidence_chain"][0].update({"source": "猜测"})
+    )
+    assert mini_validate(data, SCHEMA) != []
+
+
+def test_incomplete_optional_field():
+    """X-2/C7：incomplete 为可选 boolean（部分结果标记，totals 由其判无效）。"""
+    prop = SCHEMA["properties"]["incomplete"]
+    assert prop["type"] == "boolean"
+    assert "incomplete" not in SCHEMA["required"]
+
+
+def test_incomplete_example_accepted_and_bad_type_rejected():
+    data = json.loads(EXAMPLE_PATH.read_text(encoding="utf-8"))
+    data["incomplete"] = True
+    assert mini_validate(data, SCHEMA) == []
+    bad = json.loads(EXAMPLE_PATH.read_text(encoding="utf-8"))
+    bad["incomplete"] = "yes"
+    assert mini_validate(bad, SCHEMA) != []
+
+
+def test_schema_version_semantics_documented():
+    """Q7 版本语义写入 schema：结构破坏 major+1（联动"旧记录不可比"）；非破坏 minor+1。"""
+    desc = SCHEMA["properties"]["schema_version"]["description"]
+    assert "major" in desc
+    assert "minor" in desc
+    assert "旧记录不可比" in desc

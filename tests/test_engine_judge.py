@@ -99,8 +99,8 @@ def test_snapshot_protected():
         "confidence": "受保护",
         "verdict_source": "硬保护",
         "evidence_chain": [
-            {"source": "硬保护规则", "content": "受保护，不可处理"},
-            {"source": "硬保护规则",
+            {"source": "硬保护", "content": "受保护，不可处理"},
+            {"source": "硬保护",
              "content": "HARDPROTECT-DPAPI：DPAPI 密钥目录（Microsoft\\Protect / Crypto）："
                         "删除将导致已保存的密码、证书、Wi-Fi 凭据永久无法解密"},
         ],
@@ -142,8 +142,8 @@ def test_snapshot_updater_naming_family():
         "confidence": "高",
         "verdict_source": "知识库",
         "evidence_chain": [
-            {"source": "知识库·正则族", "content": "可再生：应用会自行重建"},
-            {"source": "知识库·正则族",
+            {"source": "知识库", "content": "可再生：应用会自行重建"},
+            {"source": "知识库",
              "content": "updater-suffix（*-updater）：Electron electron-updater 下载的"
                         "安装包缓存"},
         ],
@@ -456,8 +456,8 @@ def test_judge_scan_result_marks_incomplete(tmp_path):
     scan["incomplete"] = True
     report = judge_scan_result(scan, bundle=_bundle(), kb=KB)
     assert report["incomplete"] is True
-    # 定稿前的草案 schema 不含该字段 → 校验拒绝；T2-07 定稿将收录（X-2）
-    assert mini_validate(report, SCHEMA) != []
+    # T2-07 定稿已收录可选字段 incomplete（X-2）→ 定稿 schema 校验通过
+    assert mini_validate(report, SCHEMA) == []
 
 
 def test_normal_report_has_no_incomplete_key(tmp_path):
