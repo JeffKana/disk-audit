@@ -395,12 +395,25 @@ def test_abort_check_marks_incomplete_and_keeps_partial(tmp_path):
     assert payload["incomplete"] is True
 
 
-def test_keyboard_interrupt_marks_incomplete(tmp_path):
-    """Ctrl+C（KeyboardInterrupt）同样走"不完整"出口（验收④触发一）。"""
+class _SimulatedCtrlC(Exception):
+    """模拟用户中止（Ctrl+C/停止信号）的测试替身。
+
+    禁止在测试中抛真 KeyboardInterrupt（06 报告退回单 #21/#22：真 KI 属
+    BaseException，在 pwsh runner 上会从 pytest 会话层逃逸，环境时序相关的
+    间歇雷；本异常派生自 Exception，走 scan_path 的统一捕获区，行为确定）。
+    """
+
+
+def test_user_abort_exception_marks_incomplete(tmp_path):
+    """用户中止（停止信号）异常同样走"不完整"出口（验收④触发一）。
+
+    以非 KI 自定义异常模拟中止（退回单修复口径）；abort_check 抛出的任何
+    异常都应被 scan_path 统一捕获并置 incomplete。
+    """
     _write(tmp_path / "d0" / "f.bin", 10)
 
     def abort_check() -> bool:
-        raise KeyboardInterrupt
+        raise _SimulatedCtrlC
 
     result = scan_path(str(tmp_path), workers=1, abort_check=abort_check)
     assert result.incomplete is True
