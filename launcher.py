@@ -6,13 +6,15 @@ P5（启动即检 build >= 22621，不足拒绝并提示）、P6（仅固定本�
 `disk_audit` 包内任何模块不得 import tkinter）。
 
 耦合边界（任务卡实现约束）：本模块对 `disk_audit` 包的依赖仅限文案资源
-`disk_audit.engine.texts`；扫描/判定经 scan/judge 接口调用（T3-05 进度/中止、
-T3-06 报告入口接线），本卡 UI 骨架不 import 判定逻辑、不触发扫描（U-1：未获用户
-显式选择前不读取文件系统路径——盘型枚举属 P6 规定的选择界面组成，非扫描读取）。
+`disk_audit.engine.texts`、报告落盘/淘汰/打开 `disk_audit.reports`，以及
+scan/judge/render 三个接口入口（T3-06 接线，见 execute_audit；T3-05 进度/中止
+将经 after() 调度把该流水线异步化）。UI 不 import 判定细节、不直接触碰
+报告文件（U-2：落盘仅经 disk_audit.reports 守卫写入 DATA_DIR\reports\）。
 
 可注入点（验收①②）：build 探测 `get_windows_build`、盘符枚举 `enumerate_drive_types`
-均可经 `run(...)` 注入替换；纯逻辑（`is_build_supported` / `build_drive_entries` /
-`build_preset_rows`）无 I/O、无全局状态，供 tests/test_launcher.py 无 Tk 测试。
+均可经 `run(...)` 注入替换；体检流水线六环经 `AuditDeps` 注入（T3-06）；
+纯逻辑（`is_build_supported` / `build_drive_entries` / `build_preset_rows` /
+`execute_audit`）无 Tk I/O，供 tests/test_launcher.py 无 Tk 测试。
 tkinter 延迟导入：纯逻辑可无 Tk 环境加载，Tk 根仅在真实运行时创建。
 """
 from __future__ import annotations
@@ -25,9 +27,11 @@ import sys
 from dataclasses import dataclass
 from typing import Callable, Mapping, Sequence
 
+from disk_audit import reports
 from disk_audit.engine import texts
 
 LAUNCHER_TEXTS = texts.LAUNCHER_TEXTS
+G3_TEXTS = texts.G3_TEXTS
 
 # P5：Win11 22H2（build 22621）及以上，启动时检测
 MIN_BUILD = 22621
@@ -54,6 +58,22 @@ BuildProbe = Callable[[], int]
 DriveProbe = Callable[[], Mapping[str, int]]
 NotifyUnsupported = Callable[[int], None]
 WindowFactory = Callable[[Sequence["DriveEntry"], Sequence["PresetRow"], int], None]
+
+
+@dataclass(frozen=True)
+class AuditDeps:
+    """体检流水线六环依赖（T3-06 接线）。
+
+    全部可注入：全链路替身单测（scan/judge/render/save/prune/open）与 G2
+    异步化改造都以本结构为边界；default_deps() 给出真实装配。
+    """
+
+    scan: Callable[[str], dict]  # 范围 → scan 结果 JSON dict（只读采集）
+    judge: Callable[[dict], dict]  # scan 结果 → report-v1 dict（六层判定）
+    render: Callable[[dict], str]  # report-v1 → 离线单文件 HTML
+    save: Callable[[str], str]  # HTML → 落盘，返回报告绝对路径
+    prune: Callable[[], list[str]]  # 旧报告淘汰（保留 12 份）
+    open: Callable[[str], None]  # 默认浏览器打开报告（只读）
 
 
 @dataclass(frozen=True)
@@ -165,6 +185,45 @@ def build_preset_rows(env: Mapping[str, str] | None = None) -> list[PresetRow]:
     return rows
 
 
+def default_deps(reports_dir: str | None = None) -> "AuditDeps":
+    """真实装配（T3-06）：scan/judge/render 绑定引擎入口，save/prune/open 绑定 reports 模块。
+
+    延迟 import：launcher 模块加载不拖入扫描/判定栈（T3-04 延迟导入模式延续）；
+    reports_dir 注入时 save/prune 落点随之替换（测试替身根），默认包内 REPORTS_DIR。
+    """
+    from disk_audit.engine.render import render_report
+    from disk_audit.engine.report import judge_scan_result
+    from disk_audit.scanner import scan_path
+
+    return AuditDeps(
+        scan=lambda path: scan_path(path).to_json_dict(),
+        judge=judge_scan_result,
+        render=render_report,
+        save=lambda html_text: reports.save_report(html_text, reports_dir=reports_dir),
+        prune=lambda: reports.prune_reports(reports_dir=reports_dir),
+        open=reports.open_report,
+    )
+
+
+def execute_audit(path: str, *, deps: "AuditDeps | None" = None) -> str:
+    """一次完整体检流水线（M2 闸①：选范围 → 扫描 → 浏览器自动打开 = 3 步）。
+
+    分段清晰（每环一步，G2/T3-05 异步化时按段搬入后台线程）：
+    ① scan 只读采集 → ② judge 六层判定 → ③ render 离线 HTML
+    → ④ save 落盘（U-2 唯一写入位）→ ⑤ prune 淘汰保留 12 份
+    → ⑥ open 默认浏览器打开（只读）。
+    返回报告绝对路径；环节异常向上抛出，由调用方统一呈现失败态。
+    """
+    pipeline = deps if deps is not None else default_deps()
+    scan_result = pipeline.scan(path)
+    report = pipeline.judge(scan_result)
+    html_text = pipeline.render(report)
+    report_path = pipeline.save(html_text)
+    pipeline.prune()
+    pipeline.open(report_path)
+    return report_path
+
+
 def _notify_unsupported(build: int) -> None:
     """版本不足默认出口：优先图形提示；Tk 不可用时降级 stderr 文本提示。"""
     _force_utf8_stdio()
@@ -190,8 +249,9 @@ def build_scope_ui(
 ) -> None:
     """组装范围选择界面（Tkinter 专属段）。
 
-    T3-05 在此接线进度/中止（消费 C8 回调），T3-06 接线报告入口；本卡"开始体检"
-    仅确认所选范围（校验存在性），不发起扫描（U-1）。
+    T3-05 在此接线进度/中止（消费 C8 回调）；T3-06 已接线结果入口：
+    "开始体检" → execute_audit（同步执行，G2/T3-05 将异步化）。
+    U-1：点击"开始体检"即用户显式选择，此前不读取所选文件系统路径。
     """
     import tkinter as tk
     from tkinter import filedialog
@@ -275,7 +335,16 @@ def build_scope_ui(
             return
         else:
             path = selected
-        status_var.set(LAUNCHER_TEXTS["status_selected"].format(path=path))
+        # T3-06 接线（同步执行；G2/T3-05 将异步化）：扫描 → 报告落盘 → 浏览器打开。
+        # 分段入口 execute_audit 单点收敛，异常统一呈现失败态（X-2 不产生半成品结论）。
+        status_var.set(G3_TEXTS["status_scanning"].format(path=path))
+        root.update_idletasks()
+        try:
+            report_path = execute_audit(path)
+        except Exception as exc:  # 环节失败统一出口：状态栏呈现原因，程序不中断
+            status_var.set(G3_TEXTS["status_audit_failed"].format(reason=exc))
+            return
+        status_var.set(G3_TEXTS["status_report_opened"].format(path=report_path))
 
 
 def _browse_folder(root: object, custom_var: object, scope_var: object, filedialog: object) -> None:
