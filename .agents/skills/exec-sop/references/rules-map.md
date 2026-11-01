@@ -61,11 +61,12 @@
 - PowerShell 任务优先 `C:\Program Files\PowerShell\7\pwsh.exe -NoProfile -NonInteractive`。
 - 代码内 PowerShell 子进程：绝对路径 `%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe`（W0 教训：PATH 裁剪时静默失败）。
 
-### GitHub 网络（2026-10-31 验证）
+### GitHub 网络（2026-10-31 深夜复核）
 
-- **SSH 远程（`git@github.com`）push / fetch 实测可直连**（本仓库 origin 即 SSH）；HTTPS 类操作（gh CLI / REST API / HTTPS remote）直连 443 不通，需**临时注入** `HTTPS_PROXY=http://127.0.0.1:7890`（勿写死配置；代理客户端未开时连接被拒，改走 SSH 或等代理恢复）。
+- **SSH 远程（`git@github.com`）push / fetch 实测直连可用**（本仓库 origin 即 SSH）。
+- **HTTPS 直连 api.github.com 实测可用**（2026-10-31 复核 200 OK，推翻"443 必须走代理"旧结论）——gh / REST 先**直连**；失败时再临时注入 `HTTPS_PROXY=http://127.0.0.1:7890`（勿写死配置；代理客户端未开时注入反而会 connectex refused）。
 - gh CLI 令牌可能失效：`printf "protocol=https\nhost=github.com\n" | git credential fill` 取 PAT 走 REST（凭据仅内存，不打印不落盘）。
-- `api.github.com` 可经 WebFetch 只读访问（不经代理也通）。
+- `api.github.com` 也可经 WebFetch 只读访问。
 
 ### 编码模式（先例：退回单 T-01 / 整改项 M-01）
 

@@ -68,7 +68,7 @@ description: 磁盘体检（disk-audit）项目执行 Agent 的任务卡执行 S
 
 ## 第 8 步：push 与 PR（自办）
 
-- **push 工作分支**：`HTTPS_PROXY=http://127.0.0.1:7890 git push -u origin <分支>`（代理临时注入，勿写进仓库/全局配置——直连 github.com:443 不通）。
+- **push 工作分支**：本仓库 origin 为 SSH（`git@github.com`），`git push -u origin <分支>` 直连即可；gh / REST API 先直连，失败再临时注入 `HTTPS_PROXY=http://127.0.0.1:7890`（勿写进仓库/全局配置，精化依据见 rules-map"GitHub 网络"）。
 - **建 PR**：gh CLI；令牌失效则 `git credential fill` 取 PAT 走 REST（凭据仅内存，不打印不落盘）。PR 描述结构：
 
 ```
