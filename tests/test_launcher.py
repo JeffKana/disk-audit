@@ -208,13 +208,71 @@ def test_preset_label_keys_cover_all_presets():
         assert item.label_key in texts.LAUNCHER_TEXTS
 
 
+# ---------- T3-06（待办 G3）：开始体检回调流水线（scan→judge→render→save→prune→open） ----------
+
+
+def test_execute_audit_runs_pipeline_in_order_with_stubbed_stages():
+    """全替身链路：六环按序执行、数据逐环传递、返回报告路径（M2 闸① ≤3 步的接缝）。
+
+    本卡同步接线；G2（T3-05）将把该流水线异步化（进度/中止），故编排收敛在
+    execute_audit 单点，替身注入接口即异步化改造边界。
+    """
+    calls: list[tuple] = []
+    deps = launcher.AuditDeps(
+        scan=lambda p: (calls.append(("scan", p)), {"root": p, "units": [], "skipped": {}})[1],
+        judge=lambda scan: (
+            calls.append(("judge", scan["root"])),
+            {"schema_version": "1.0", "scan_root": scan["root"], "candidates": []},
+        )[1],
+        render=lambda report: (
+            calls.append(("render", report["scan_root"])),
+            "<html>" + report["scan_root"] + "</html>",
+        )[1],
+        save=lambda html: (calls.append(("save", html)), r"C:\reports\report-1.html")[1],
+        prune=lambda: (calls.append(("prune", None)), [])[1],
+        open=lambda path: calls.append(("open", path)),
+    )
+    got = launcher.execute_audit(r"C:\scope", deps=deps)
+    assert got == r"C:\reports\report-1.html"
+    assert [entry[0] for entry in calls] == ["scan", "judge", "render", "save", "prune", "open"]
+    assert calls[0][1] == r"C:\scope"
+    assert calls[1][1] == r"C:\scope"
+    assert calls[2][1] == r"C:\scope"
+    assert calls[3][1] == "<html>" + r"C:\scope" + "</html>"
+    assert calls[5][1] == r"C:\reports\report-1.html"
+
+
+def test_execute_audit_with_default_deps_writes_under_injected_dir(tmp_path):
+    """默认装配：scan/judge/render/open 不实际执行（仅验证可调用），
+    save/prune 绑定注入目录——真实落盘一次验证接线正确（路径根可注入）。"""
+    deps = launcher.default_deps(reports_dir=str(tmp_path))
+    path = deps.save("<html>wiring</html>")
+    assert Path(path).parent == tmp_path
+    assert Path(path).name.startswith("report-")
+    assert deps.prune() == []
+
+
+def test_default_deps_scan_and_judge_are_real_entrypoints():
+    """默认装配绑定真实 scan/judge/render/open 入口（CI 不实际调用它们）。"""
+    from disk_audit.engine.report import judge_scan_result
+    from disk_audit.engine.render import render_report
+
+    deps = launcher.default_deps()
+    assert deps.judge is judge_scan_result
+    assert deps.render is render_report
+
+
 # ---------- 耦合边界（验收④：引擎零 UI 依赖；规范 §1：包内零 tkinter） ----------
 
 
-def test_launcher_imports_engine_only_via_texts_resource():
-    """UI → 引擎方向只允许经文案资源（texts）进入 disk_audit 包，不 import 判定/扫描逻辑。
+def test_launcher_imports_engine_only_via_declared_interfaces():
+    """UI → 引擎方向只允许经本卡声明的接口模块进入 disk_audit 包。
 
-    扫描与判定按任务卡约束经 scan/judge 接口调用（T3-05/T3-06 接线），本卡 UI 骨架不触发。
+    T3-04 骨架期仅文案资源（texts）；T3-06（待办 G3）按任务卡接线
+    scan/judge/render/save/open 六环，allowlist 相应扩至：
+    scanner（scan 接口）、engine.report（judge）、engine.render（render）、
+    reports（落盘/淘汰/打开）。守卫语义不变：不得 import 判定细节外的
+    包内私有模块，且引擎侧零 tkinter 由 test_package_has_no_tkinter_import 钉死。
     """
     source = (_REPO_ROOT / "launcher.py").read_text(encoding="utf-8")
     tree = ast.parse(source)
@@ -225,7 +283,14 @@ def test_launcher_imports_engine_only_via_texts_resource():
         elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
             imported.append(node.module)
     engine_imports = {name for name in imported if name.startswith("disk_audit")}
-    assert engine_imports <= {"disk_audit.engine"}
+    assert engine_imports <= {
+        "disk_audit",  # 包根（disk_audit.reports 的导入形式）
+        "disk_audit.engine",
+        "disk_audit.engine.report",
+        "disk_audit.engine.render",
+        "disk_audit.reports",
+        "disk_audit.scanner",
+    }
 
 
 def test_package_has_no_tkinter_import():

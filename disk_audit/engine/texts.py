@@ -150,3 +150,17 @@ LAUNCHER_TEXTS: dict[str, str] = {
     "status_selected": "已选择扫描范围：{path}；扫描功能将在后续版本接入",
     "status_missing_folder": "所选文件夹不存在，请重新选择",
 }
+
+# ======================================================================
+# G3 结果入口文案（T3-06；方案四节架构⑤"静态 HTML · 默认浏览器打开"、M2 闸①
+# "双击到看到报告 ≤3 步"）。本区块 append-only：新增文案一律向文末追加，
+# 严禁改动上方既有键值。
+# ======================================================================
+G3_TEXTS: dict[str, str] = {
+    "status_scanning": "正在体检：{path}；完成后报告将自动在默认浏览器打开",
+    "status_report_opened": "体检完成，报告已保存并在默认浏览器打开：{path}",
+    "status_audit_failed": "体检未完成：{reason}",
+    "reports_err_bad_filename": "报告文件名不合法：{filename}",
+    "reports_err_outside_dir": "报告写入路径越界，已拒绝写入：{target}",
+    "reports_err_bad_keep": "报告保留份数必须为正整数：{keep}",
+}
