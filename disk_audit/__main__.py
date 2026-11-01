@@ -1,7 +1,8 @@
 """命令行入口。引擎层必须可独立 CLI 调用、零 UI 依赖（M1 验收④）。
 
 --selftest 为 CI 门禁；scan 子命令输出扫描 JSON（待办 C2）；
-judge 子命令消费 scan 结果执行归属判定并输出报告 JSON（待办 D1，任务卡 T2-02）。
+judge 子命令消费 scan 结果执行归属判定并输出报告 JSON（待办 D1，任务卡 T2-02）；
+render 子命令消费报告 JSON 输出离线单文件 HTML（待办 F2，任务卡 T3-02）。
 """
 from __future__ import annotations
 
@@ -11,6 +12,7 @@ import sys
 from pathlib import Path
 
 from . import __version__
+from .engine.render import render_report
 from .engine.report import judge_scan_result
 from .hardprotect import check_protection
 from .scanner import scan_path
@@ -67,6 +69,46 @@ def _cmd_judge(args: argparse.Namespace) -> int:
     return 0
 
 
+def _force_utf8_stdio() -> None:
+    """强制 stdout/stderr 为 UTF-8（T-01 教训：runner/重定向默认编码非 UTF-8，
+    中文输出假红/乱码；hasattr 守卫兼容 pytest 等替换过的流对象）。"""
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8")
+            except (OSError, ValueError):
+                pass
+
+
+def _cmd_render(args: argparse.Namespace) -> int:
+    """render 子命令：报告 JSON → 离线单文件 HTML 文本，输出到 stdout（待办 F2）。
+
+    不落盘（U-2：本程序仅在 %LOCALAPPDATA%\\DiskAudit\\ 内写文件；报告落盘与
+    默认浏览器打开由结果入口负责，T3-06）；重定向即得报告文件。
+    """
+    _force_utf8_stdio()
+    try:
+        raw = Path(args.report_json).read_text(encoding="utf-8")
+    except OSError as exc:
+        print(f"渲染失败：无法读取报告文件：{exc}", file=sys.stderr)
+        return 2
+    except UnicodeDecodeError as exc:
+        print(f"渲染失败：报告文件不是 UTF-8 编码：{exc}", file=sys.stderr)
+        return 2
+    try:
+        report = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        print(f"渲染失败：报告文件不是合法 JSON：{exc}", file=sys.stderr)
+        return 2
+    try:
+        html_text = render_report(report)
+    except ValueError as exc:
+        print(f"渲染失败：{exc}", file=sys.stderr)
+        return 2
+    print(html_text)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="disk-audit", description="磁盘体检 · 只诊断，不动手"
@@ -83,6 +125,10 @@ def main(argv: list[str] | None = None) -> int:
         "judge", help="对 scan 结果执行归属判定并输出报告 JSON（待办 D1）"
     )
     judge_parser.add_argument("scan_result", help="scan 子命令输出的 JSON 文件路径")
+    render_parser = sub.add_parser(
+        "render", help="将报告 JSON 渲染为离线单文件 HTML 并输出到 stdout（待办 F2）"
+    )
+    render_parser.add_argument("report_json", help="judge 子命令输出的报告 JSON 文件路径")
     args = parser.parse_args(argv)
 
     if args.selftest:
@@ -91,6 +137,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_scan(args)
     if args.command == "judge":
         return _cmd_judge(args)
+    if args.command == "render":
+        return _cmd_render(args)
     parser.print_help()
     return 0
 
