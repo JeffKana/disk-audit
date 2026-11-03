@@ -1,0 +1,29 @@
+[
+    {
+        "path":  "C:\\Users\\querkecor\\AppData\\Local\\Programs",
+        "explorer_allocated_bytes":  2492484472,
+        "method":  "pure_handle_allocation_size_sum_rebuilt_in_vm",
+        "n_files":  29673,
+        "n_dirs":  4506,
+        "n_fail":  0,
+        "n_reparse":  1
+    },
+    {
+        "path":  "C:\\Users\\querkecor\\AppData\\Roaming\\Tencent",
+        "explorer_allocated_bytes":  9794711160,
+        "method":  "pure_handle_allocation_size_sum_rebuilt_in_vm",
+        "n_files":  33008,
+        "n_dirs":  3820,
+        "n_fail":  0,
+        "n_reparse":  0
+    },
+    {
+        "path":  "C:\\ProgramData\\Package Cache",
+        "explorer_allocated_bytes":  412832472,
+        "method":  "pure_handle_allocation_size_sum_rebuilt_in_vm",
+        "n_files":  89,
+        "n_dirs":  87,
+        "n_fail":  0,
+        "n_reparse":  0
+    }
+]

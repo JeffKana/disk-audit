@@ -1,0 +1,6 @@
+OK	C:\Users\qa\AppData\Roaming\Tencent	files=2	dirs=8	fail=0	reparse=0	alloc=249856
+MISSING	C:\ProgramData\Package Cache
+OK	C:\Users\qa\AppData\Local\Programs	files=3243	dirs=642	fail=0	reparse=0	alloc=1088864088
+OK	C:\Users\qa\AppData\Local\kingsoft	files=12652	dirs=4576	fail=0	reparse=0	alloc=2765179792
+OK	C:\Users\qa\AppData\Local\Google	files=0	dirs=3	fail=0	reparse=0	alloc=0
+WROTE	C:\stage\t209c\baseline_vm.json	records=4

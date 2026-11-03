@@ -26,12 +26,13 @@ Guest 账号 `qa`（autologon、UAC 静默 ConsentPromptBehaviorAdmin=0 已配�
 4. **H 盘仅剩 ~11G**：建新差分盘前先 `df` 核对；M4 八台矩阵滚动创建/销毁，验收完立即回收差分盘。
 5. **父镜像快照永不改动**：一切实验在差分机/新克隆上；镜像回收前 sdelete 置零 + `modifymedium --compact`（22H2 曾压至 16.1G）。
 
-## guestcontrol 四坑（MSYS Git Bash 环境）
+## guestcontrol 五坑（MSYS Git Bash 环境）
 
-1. 置 `MSYS_NO_PATHCONV=1`——MSYS 路径转换会篡改 `/c` 之类参数。
-2. `copyto` 源必须 **Windows 风格路径**（`H:\...`），目标同理。
-3. 复杂/多命令操作写成 `.cmd` 脚本拷进去执行，不要在命令行嵌套引号。
-4. 控制台打字注入避开 `>&|` 字符；`screenshotpng` 输出路径同样受路径转换影响（Windows 风格）。
+1. 置 `MSYS_NO_PATHCONV=1`——MSYS 路径转换会篡改 `/c` 之类参数。**漏置时 `run` 不是立即报错，而是挂在进程启动回执等待（WaitForArray 30s 超时、VBOX_E_IPRT_ERROR），与"GA 未就绪/账号锁定"同形**；mkdir/copyto 等文件通道操作不含 `/` 开头参数不受影响，会进一步掩盖根因（2026-11-01 T2-09 子项③实证）。
+2. `copyto` 源必须 **Windows 风格路径**（`H:\...`），目标同理；置了 `MSYS_NO_PATHCONV=1` 后读宿主文件也要用 Windows 路径（`/h/...` 会被原生工具当选项前缀）。
+3. 复杂/多命令操作写成 `.cmd` 脚本拷进去执行，不要在命令行嵌套引号；`run` 的 guest 命令用完整路径 exe（`'C:\Windows\System32\cmd.exe' '/c' '...'`）最稳。
+4. 控制台打字注入避开 `>&|` 字符；`screenshotpng` 在 7.2.22 归 `controlvm` 子命令（`VBoxManage controlvm <vm> screenshotpng <file>`），输出路径同样受路径转换影响（Windows 风格）。
+5. **探活/排障不吞 stderr**（勿 `2>/dev/null`）——报错原文是定位第一线索；桌面状态存疑时先 `controlvm <vm> screenshotpng` 截图（headless 黑屏 = 显示器断电属正常，autologon 失败则见登录屏）。
 
 ## 常用操作配方
 
