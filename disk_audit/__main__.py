@@ -2,7 +2,9 @@
 
 --selftest 为 CI 门禁；scan 子命令输出扫描 JSON（待办 C2）；
 judge 子命令消费 scan 结果执行归属判定并输出报告 JSON（待办 D1，任务卡 T2-02）；
-render 子命令消费报告 JSON 输出离线单文件 HTML（待办 F2，任务卡 T3-02）。
+render 子命令消费报告 JSON 输出离线单文件 HTML（待办 F2，任务卡 T3-02）；
+export-csv 子命令消费报告 JSON 导出候选 CSV（默认脱敏，--raw 出原文；
+待办 F3，任务卡 T4-06）。
 """
 from __future__ import annotations
 
@@ -12,6 +14,8 @@ import sys
 from pathlib import Path
 
 from . import __version__
+from .csv_export import export_csv
+from .engine import texts
 from .engine.render import render_report
 from .engine.report import judge_scan_result
 from .hardprotect import check_protection
@@ -109,6 +113,42 @@ def _cmd_render(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_export_csv(args: argparse.Namespace) -> int:
+    """export-csv 子命令：报告 JSON → 候选 CSV 落盘（待办 F3）。
+
+    默认脱敏（方案 P7 四类）；显式 --raw 才出原文。导出完成态展示分享提示
+    （任务卡实现约束："报告含本机路径"）；raw 模式提示升级为明确"未脱敏"
+    警示（R10 零假设原则）。文件写 DATA_DIR\\reports\\（U-2）。
+    """
+    _force_utf8_stdio()
+    fail_prefix = "导出失败："
+    try:
+        raw = Path(args.report_json).read_text(encoding="utf-8")
+    except OSError as exc:
+        print(fail_prefix + texts.F3_TEXTS["csv_err_read"].format(exc=exc), file=sys.stderr)
+        return 2
+    except UnicodeDecodeError as exc:
+        print(fail_prefix + texts.F3_TEXTS["csv_err_encode"].format(exc=exc), file=sys.stderr)
+        return 2
+    try:
+        report = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        print(fail_prefix + texts.F3_TEXTS["csv_err_json"].format(exc=exc), file=sys.stderr)
+        return 2
+    try:
+        path = export_csv(report, raw=args.raw)
+    except ValueError as exc:
+        print(f"{fail_prefix}{exc}", file=sys.stderr)
+        return 2
+    if args.raw:
+        print(texts.F3_TEXTS["csv_done_raw"].format(path=path))
+        print(texts.F3_TEXTS["csv_share_notice_raw"])
+    else:
+        print(texts.F3_TEXTS["csv_done_default"].format(path=path))
+        print(texts.F3_TEXTS["csv_share_notice"])
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="disk-audit", description="磁盘体检 · 只诊断，不动手"
@@ -129,6 +169,14 @@ def main(argv: list[str] | None = None) -> int:
         "render", help="将报告 JSON 渲染为离线单文件 HTML 并输出到 stdout（待办 F2）"
     )
     render_parser.add_argument("report_json", help="judge 子命令输出的报告 JSON 文件路径")
+    export_parser = sub.add_parser(
+        "export-csv",
+        help="将报告 JSON 候选导出为 CSV（默认脱敏，--raw 出原文）（待办 F3）",
+    )
+    export_parser.add_argument("report_json", help="judge 子命令输出的报告 JSON 文件路径")
+    export_parser.add_argument(
+        "--raw", action="store_true", help="输出未脱敏原文（默认脱敏；对外分享前请谨慎）"
+    )
     args = parser.parse_args(argv)
 
     if args.selftest:
@@ -139,6 +187,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_judge(args)
     if args.command == "render":
         return _cmd_render(args)
+    if args.command == "export-csv":
+        return _cmd_export_csv(args)
     parser.print_help()
     return 0
 

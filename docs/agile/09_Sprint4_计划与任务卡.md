@@ -96,6 +96,10 @@ M2 交付物缺口：F3（CSV 默认脱敏）、F4（A1~A5 接线）、B3（白�
 - **验收标准**：①四类脱敏各有正反单测（用户名在路径中段/尾部、SID 形如 S-1-5-21-*、其他用户目录 C:\\Users\\<other>\\）；②默认导出不含原文断言（含机器名/用户名的真实样例）；③显式 `--raw` 参数才出原文；④CSV 可被 Excel 打开（BOM/编码留档：utf-8-sig）；⑤远端 CI 绿。
 - **依赖**：无（Wave 1）。
 - **执行记录**：
+  - **做了什么**：新增 `disk_audit/csv_export.py`（`sanitize_text` 脱敏引擎、`export_csv(report, *, out_dir=None, raw=False, now=None) -> 路径`、`resolve_csv_path` 越界守卫、同秒 `-N` 序号）；`disk_audit/__main__.py` 新增 `export-csv <report.json> [--raw]` 子命令（完成态输出分享提示，raw 升级"未脱敏"警示）；`disk_audit/engine/texts.py` 文末追加 F3 区块（占位符/CSV 表头/完成态与错误文案，append-only）；`tests/test_csv_export.py` 44 项用例。
+  - **实现决策及依据**：①脱敏顺序自决：SID → 其他用户目录（`\\Users\\<段>`，排除当前用户名与 `<SID>` 占位）→ 当前用户名 → 计算机名——最具体优先，防当前用户目录被误标"其他用户"、防 Users 下 SID 段被吞（任务卡"顺序自决并记录"）。②"正则 + 环境变量双锚定"落地：值锚 = USERNAME/COMPUTERNAME（可注入替身），位置锚 = 段边界正则（中段/尾部完整段命中，长目录名内子串不误伤，反例单测覆盖）；短型 well-known SID（S-1-5-18 等）按正则下限（≥3 组数字后缀）不脱敏（全机通用常量、无个人可识别信息，有意下限）；身份未知时 Users 下所有目录一律按"其他用户"脱敏（宁过度不遗漏）。③CSV 列集六数据列：路径/逻辑大小（字节）/占用空间（字节）/置信度/判定来源/建议动作（E-2 双口径；字节整数便于 Excel 排序，列名带单位）；证据链全文不导出（卡"控体量"）；全部文本列统一过脱敏器。④落盘复用 reports.py（G3）模式：默认 REPORTS_DIR（DATA_DIR\\reports\\，U-2）、路径根可注入、`candidates-YYYYmmdd-HHMMSS.csv` 命名、越界 ValueError 中文文案。⑤编码 utf-8-sig + QUOTE_MINIMAL（验收④：BOM 前 3 字节断言 + 逗号/引号路径回读逐字一致）。⑥输入校验拒绝并披露（沿用 render F2 先例）：候选六字段缺失 → ValueError（字段名以中文列名披露），校验失败零落盘。
+  - **未尽事项/已知限制**：①incomplete（X-2/C7）报告候选亦可被导出且 CSV 无"不完整"标注位（卡内无此要求；如需拦截另立任务）；②用户名/计算机名仅按完整路径段脱敏，段内子串（如 `from-<用户名>`）不命中（段锚定精度取舍，反例单测留档）；③CSV 保持纯数据列，未含扫描根/不完整标记等上下文（TreeSize 样式仅作格式参考，未复制其内容——README 项 11 个人信息不入仓库）。
+  - **自测输出摘要**：`python -m pytest` 裸跑 **360 passed**（基线 316 + 新增 44：四类正反例/默认零原文/raw 原文/BOM/越界守卫/CLI 退码，argv 显式传参无真 KI）；`python -m disk_audit --selftest` 6/6；`tools/check_imports.py` 白名单通过。真实样例端到端（本机 Roaming 实扫 138 候选，scan→judge→export）：默认导出 `C:\Users\querkecor\AppData\Local\DiskAudit\reports\candidates-20261103-235541.csv` —— 全文检索真实用户名 **0 次**、`<用户名>` 占位 138 处、BOM=True、csv.reader 139 行全 6 字段；`--raw` 对照导出 `candidates-20261103-235559.csv` 原文 138 次（CLI 旗标验证）。验收①~④均有单测/留档，⑤待远端 CI。
 
 ---
 
