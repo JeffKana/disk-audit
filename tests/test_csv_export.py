@@ -406,8 +406,11 @@ def _write_report(tmp_path: Path) -> Path:
     return report_json
 
 
-def test_cli_export_csv_default_sanitized_message(tmp_path: Path, monkeypatch, capsys):
-    """CLI 默认导出：完成态含分享提示文案（"报告含本机路径"），文件落替身目录。"""
+def test_cli_export_csv_default_sanitized_message(tmp_path: Path, monkeypatch, capsys, identity_env):
+    """CLI 默认导出：完成态含分享提示文案（"报告含本机路径"），文件落替身目录。
+
+    identity_env 夹具显式锚定脱敏身份——不得依赖执行机环境碰巧一致
+    （CI runner 用户名与样例用户名不同， Ambient env 会导致假红）。"""
     from disk_audit.__main__ import main
 
     monkeypatch.setattr(csv_export, "REPORTS_DIR", str(tmp_path / "out"))
@@ -424,7 +427,7 @@ def test_cli_export_csv_default_sanitized_message(tmp_path: Path, monkeypatch, c
     assert USER not in text and PH_USER in text
 
 
-def test_cli_export_csv_raw_flag_warns_unsanitized(tmp_path: Path, monkeypatch, capsys):
+def test_cli_export_csv_raw_flag_warns_unsanitized(tmp_path: Path, monkeypatch, capsys, identity_env):
     """--raw：完成态提示升级为"未脱敏"警示（R10 零假设原则），文件含原文。"""
     from disk_audit.__main__ import main
 
