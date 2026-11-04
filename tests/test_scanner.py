@@ -613,3 +613,201 @@ def test_progress_multithread_monotonic(tmp_path, monkeypatch):
         assert curr.entries >= prev.entries  # 多线程下 entries 单调不减
         assert curr.elapsed >= prev.elapsed  # 多线程下 elapsed 单调不减
     assert events[-1].entries == total
+
+
+# ---------- T4-08/T3-08：枚举段（迭代器 next() 段）OSError 折入 X-1 ----------
+# 场景依据：T2-09 首轮 4/4 扫描 incomplete 实证——VM AppX 服务窗口实时增删
+# 判定单元目录，scandir 迭代句柄失效在 for entry in iterator 段抛 OSError，
+# 逃逸进 X-2"不完整"出口。修复口径（08 报告 §3 裁决 2）：枚举段 OSError 折入
+# X-1（跳过+计数+继续），X-2 保留给真实中止/致命异常。
+# 与既有 stat 段夹具（_FakeEntry.stat_error）区分：本区块夹具在迭代器
+# next() 段抛错，不触及 stat/计量段。
+
+
+class _ChurnIter:
+    """枚举段抖动夹具：产出前 churn_after 个条目后在迭代器 next() 段抛 error。
+
+    error=None 时等价普通迭代器（耗尽即停）；churn_after 缺省 = 全部产出后抛
+    （枚举尾部失效），传更小值模拟"枚举到一半目录被外部删除"。
+    """
+
+    def __init__(self, items, error: Exception | None = None,
+                 churn_after: int | None = None):
+        self._items = list(items)
+        self._error = error
+        self._churn_after = len(self._items) if churn_after is None else churn_after
+        self._n = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._error is not None and self._n >= self._churn_after:
+            raise self._error
+        if self._n >= len(self._items):
+            raise StopIteration
+        item = self._items[self._n]
+        self._n += 1
+        return item
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc_info):
+        return False
+
+
+def test_expand_dir_iteration_oserror_folds_into_x1(tmp_path, monkeypatch):
+    """验收①（BFS 段）：_expand_dir 迭代段 OSError → 跳过计数+继续、不进 X-2。"""
+    gone = OSError(2, "模拟目录在枚举期间被外部删除")
+    entries = {
+        str(tmp_path): [
+            _FakeEntry(str(tmp_path / "d1"), True),
+            _FakeEntry(str(tmp_path / "ok"), True),
+        ],
+        str(tmp_path / "d1"): [_FakeEntry(str(tmp_path / "d1" / "g0.bin"), False, 10)],
+        str(tmp_path / "ok"): [_FakeEntry(str(tmp_path / "ok" / "f.bin"), False, 20)],
+    }
+
+    def fake_scandir(path):
+        if path == str(tmp_path / "d1"):
+            return _ChurnIter(entries[path], error=gone)  # 产出 g0 后抛（枚举尾部失效）
+        return _FakeIter(entries[path])
+
+    monkeypatch.setattr(scanner, "_scandir", fake_scandir)
+    result = scan_path(str(tmp_path), workers=1)  # 2 顶层目录 < min_parts=3 → 全 BFS 段
+    assert result.incomplete is False  # 不触发 X-2"不完整"出口
+    assert result.stats.skips.other == 1  # X-1 计数恰一次
+    assert result.stats.files == 2  # 已枚举的 g0.bin 保留 + ok 目录完整
+    assert result.stats.dirs == 3  # 根 + d1 + ok（扫描继续完成）
+
+
+def test_scan_tree_iteration_oserror_folds_into_x1(tmp_path, monkeypatch):
+    """验收①（并行段）：_scan_tree 迭代段 OSError → 计数+继续、不进 X-2。"""
+    gone = OSError(2, "模拟前沿子树枚举期间目录消失")
+    root_entries = [
+        _FakeEntry(str(tmp_path / f"d{i}"), True) for i in range(6)
+    ]
+    entries = {str(tmp_path): root_entries}
+    for i in range(6):
+        entries[str(tmp_path / f"d{i}")] = [
+            _FakeEntry(str(tmp_path / f"d{i}" / "f.bin"), False, 10)
+        ]
+
+    def fake_scandir(path):
+        if path == str(tmp_path / "d3"):
+            return _ChurnIter(entries[path], error=gone)
+        return _FakeIter(entries[path])
+
+    monkeypatch.setattr(scanner, "_scandir", fake_scandir)
+    result = scan_path(str(tmp_path), workers=2)  # 6 顶层目录 ≥ min_parts=6 → 并行段
+    assert result.incomplete is False
+    assert result.stats.skips.other == 1  # 工作线程折入计数经 merge 汇入全局
+    assert result.stats.files == 6  # d3 抛错前已产出的 f.bin 也计入
+    assert result.stats.dirs == 7  # 根 + 6 个前沿目录
+
+
+def test_deep_nested_iteration_oserror_folds_into_x1(tmp_path, monkeypatch):
+    """验收②边界：折入发生在 BFS 嵌套深处（第 4 层）同样计数+继续。"""
+    gone = OSError(2, "模拟深层目录枚举失效")
+    entries = {
+        str(tmp_path): [_FakeEntry(str(tmp_path / "a"), True)],
+        str(tmp_path / "a"): [_FakeEntry(str(tmp_path / "a" / "b"), True)],
+        str(tmp_path / "a" / "b"): [_FakeEntry(str(tmp_path / "a" / "b" / "deep"), True)],
+        str(tmp_path / "a" / "b" / "deep"): [
+            _FakeEntry(str(tmp_path / "a" / "b" / "deep" / "g0.bin"), False, 10)
+        ],
+    }
+
+    def fake_scandir(path):
+        if path == str(tmp_path / "a" / "b" / "deep"):
+            return _ChurnIter(entries[path], error=gone)
+        return _FakeIter(entries[path])
+
+    monkeypatch.setattr(scanner, "_scandir", fake_scandir)
+    result = scan_path(str(tmp_path), workers=1)  # 单链 < min_parts → deep 在 BFS 段展开
+    assert result.incomplete is False
+    assert result.stats.skips.other == 1
+    assert result.stats.files == 1  # deep 已枚举的 g0.bin 保留
+    assert result.stats.dirs == 4  # 根 + a + b + deep
+
+
+def test_enumerate_units_iteration_oserror_folds_into_x1(tmp_path, monkeypatch):
+    """验收③注入式：单元枚举段（Packages 容器下钻）迭代 OSError → 计数+继续。
+
+    T2-09 实证场景（Packages 下 wpsappext1~3 消失）的注入等效：容器迭代段
+    抛 OSError 时单元清单保留已枚举部分、扫描整体完整完成、不进 X-2。
+    """
+    gone = OSError(2, "模拟 AppX 服务窗口删 Packages 下单元目录")
+    entries = {
+        str(tmp_path): [
+            _FakeEntry(str(tmp_path / "Programs"), True),
+            _FakeEntry(str(tmp_path / "Packages"), True),
+        ],
+        str(tmp_path / "Programs"): [_FakeEntry(str(tmp_path / "Programs" / "p_app"), True)],
+        str(tmp_path / "Programs" / "p_app"): [],
+        str(tmp_path / "Packages"): [_FakeEntry(str(tmp_path / "Packages" / "wps1"), True)],
+        str(tmp_path / "Packages" / "wps1"): [],
+    }
+
+    def fake_scandir(path):
+        if path == str(tmp_path / "Packages"):
+            # 单元枚举段与 BFS 展开段各折入一次（同一夹具目录被两处枚举）
+            return _ChurnIter(entries[path], error=gone)
+        return _FakeIter(entries[path])
+
+    # 单元枚举走独立间接层 _units_scandir（与 _scandir 的夹具调用计数隔离，
+    # 见 scanner.py 注释）；BFS/并行展开走 _scandir——两者指同一 fake
+    monkeypatch.setattr(scanner, "_scandir", fake_scandir)
+    monkeypatch.setattr(scanner, "_units_scandir", fake_scandir)
+    result = scan_path(str(tmp_path), workers=1)
+    assert result.incomplete is False
+    assert result.stats.skips.other == 2  # enumerate_units 折入 + _expand_dir 折入
+    unit_names = {u.path.rsplit("\\", 1)[-1] for u in result.units}
+    assert unit_names == {"Programs", "Packages", "p_app", "wps1"}  # 已枚举单元保留
+    assert result.stats.dirs == 5  # 根 + Programs + Packages + p_app + wps1
+
+
+def test_progress_terminal_event_coexists_with_enumeration_fold(tmp_path, monkeypatch):
+    """C8 共存：折入后进度终态事件仍发且条目数与结果一致。"""
+    gone = OSError(2, "模拟目录消失")
+    entries = {
+        str(tmp_path): [
+            _FakeEntry(str(tmp_path / "d1"), True),
+            _FakeEntry(str(tmp_path / "ok"), True),
+        ],
+        str(tmp_path / "d1"): [_FakeEntry(str(tmp_path / "d1" / "g0.bin"), False, 10)],
+        str(tmp_path / "ok"): [_FakeEntry(str(tmp_path / "ok" / "f.bin"), False, 20)],
+    }
+
+    def fake_scandir(path):
+        if path == str(tmp_path / "d1"):
+            return _ChurnIter(entries[path], error=gone)
+        return _FakeIter(entries[path])
+
+    monkeypatch.setattr(scanner, "_scandir", fake_scandir)
+    events: list[scanner.ProgressEvent] = []
+    result = scan_path(str(tmp_path), workers=1, progress_cb=events.append)
+    assert result.incomplete is False
+    assert result.stats.skips.other == 1
+    assert len(events) >= 1  # 终态事件不受节流必发
+    total = result.stats.files + result.stats.dirs
+    assert events[-1].entries == total  # 终态条目数 = 实际结果口径
+
+
+def test_non_oserror_iteration_exception_still_x2(tmp_path, monkeypatch):
+    """验收②反例：迭代段非 OSError 致命异常仍走 X-2"不完整"出口（边界不放宽）。"""
+    entries = {
+        str(tmp_path): [_FakeEntry(str(tmp_path / "d0"), True)],
+        str(tmp_path / "d0"): [_FakeEntry(str(tmp_path / "d0" / "f.bin"), False, 10)],
+    }
+
+    def fake_scandir(path):
+        if path == str(tmp_path / "d0"):
+            return _ChurnIter(entries[path], error=RuntimeError("非 OSError 致命异常"))
+        return _FakeIter(entries[path])
+
+    monkeypatch.setattr(scanner, "_scandir", fake_scandir)
+    result = scan_path(str(tmp_path), workers=1)
+    assert result.incomplete is True  # X-2 语义不变
+    assert result.stats.files == 1  # 异常前已采集的部分保留（部分出口口径）
