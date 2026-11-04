@@ -275,8 +275,10 @@ def test_launcher_imports_engine_only_via_declared_interfaces():
     T3-04 骨架期仅文案资源（texts）；T3-06（待办 G3）按任务卡接线
     scan/judge/render/save/open 六环，allowlist 相应扩至：
     scanner（scan 接口）、engine.report（judge）、engine.render（render）、
-    reports（落盘/淘汰/打开）。守卫语义不变：不得 import 判定细节外的
-    包内私有模块，且引擎侧零 tkinter 由 test_package_has_no_tkinter_import 钉死。
+    reports（落盘/淘汰/打开）；T4-07（待办 F4）接线建议动作 A1~A3，
+    扩 system_actions（B3 白名单三能力，default_action_deps/run_suggested_action
+    延迟导入）。守卫语义不变：不得 import 判定细节外的包内私有模块，
+    且引擎侧零 tkinter 由 test_package_has_no_tkinter_import 钉死。
     """
     source = (_REPO_ROOT / "launcher.py").read_text(encoding="utf-8")
     tree = ast.parse(source)
@@ -294,6 +296,7 @@ def test_launcher_imports_engine_only_via_declared_interfaces():
         "disk_audit.engine.render",
         "disk_audit.reports",
         "disk_audit.scanner",
+        "disk_audit.system_actions",  # T4-07/F4：A1~A3 经 B3 白名单（唯一系统交互出口）
     }
 
 
