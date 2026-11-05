@@ -156,6 +156,9 @@ def check_fixture() -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    for stream in (sys.stdout, sys.stderr):  # 中文输出守卫（T-01 双保险先例，M-02）
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description="容量偏差对比（占用空间口径，方案 9.2）")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(

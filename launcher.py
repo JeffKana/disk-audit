@@ -7,16 +7,22 @@ P5（启动即检 build >= 22621，不足拒绝并提示）、P6（仅固定本�
 独立入口，`disk_audit` 包内任何模块不得 import tkinter）。
 
 耦合边界（任务卡实现约束）：本模块对 `disk_audit` 包的依赖仅限文案资源
-`disk_audit.engine.texts`、报告落盘/淘汰/打开 `disk_audit.reports`，以及
+`disk_audit.engine.texts`、报告落盘/淘汰/打开 `disk_audit.reports`、
 scan/judge/render 三个接口入口（T3-06 接线，见 execute_audit；T3-05 经
-run_audit_async 把该流水线搬入后台线程，进度经 after() 派发主线程）。
-UI 不 import 判定细节、不直接触碰报告文件（U-2：落盘仅经 disk_audit.reports
-守卫写入 DATA_DIR\reports\）。
+run_audit_async 把该流水线搬入后台线程，进度经 after() 派发主线程），以及
+T4-07（待办 F4）接线的系统交互白名单 `disk_audit.system_actions`（B3 三能力，
+A1~A3 建议动作的唯一系统交互出口，default_action_deps/run_suggested_action
+延迟导入）。UI 不 import 判定细节、不直接触碰报告文件（U-2：落盘仅经
+disk_audit.reports 守卫写入 DATA_DIR\reports\）；除 B3 白名单外不发起任何
+系统交互（U-4）。
 
 可注入点（验收①②）：build 探测 `get_windows_build`、盘符枚举 `enumerate_drive_types`
 均可经 `run(...)` 注入替换；体检流水线六环经 `AuditDeps` 注入（T3-06）；
+建议动作三能力经 `ActionDeps` 注入（T4-07，默认装配绑定 B3）；
 纯逻辑（`is_build_supported` / `build_drive_entries` / `build_preset_rows` /
-`execute_audit` / `run_audit_async`）无 Tk I/O，供 tests/test_launcher.py 无 Tk 测试。
+`execute_audit` / `run_audit_async` / `select_operable_candidates` /
+`run_suggested_action`）无 Tk I/O，供 tests/test_launcher.py 与
+tests/test_launcher_actions.py 无 Tk 测试。
 tkinter 延迟导入：纯逻辑可无 Tk 环境加载，Tk 根仅在真实运行时创建。
 
 中止设计（T3-05 定夺，关闭 T2-05 未尽事项③）：产品侧同测试侧一律禁抛真
@@ -44,9 +50,15 @@ if TYPE_CHECKING:  # 仅类型标注引用（延迟导入模式：模块加载�
 LAUNCHER_TEXTS = texts.LAUNCHER_TEXTS
 G3_TEXTS = texts.G3_TEXTS
 G2_TEXTS = texts.G2_TEXTS
+F4_TEXTS = texts.F4_TEXTS
 
 # P5：Win11 22H2（build 22621）及以上，启动时检测
 MIN_BUILD = 22621
+
+# F4 建议动作（T4-07）：可操作候选筛选口径（A5 语义，见 select_operable_candidates）
+OPERABLE_CONFIDENCES = ("高", "中")  # 5.1 四档中仅此两档可操作；受保护/低固定 A5
+OPERABLE_ACTIONS = ("A1", "A2", "A3")  # 5.3 中经 B3 白名单执行的三种动作
+ACTION_KEYS = ("A1", "A2", "A3")  # 界面动作按钮顺序（5.3 编号序）
 
 # GetDriveTypeW 返回的盘型常量（Win32 DEVICE_TYPE 语义）
 DRIVE_UNKNOWN = 0
@@ -88,6 +100,20 @@ class AuditDeps:
     save: Callable[[str], str]  # HTML → 落盘，返回报告绝对路径
     prune: Callable[[], list[str]]  # 旧报告淘汰（保留 12 份）
     open: Callable[[str], None]  # 默认浏览器打开报告（只读）
+
+
+@dataclass(frozen=True)
+class ActionDeps:
+    """建议动作三能力依赖（T4-07/F4；方案 5.3 A1~A3 + U-4 白名单）。
+
+    全部可注入（验收①参数断言替身）；default_action_deps() 给出真实装配，
+    绑定 disk_audit.system_actions（B3）三个公开能力函数——UI 侧不自行实现
+    任何系统交互，越权防护完全由 B3 结构性白名单承担（SystemActionRejected）。
+    """
+
+    copy_path: Callable[[str], None]  # A1 复制路径：copy_to_clipboard(path)
+    locate: Callable[[str], None]  # A2 打开所在文件夹：locate_in_explorer(path)
+    open_settings: Callable[[], None]  # A3 打开系统应用列表：open_apps_settings()
 
 
 @dataclass(frozen=True)
@@ -227,11 +253,14 @@ def execute_audit(
     deps: "AuditDeps | None" = None,
     progress_cb: "Callable[[ProgressEvent], None] | None" = None,
     abort_check: "Callable[[], bool] | None" = None,
+    on_report: "Callable[[dict], None] | None" = None,
 ) -> str | None:
     """一次完整体检流水线（M2 闸①：选范围 → 扫描 → 浏览器自动打开 = 3 步）。
 
     分段清晰（每环一步）：① scan 只读采集（透传 C8 进度回调与 C7 中止谓词）
-    → ② judge 六层判定 → ③ render 离线 HTML → ④ save 落盘（U-2 唯一写入位）
+    → ② judge 六层判定 →（on_report：judge 输出的 report-v1 dict 原样透传，
+    T4-07 完成态建议动作区的数据源；在 render/save 前回调，缺省不回调）
+    → ③ render 离线 HTML → ④ save 落盘（U-2 唯一写入位）
     → ⑤ prune 淘汰保留 12 份 → ⑥ open 默认浏览器打开（只读）。
     完整路径返回报告绝对路径；环节异常向上抛出，由调用方统一呈现失败态。
     中止/异常路径（X-2：scan 结果置 incomplete=True）：短路返回 None，不
@@ -246,11 +275,88 @@ def execute_audit(
     if scan_result.get("incomplete") is True:  # X-2：中止/异常统一"不完整"出口
         return None
     report = pipeline.judge(scan_result)
+    if on_report is not None:
+        on_report(report)
     html_text = pipeline.render(report)
     report_path = pipeline.save(html_text)
     pipeline.prune()
     pipeline.open(report_path)
     return report_path
+
+
+def default_action_deps() -> "ActionDeps":
+    """真实装配（T4-07/F4）：三能力绑定 disk_audit.system_actions（B3 公开接口）。
+
+    延迟 import：launcher 模块加载不拖入 ctypes/B3 栈（T3-04 延迟导入模式延续）；
+    B3 自带 executor/writer 注入点（验收①参数断言打到 B3 白名单出口）。
+    """
+    from disk_audit import system_actions
+
+    return ActionDeps(
+        copy_path=system_actions.copy_to_clipboard,
+        locate=system_actions.locate_in_explorer,
+        open_settings=system_actions.open_apps_settings,
+    )
+
+
+def action_button_label(action: str) -> str:
+    """动作按钮文案：5.3 编号 + 固定动作标签（texts.ACTION_LABELS 单一措辞源）。"""
+    return f"{action} {texts.ACTION_LABELS.get(action, action)}"
+
+
+def select_operable_candidates(report: dict) -> list[dict]:
+    """纯函数（F4/A5 语义）：从 report-v1 dict 筛选可执行建议动作的候选。
+
+    可操作 = 置信度 ∈ {高, 中} 且 suggested_action ∈ {A1, A2, A3}：
+    - 受保护/低置信固定 A5（方案 5.3）→ 永不进入可操作列表（卡面硬约束：
+      "受保护/低置信项不得出现 A1~A3 入口"）；
+    - 建议动作已是 A5 的高/中候选（在用软件等，judge 打标口径）同样不进入——
+      报告对它们展示"无建议"，UI 不得自相矛盾地提供动作入口（R10 一致性；
+      本口径是对卡面"仅高/中可操作"的收窄而非放宽）；
+    - 防御性输入（缺键/非对象元素）→ 空列表，不抛异常。
+    A4（查看证据链）为报告内展开，不属于本筛选（无外部调用，F2 details 原生）。
+    """
+    candidates = report.get("candidates") if isinstance(report, dict) else None
+    if not isinstance(candidates, list):
+        return []
+    operable: list[dict] = []
+    for candidate in candidates:
+        if not isinstance(candidate, dict):
+            continue
+        if candidate.get("confidence") not in OPERABLE_CONFIDENCES:
+            continue
+        if candidate.get("suggested_action") not in OPERABLE_ACTIONS:
+            continue
+        operable.append(candidate)
+    return operable
+
+
+def run_suggested_action(action: str, path: str, *, deps: "ActionDeps | None" = None) -> str:
+    """执行一个建议动作（A1/A2/A3），返回状态栏文案（E-5 风格）。
+
+    仅接受 OPERABLE_ACTIONS 三个动作键，其余一律不触达任何系统出口、仅返回
+    披露文案；A1/A2/A3 经 ActionDeps（默认 B3 白名单）执行。B3 的越权拒绝
+    （SystemActionRejected）与失败（OSError 等）在本层捕获并转为状态栏文案，
+    不向 UI 抛异常、不弹错误对话框（E-5：非阻塞披露，沿 G2 状态栏先例）。
+    """
+    from disk_audit import system_actions  # 延迟导入：异常类型与白名单出口同源
+
+    pipeline = deps if deps is not None else default_action_deps()
+    try:
+        if action == "A1":
+            pipeline.copy_path(path)
+            return F4_TEXTS["status_copied"].format(path=path)
+        if action == "A2":
+            pipeline.locate(path)
+            return F4_TEXTS["status_located"].format(path=path)
+        if action == "A3":
+            pipeline.open_settings()
+            return F4_TEXTS["status_settings_opened"]
+    except system_actions.SystemActionRejected as exc:  # U-4 越权拒绝：披露白名单边界
+        return str(exc)
+    except Exception as exc:  # 剪贴板失败（OSError）等：状态栏披露，不弹错误框
+        return F4_TEXTS["status_action_failed"].format(reason=exc)
+    return F4_TEXTS["status_unknown_action"].format(action=action or "（空）")
 
 
 def run_audit_async(
@@ -262,16 +368,19 @@ def run_audit_async(
     on_progress: "Callable[[ProgressEvent], None]",
     on_complete: Callable[[str | None], None],
     on_error: Callable[[Exception], None],
+    on_report: "Callable[[dict], None] | None" = None,
 ) -> threading.Thread:
     """把体检流水线搬入后台 daemon 线程执行（G2/T3-05：UI 线程零阻塞）。
 
     线程模型：scan/judge/render/save/prune/open 全部在返回的工作线程内执行；
-    所有 UI 变更（进度/完成/失败）一律经 ``after`` 派发主线程执行（真实运行传
-    ``root.after`` 的 0 延迟包装）——工作线程内不触碰任何 UI 状态。C8 进度事件
-    的节流已由 scanner 侧保证（>=500ms 或 2 万条目双阈值），本函数只转发。
-    中止 = 调用方对 ``stop`` 置位（协作式停止标志，透传为 scan 的 abort_check），
-    任何路径不得抛真 KeyboardInterrupt（T2-05③ 定夺：产品侧同测试侧禁抛真 KI）。
-    返回工作线程对象（daemon：窗口销毁后不悬挂进程）。
+    所有 UI 变更（进度/报告/完成/失败）一律经 ``after`` 派发主线程执行（真实
+    运行传 ``root.after`` 的 0 延迟包装）——工作线程内不触碰任何 UI 状态。
+    C8 进度事件的节流已由 scanner 侧保证（>=500ms 或 2 万条目双阈值），本函数
+    只转发。on_report（T4-07：judge 输出的 report dict 透传给完成态建议动作区）
+    同样经 after 派发主线程执行。中止 = 调用方对 ``stop`` 置位（协作式停止标志，
+    透传为 scan 的 abort_check），任何路径不得抛真 KeyboardInterrupt（T2-05③
+    定夺：产品侧同测试侧禁抛真 KI）。返回工作线程对象（daemon：窗口销毁后不
+    悬挂进程）。
 
     参数：
         stop: 停止标志；置位后 scanner 在下一目录展开前经 abort_check 退出（X-2）。
@@ -279,6 +388,7 @@ def run_audit_async(
         on_progress: 主线程执行的进度更新（ProgressEvent 三字段，E-1）。
         on_complete: 主线程执行的完成处理；参数为报告路径，None = 不完整（X-2）。
         on_error: 主线程执行的失败处理（scan/judge 等环节异常）。
+        on_report: 主线程执行的报告透传（report-v1 dict，T4-07；缺省不透传）。
     """
 
     def _dispatch(callback: Callable[[], None]) -> None:
@@ -290,11 +400,17 @@ def run_audit_async(
 
     def worker() -> None:
         try:
+            report_cb = (
+                (lambda report: _dispatch(lambda: on_report(report)))
+                if on_report is not None
+                else None
+            )
             report_path = execute_audit(
                 path,
                 deps=deps,
                 progress_cb=lambda event: _dispatch(lambda: on_progress(event)),
                 abort_check=stop.is_set,
+                on_report=report_cb,
             )
         except Exception as exc:  # 环节失败统一出口：主线程呈现失败态，程序不中断
             failure = exc  # except 块结束时解释器删除 exc，先绑定再进派发闭包
@@ -342,8 +458,8 @@ def build_scope_ui(
     from tkinter import filedialog, ttk
 
     root.title(LAUNCHER_TEXTS["window_title"])
-    root.geometry("720x660")
-    root.minsize(640, 600)
+    root.geometry("720x820")
+    root.minsize(640, 760)
 
     status_var = tk.StringVar(value="")
     scope_var = tk.StringVar(value="")
@@ -422,6 +538,83 @@ def build_scope_ui(
         bg="#FFF3CD", fg="#664D03", padx=8, pady=4,
     )
 
+    # F4 建议动作区（T4-07）：完成态填充可操作候选（select_operable_candidates
+    # 口径：高/中置信且建议 A1~A3；受保护/低置信/建议 A5 的候选永不出现——A5 语义，
+    # 无任何入口）。动作经 run_suggested_action → ActionDeps（默认 B3 白名单）
+    # 执行；拒绝/失败仅状态栏披露（E-5，不弹错误框）。A4 = 指向报告"证据链"区的
+    # 文字指引（报告内 details 原生展开）；A5 = 无任何入口。
+    actions_frame = tk.LabelFrame(root, text=F4_TEXTS["actions_group"])
+    actions_frame.pack(fill="x", padx=12, pady=4)
+    actions_note_var = tk.StringVar(value=F4_TEXTS["candidate_none"])
+    tk.Label(
+        actions_frame, textvariable=actions_note_var, anchor="w",
+        wraplength=660, justify="left",
+    ).pack(fill="x")
+    cand_var = tk.StringVar(value="")
+    cand_box = ttk.Combobox(actions_frame, textvariable=cand_var, state="readonly")
+    cand_box.pack(fill="x", padx=8, pady=(4, 2))
+    actions_row = tk.Frame(actions_frame)
+    actions_row.pack(fill="x", padx=8)
+    action_buttons: dict[str, tk.Button] = {}
+    for action_key in ACTION_KEYS:
+        button = tk.Button(
+            actions_row,
+            text=action_button_label(action_key),
+            command=lambda key=action_key: _on_action(key),
+            state="disabled",
+            width=18,
+        )
+        button.pack(side="left", padx=(0, 8))
+        action_buttons[action_key] = button
+    tk.Label(
+        actions_frame, text=F4_TEXTS["a4_hint"], anchor="w",
+        wraplength=660, justify="left", fg="#6b7280",
+    ).pack(fill="x", padx=8, pady=(2, 6))
+    operable_paths: list[str] = []
+
+    def _set_actions_state(enabled: bool) -> None:
+        for button in action_buttons.values():
+            button.config(state="normal" if enabled else "disabled")
+
+    def _reset_actions() -> None:
+        """新一次体检发起时清空动作区（上一次的候选/选中态零残留，对齐 G2 会话语义）。"""
+        operable_paths.clear()
+        cand_box.config(values=())
+        cand_var.set("")
+        actions_note_var.set(F4_TEXTS["candidate_none"])
+        _set_actions_state(False)
+
+    def _populate_actions(report: dict) -> None:
+        """完成态（主线程）：按 A5 语义填充可操作候选，默认选中第一条。"""
+        operable = select_operable_candidates(report)
+        operable_paths.clear()
+        if not operable:
+            cand_box.config(values=())
+            cand_var.set("")
+            actions_note_var.set(F4_TEXTS["no_operable"])
+            _set_actions_state(False)
+            return
+        items: list[str] = []
+        for candidate in operable:
+            path = str(candidate.get("path", ""))
+            operable_paths.append(path)
+            items.append(F4_TEXTS["candidate_item_fmt"].format(
+                path=path,
+                confidence=candidate.get("confidence", ""),
+                source=candidate.get("verdict_source", ""),
+            ))
+        cand_box.config(values=items)
+        cand_box.current(0)
+        actions_note_var.set(F4_TEXTS["actions_note"])
+        _set_actions_state(True)
+
+    def _on_action(action: str) -> None:
+        index = cand_box.current()
+        if index < 0 or index >= len(operable_paths):
+            status_var.set(F4_TEXTS["no_candidate_selected"])
+            return
+        status_var.set(run_suggested_action(action, operable_paths[index]))
+
     bottom = tk.Frame(root)
     bottom.pack(fill="x", padx=12, pady=(4, 12))
     start_button = tk.Button(bottom, text=LAUNCHER_TEXTS["start_button"], command=lambda: _on_start())
@@ -474,6 +667,7 @@ def build_scope_ui(
         status_var.set(G3_TEXTS["status_scanning"].format(path=path))
         _set_audit_state(running=True)
         progressbar.start(50)
+        _reset_actions()  # F4：新会话清空上一次的可操作候选（无跨次残留）
 
         def on_progress(event: "ProgressEvent") -> None:
             progress_var.set(
@@ -482,6 +676,11 @@ def build_scope_ui(
                 )
             )
             current_path_var.set(G2_TEXTS["progress_current_path"].format(path=event.path))
+
+        def on_report(report: dict) -> None:
+            # 主线程执行（run_audit_async 经 after 派发）：judge 输出到达即填充
+            # 建议动作区（先于 on_complete 的状态栏完成文案，after 队列 FIFO）。
+            _populate_actions(report)
 
         def on_complete(report_path: "str | None") -> None:
             progressbar.stop()
@@ -504,6 +703,7 @@ def build_scope_ui(
             stop=stop,
             after=lambda cb: root.after(0, cb),
             on_progress=on_progress,
+            on_report=on_report,
             on_complete=on_complete,
             on_error=on_error,
         )

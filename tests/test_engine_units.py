@@ -1,4 +1,4 @@
-"""T2-02（待办 D1）判定单元划分与聚合测试。
+r"""T2-02（待办 D1）判定单元划分与聚合测试。
 
 依据：方案 9.2（判定单元 = 扫描范围顶层目录及其下钻子项，文件级不单独计入）；
 容器下钻对齐原型 drill_programs/drill_packages（%LOCALAPPDATA%\Programs、Packages
