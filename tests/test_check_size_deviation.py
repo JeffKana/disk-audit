@@ -10,6 +10,8 @@ import json
 import math
 from pathlib import Path
 
+import pytest
+
 _TOOLS = Path(__file__).resolve().parents[1] / "tools"
 _SPEC = importlib.util.spec_from_file_location(
     "check_size_deviation", _TOOLS / "check_size_deviation.py"
@@ -89,3 +91,29 @@ def test_fixture_mode_self_check(capsys):
     out = capsys.readouterr().out
     assert "偏差：0.000%" in out
     assert "簇对齐公式" in out
+
+
+def test_main_entry_reconfigures_stdio_utf8(monkeypatch):
+    """M-02：入口对 stdout/stderr 做 UTF-8 reconfigure 守卫（T-01 双保险先例）。
+
+    注入记录型替身流，断言 main() 在参数解析前对两个流各执行一次
+    reconfigure(encoding="utf-8")——缺参用法错误（SystemExit）不影响守卫先行。
+    """
+    reconfigured: list[dict] = []
+
+    class _RecordingStream:
+        def reconfigure(self, **kwargs):
+            reconfigured.append(kwargs)
+
+        def write(self, text):
+            return len(text)
+
+        def flush(self):
+            return None
+
+    stream = _RecordingStream()
+    monkeypatch.setattr(check_size_deviation.sys, "stdout", stream, raising=False)
+    monkeypatch.setattr(check_size_deviation.sys, "stderr", stream, raising=False)
+    with pytest.raises(SystemExit):
+        check_size_deviation.main([])
+    assert reconfigured == [{"encoding": "utf-8"}, {"encoding": "utf-8"}]
