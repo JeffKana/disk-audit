@@ -108,6 +108,13 @@ _CSS = (
     "footer{color:#6b7280;font-size:12.8px;margin-top:16px}"
 )
 
+# 管理员模式徽标配色（H4/S-3，POC-4 基线蓝色系）：仅 admin_mode 报告注入
+# <style>——普通报告输出与 H4 前逐字节一致（回归④"普通模式输出不受影响"）
+_ADMIN_CSS = (
+    ".adminbadge{display:inline-block;background:#dbeafe;color:#1e3a8a;"
+    "border:1px solid #1d4ed8;border-radius:6px;padding:2px 10px;font-weight:700}"
+)
+
 
 def _e(text: object) -> str:
     """HTML 转义（含引号，属性上下文安全）。"""
@@ -189,23 +196,27 @@ def _validate(report: object) -> None:
 
 def _head(report: dict) -> str:
     title = f"{texts.REPORT_TITLE} · {report['scan_root']}"
+    css = _CSS + _ADMIN_CSS if report.get("admin_mode") is True else _CSS
     return (
         "<!DOCTYPE html>\n"
         '<html lang="zh-CN">\n'
         "<head>\n"
         '<meta charset="UTF-8">\n'
         f"<title>{_e(title)}</title>\n"
-        f"<style>{_CSS}</style>\n"
+        f"<style>{css}</style>\n"
         "</head>\n"
         "<body>\n"
     )
 
 
-def _header(report: dict, incomplete: bool) -> str:
+def _header(report: dict, incomplete: bool, admin_mode: bool) -> str:
     parts = ['<header class="bar">']
     parts.append(
         f'<h1>{_e(texts.REPORT_TITLE)} <span class="motto">{_e(texts.REPORT_MOTTO)}</span></h1>'
     )
+    if admin_mode:
+        # S-3/H4：管理员模式报告在页眉显著位置标注（徽标先例：incomplete 徽标）
+        parts.append(f'<p><span class="adminbadge">{_e(texts.ADMIN_MODE_BADGE)}</span></p>')
     if incomplete:
         parts.append(f'<p><span class="badge">{_e(texts.INCOMPLETE_BADGE)}</span></p>')
     parts.append(f'<p class="note">{_e(texts.REPORT_PRIVACY_NOTICE)}</p>')
@@ -395,13 +406,16 @@ def render_report(report: dict) -> str:
     输入不合法时抛 ValueError（中文文案，texts.RENDER_ERR_*）；不修改输入。
     incomplete 输入（X-2/C7）：页眉徽标 + 概览区不输出任何汇总数据，
     已采集的部分候选仍保留展示。
+    admin_mode 输入（S-3/H4）：页眉"管理员模式"徽标；普通报告不含该键、
+    页眉零变化（缺省按非管理员处理，1.0 旧记录兼容——I3 预留）。
     """
     _validate(report)
     incomplete = report.get("incomplete") is True
+    admin_mode = report.get("admin_mode") is True
     candidates = report["candidates"]
     parts = [
         _head(report),
-        _header(report, incomplete),
+        _header(report, incomplete, admin_mode),
         _overview(report, incomplete),
         _details(candidates),
         _evidence(candidates),

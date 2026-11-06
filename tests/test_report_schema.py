@@ -198,3 +198,40 @@ def test_schema_version_semantics_documented():
     assert "major" in desc
     assert "minor" in desc
     assert "旧记录不可比" in desc
+
+
+# ---------- T4-04（待办 H4）：admin_mode 可选字段 + 版本语义判定（1.0 → 1.1） ----------
+
+
+def test_schema_version_const_is_1_1_after_optional_field_addition():
+    """版本语义判定（T4-04 核心）：定稿规则明文"可选字段新增等非破坏变更 → minor+1；
+    禁止原地改义"（schema schema_version.description + 字段对照表版本节"可选字段
+    新增（先例：incomplete）→ 1.1"），故新增 admin_mode 可选字段必须升版 1.0 → 1.1。
+    1.0 旧记录（无 admin_mode 键）在新 schema 下仍合法（字段非必需）——旧记录可比。"""
+    assert SCHEMA["properties"]["schema_version"]["const"] == "1.1"
+
+
+def test_admin_mode_optional_boolean_field():
+    """S-3/H4：admin_mode 为顶层可选 boolean，不进 required；普通报告不含本键。"""
+    prop = SCHEMA["properties"]["admin_mode"]
+    assert prop["type"] == "boolean"
+    assert "admin_mode" not in SCHEMA["required"]
+
+
+def test_admin_report_with_1_1_validates():
+    """验收①：管理员报告（schema_version 1.1 + admin_mode true）过定稿 schema 校验。"""
+    data = json.loads(EXAMPLE_PATH.read_text(encoding="utf-8"))
+    data["admin_mode"] = True
+    assert mini_validate(data, SCHEMA) == []
+
+
+def test_admin_mode_bad_type_rejected():
+    data = json.loads(EXAMPLE_PATH.read_text(encoding="utf-8"))
+    data["admin_mode"] = "yes"
+    assert mini_validate(data, SCHEMA) != []
+
+
+def test_normal_example_still_validates_without_admin_mode_key():
+    """回归④：普通报告样例不含 admin_mode 键，升版后仍过校验（旧记录可比）。"""
+    assert "admin_mode" not in EXAMPLE
+    assert mini_validate(EXAMPLE, SCHEMA) == []

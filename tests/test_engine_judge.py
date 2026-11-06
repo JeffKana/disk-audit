@@ -415,7 +415,9 @@ def test_judge_scan_result_builds_draft_valid_report(tmp_path):
     scan["skipped"]["total"] = 2
     report = judge_scan_result(scan, bundle=_bundle(), kb=KB)
     assert mini_validate(report, SCHEMA) == []
-    assert report["schema_version"] == "1.0"
+    # T4-04（H4）：按 F1 定稿版本语义（可选字段新增 → minor+1）升版 1.0 → 1.1；
+    # 断言随版本契约语义更新，非删弱（schema const 与 REPORT_SCHEMA_VERSION 同步）。
+    assert report["schema_version"] == "1.1"
     assert report["scan_root"] == scan["root"]
     assert len(report["candidates"]) == len(scan["units"])
     assert report["totals"]["skipped_entries"] == 2
@@ -512,4 +514,16 @@ def test_normal_report_has_no_incomplete_key(tmp_path):
     scan = _scan_fixture(tmp_path)
     report = judge_scan_result(scan, bundle=_bundle(), kb=KB)
     assert "incomplete" not in report
+    assert mini_validate(report, SCHEMA) == []
+
+
+# ---------- T4-04（待办 H4）：普通流水线不产 admin_mode 键（回归④⑤） ----------
+
+
+def test_normal_report_has_no_admin_mode_key(tmp_path):
+    """回归④：普通流水线（judge_scan_result）装配的报告不含 admin_mode 键——
+    "不写普通记录键"（S-3/T4-04；标志仅由提权实例装配链置入，elevated.mark_admin_report）。"""
+    scan = _scan_fixture(tmp_path)
+    report = judge_scan_result(scan, bundle=_bundle(), kb=KB)
+    assert "admin_mode" not in report
     assert mini_validate(report, SCHEMA) == []
