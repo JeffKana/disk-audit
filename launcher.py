@@ -61,6 +61,7 @@ G3_TEXTS = texts.G3_TEXTS
 G2_TEXTS = texts.G2_TEXTS
 F4_TEXTS = texts.F4_TEXTS
 H1_TEXTS = texts.H1_TEXTS
+H2_TEXTS = texts.H2_TEXTS
 
 # P5：Win11 22H2（build 22621）及以上，启动时检测
 MIN_BUILD = 22621
@@ -515,6 +516,32 @@ def request_admin_rescan(
     )
 
 
+# ---------- T4-02（待办 H2）：UAC 取消处理 · 返回码 → 状态栏文案（E-5） ----------
+
+# E-5：UAC 取消 → 保留原报告、不重试、不弹错误框，仅提示"已取消，结果未变更"。
+# 判定精确（Win32 语义，elevated.py 接口约定 4）：仅 ERROR_CANCELLED(1223)=用户
+# 取消；其余 >32 已发起；其余 ≤32 值（NotFound=2、AccessDenied=5 等）是发起失败，
+# 走独立文案、不冒充取消（X-4 完整失败语义归 T4-03/H3）。【分支顺序关键】1223
+# 数值上 >32（>32"已发起"惯例的例外），取消判定必须先于 >32 判定——否则 UAC 取消
+# 会被误判为"已发起"（T4-01 先判 >32 的占位实现即存在此误判，本卡修正）。
+# 零弹窗：三态一律走 G2 状态栏先例（非阻塞 status_var 文案），E-5 明文禁错误框。
+# 零重试：本函数只做"码 → 文案"映射，零 I/O、零调度、零自启动引用（AST 断言
+# 见 tests/test_launcher_h2.py）；回调恰一次发起后即返回，无自动重试路径。
+def admin_rescan_status_text(result_code: int) -> str:
+    """ShellExecuteW 返回码 → 状态栏文案（纯函数，无 Tk，供无 Tk 注入测试）。
+
+    ==elevated.ERROR_CANCELLED(1223) 用户在 UAC 取消 → H2 "已取消，结果未变更"
+    （E-5 定稿原文短语入文案；1223 数值 >32，故本分支必须先判）；其余 >32 已发起
+    → H1 "已发起"文案（正常路径口径不变）；其余值 = 发起失败 → H2 独立失败文案
+    （如实披露返回码，不冒充取消）。
+    """
+    if result_code == elevated.ERROR_CANCELLED:  # 判定精确：仅 1223 是用户取消（先于 >32）
+        return H2_TEXTS["status_admin_cancelled"]
+    if result_code > 32:  # Win32：>32 = 已发起（H1 口径不变；1223 已被上一分支截获）
+        return H1_TEXTS["status_admin_launched"]
+    return H2_TEXTS["status_admin_launch_failed"].format(code=result_code)
+
+
 def _notify_unsupported(build: int) -> None:
     """版本不足默认出口：优先图形提示；Tk 不可用时降级 stderr 文本提示。"""
     _force_utf8_stdio()
@@ -833,18 +860,20 @@ def build_scope_ui(
         单击 → 写 tmp\\spec.json（范围+时间戳+唯一请求 ID，U-2 合规位）→
         ShellExecuteW runas 重启自身（单点 _shell_execute_runas，AST 断言调用点
         唯一、无重试/轮询/自动再触发——防重生设计，见 disk_audit/elevated.py）。
-        ShellExecuteW 返回码语义：>32 已发起 → 状态栏提示；ERROR_CANCELLED=UAC
-        取消（E-5，T4-02 接口位）；其余=发起失败（X-4，T4-03 接口位）——本卡
-        只留接口位：不弹框、不重试。
+        返回码呈现（T4-02/E-5）：>32 已发起 → 状态栏 H1 文案；ERROR_CANCELLED=
+        UAC 取消 → 状态栏"已取消，结果未变更"（保留原报告、零弹窗、零重试）；
+        其余=发起失败 → 独立状态栏文案（不冒充取消；X-4 完整失败语义归 T4-03）。
+        判定收敛于纯函数 admin_rescan_status_text，三态一律走非阻塞状态栏
+        （G2 先例），不弹任何框；单次发起后即返回，无自动重试路径。
         """
         path = _resolve_selected_scope()
         if path is None:
             return
         result_code = request_admin_rescan(path)
-        if result_code > 32:  # Win32：>32 = 已发起
-            status_var.set(H1_TEXTS["status_admin_launched"])
-        # 其余返回码（含 ERROR_CANCELLED=1223 取消）→ E-5/H2、X-4/T4-03 口径，
-        # 本卡不实现取消/失败 UX（不弹框、不重试、不轮询）。
+        # T4-02/E-5：取消(1223)与发起失败（其余 ≤32 值）走状态栏文案，判定精确
+        # 收敛于纯函数（仅 ERROR_CANCELLED 是取消，其他失败不冒充）；零弹窗、
+        # 零重试——恰一次发起后即返回，无循环/after 调度/再触发（AST 断言固化）。
+        status_var.set(admin_rescan_status_text(result_code))
 
 
 def _browse_folder(root: object, custom_var: object, scope_var: object, filedialog: object) -> None:
