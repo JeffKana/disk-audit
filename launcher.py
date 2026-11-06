@@ -7,7 +7,8 @@ P5（启动即检 build >= 22621，不足拒绝并提示）、P6（仅固定本�
 独立入口，`disk_audit` 包内任何模块不得 import tkinter）。
 
 耦合边界（任务卡实现约束）：本模块对 `disk_audit` 包的依赖仅限文案资源
-`disk_audit.engine.texts`、报告落盘/淘汰/打开 `disk_audit.reports`、
+`disk_audit.engine.texts`、报告落盘/淘汰/打开 `disk_audit.reports`、提权重扫
+`disk_audit.elevated`（T4-01：spec/done/命令构造/只读证据装配），以及
 scan/judge/render 三个接口入口（T3-06 接线，见 execute_audit；T3-05 经
 run_audit_async 把该流水线搬入后台线程，进度经 after() 派发主线程），以及
 T4-07（待办 F4）接线的系统交互白名单 `disk_audit.system_actions`（B3 三能力，
@@ -15,6 +16,13 @@ A1~A3 建议动作的唯一系统交互出口，default_action_deps/run_suggeste
 延迟导入）。UI 不 import 判定细节、不直接触碰报告文件（U-2：落盘仅经
 disk_audit.reports 守卫写入 DATA_DIR\reports\）；除 B3 白名单外不发起任何
 系统交互（U-4）。
+
+T4-01 防重生日志：自重启调用单点化于本模块 `_shell_execute_runas`（全仓库唯一
+ShellExecuteW 出口，仅 `_on_admin_rescan` 点击回调经 `request_admin_rescan` →
+`_launch_elevated_self` 抵达；AST 断言调用点唯一 + 提权分支零自启动，见
+tests/test_elevated.py）。前次执行曾出现 python 进程自重生链（根因未确证），
+本卡以四道结构性防线阻断：单点发起 / 提权分支 AST 零自启动 / spec 一次性消费 /
+UI 仅单击无重试。
 
 可注入点（验收①②）：build 探测 `get_windows_build`、盘符枚举 `enumerate_drive_types`
 均可经 `run(...)` 注入替换；体检流水线六环经 `AuditDeps` 注入（T3-06）；
@@ -39,9 +47,10 @@ import re
 import sys
 import threading
 from dataclasses import dataclass
+from datetime import datetime
 from typing import TYPE_CHECKING, Callable, Mapping, Sequence
 
-from disk_audit import reports
+from disk_audit import elevated, reports
 from disk_audit.engine import texts
 
 if TYPE_CHECKING:  # 仅类型标注引用（延迟导入模式：模块加载不拖入扫描栈）
@@ -51,6 +60,7 @@ LAUNCHER_TEXTS = texts.LAUNCHER_TEXTS
 G3_TEXTS = texts.G3_TEXTS
 G2_TEXTS = texts.G2_TEXTS
 F4_TEXTS = texts.F4_TEXTS
+H1_TEXTS = texts.H1_TEXTS
 
 # P5：Win11 22H2（build 22621）及以上，启动时检测
 MIN_BUILD = 22621
@@ -247,6 +257,34 @@ def default_deps(reports_dir: str | None = None) -> "AuditDeps":
     )
 
 
+def _elevated_deps(reports_dir: str | None = None) -> AuditDeps:
+    """提权实例流水线装配（T4-01；与 default_deps 的差异即 R9 边界，逐环说明）：
+
+    save=elevated.save_admin_report（admin- 前缀，S-3 文件级可区分）；
+    prune=no-op（提权实例不淘汰普通报告——最小写入面）；
+    open=no-op（R9：提权进程不执行任何外部程序——os.startfile 会启动浏览器）；
+    judge 经 elevated.collect_evidence_readonly 只装配 winreg 只读证据源
+    （Appx/进程/服务三源需 powershell 子进程，提权模式不采集并降级披露）。
+    scan 与普通实例共用同一只读枚举器 scan_path（E-4：提权只为读原本无权读的目录）。
+    """
+    from disk_audit.engine.render import render_report
+    from disk_audit.engine.report import judge_scan_result
+    from disk_audit.scanner import scan_path
+
+    return AuditDeps(
+        scan=lambda path, progress_cb=None, abort_check=None: scan_path(
+            path, progress_cb=progress_cb, abort_check=abort_check
+        ).to_json_dict(),
+        judge=lambda scan: judge_scan_result(
+            scan, bundle=elevated.collect_evidence_readonly()
+        ),
+        render=render_report,
+        save=lambda html_text: elevated.save_admin_report(html_text, reports_dir=reports_dir),
+        prune=lambda: [],
+        open=lambda report_path: None,
+    )
+
+
 def execute_audit(
     path: str,
     *,
@@ -423,6 +461,60 @@ def run_audit_async(
     return thread
 
 
+# ---------- T4-01（待办 H1）：以管理员身份重扫 · 宿主侧发起 ----------
+
+# 【防重生防线 1】自重启调用单点化：全仓库 ShellExecuteW/WinExec/os.system/os.popen/
+# subprocess/os.startfile 仅允许出现在 _shell_execute_runas 这一处（ctypes
+# ShellExecuteW；tests/test_elevated.py AST 断言全仓库唯一 + 提权分支零自启动）。
+# 【U-3】runas 发起只能由用户点击回调（_on_admin_rescan）经 request_admin_rescan
+# → _launch_elevated_self 抵达本函数，调用点唯一、无重试/轮询/自动再触发路径
+# （AST 断言固化）。取消（ERROR_CANCELLED）与发起失败的 UX 归 T4-02/T4-03（E-5/X-4
+# 接口位），本卡不弹框、不重试。
+def _shell_execute_runas(lp_file: str, lp_verb: str, lp_parameters: str) -> int:
+    """真实发起（全仓库唯一 ShellExecuteW 出口；仅由点击回调链抵达）。"""
+    result = ctypes.windll.shell32.ShellExecuteW(
+        None, lp_verb, lp_file, lp_parameters, None, elevated.SW_SHOWNORMAL
+    )
+    return int(result)
+
+
+def _launch_elevated_self(
+    *,
+    shell_execute: "elevated.ShellExecute | None" = None,
+    executable: str | None = None,
+    script: str | None = None,
+) -> int:
+    """构造"重启自身"命令并发起 runas（shell_execute 可注入供单测断言参数）。"""
+    lp_file, lp_parameters = elevated.build_rescan_command(
+        executable=executable, script=script
+    )
+    if shell_execute is not None:  # 测试注入替身：不触达真实 ShellExecuteW
+        return shell_execute(lp_file, "runas", lp_parameters)
+    return _shell_execute_runas(lp_file, "runas", lp_parameters)
+
+
+def request_admin_rescan(
+    scope: str,
+    *,
+    tmp_dir: str | None = None,
+    shell_execute: "elevated.ShellExecute | None" = None,
+    executable: str | None = None,
+    script: str | None = None,
+    now: datetime | None = None,
+) -> int:
+    """宿主侧点击处理（纯逻辑，无 Tk；U-3：仅由 _on_admin_rescan 点击回调调用）。
+
+    顺序：写 tmp\\spec.json（U-2 合规位，含范围/时间戳/唯一请求 ID）→ runas
+    重启自身。返回 ShellExecuteW 返回码：>32 已发起；ERROR_CANCELLED 取消
+    （E-5，T4-02 接口位）；其余发起失败（X-4，T4-03 接口位）——原样透传，
+    本卡不做取消/失败的 UX，不弹任何框、不重试。
+    """
+    elevated.write_rescan_request(scope, tmp_dir=tmp_dir, now=now)
+    return _launch_elevated_self(
+        shell_execute=shell_execute, executable=executable, script=script
+    )
+
+
 def _notify_unsupported(build: int) -> None:
     """版本不足默认出口：优先图形提示；Tk 不可用时降级 stderr 文本提示。"""
     _force_utf8_stdio()
@@ -453,6 +545,9 @@ def build_scope_ui(
     停止标志（abort_check → X-2），中止后呈现"不完整报告"横幅并可重新发起
     （每次"开始体检"新建停止标志/新线程/进度归零，无状态残留）。
     U-1：点击"开始体检"即用户显式选择，此前不读取所选文件系统路径。
+    T4-01（H1/E-4）：范围区新增"以管理员身份重扫"入口——U-3 全程序唯一提权
+    发起路径 = 本区按钮单击回调 _on_admin_rescan（写 spec.json → runas 重启
+    自身，无重试/轮询；防重生设计见 disk_audit/elevated.py）。
     """
     import tkinter as tk
     from tkinter import filedialog, ttk
@@ -500,6 +595,13 @@ def build_scope_ui(
         command=lambda: _browse_folder(root, custom_var, scope_var, filedialog),
     )
     browse_button.pack(side="left")
+
+    # E-4/T4-01：以管理员身份重扫入口（U-3：唯一提权发起路径 = 本按钮单击回调）
+    admin_rescan_button = tk.Button(
+        scope_frame, text=H1_TEXTS["admin_rescan_button"],
+        command=lambda: _on_admin_rescan(),
+    )
+    admin_rescan_button.pack(fill="x", pady=(6, 0))
 
     def _sync_custom_state(*_args: object) -> None:
         state = "normal" if scope_var.get() == CUSTOM_SENTINEL else "disabled"
@@ -634,6 +736,7 @@ def build_scope_ui(
         for radio in scope_radios:
             radio.config(state="disabled" if running else "normal")
         start_button.config(state="disabled" if running else "normal")
+        admin_rescan_button.config(state="disabled" if running else "normal")
         abort_button.config(state="normal" if running else "disabled")
         if running:
             custom_entry.config(state="disabled")
@@ -641,21 +744,27 @@ def build_scope_ui(
         else:
             _sync_custom_state()
 
-    def _on_start() -> None:
+    def _resolve_selected_scope() -> "str | None":
+        """当前所选范围（U-1：未选择/不存在时置状态栏并返回 None，不读取任何路径）。"""
         selected = scope_var.get()
         if selected == CUSTOM_SENTINEL:
             path = custom_var.get().strip()
             if not path:
                 status_var.set(LAUNCHER_TEXTS["status_no_selection"])
-                return
+                return None
             if not os.path.isdir(path):
                 status_var.set(LAUNCHER_TEXTS["status_missing_folder"])
-                return
-        elif not selected:
+                return None
+            return path
+        if not selected:
             status_var.set(LAUNCHER_TEXTS["status_no_selection"])
+            return None
+        return selected
+
+    def _on_start() -> None:
+        path = _resolve_selected_scope()
+        if path is None:
             return
-        else:
-            path = selected
         # G2 接线（T3-05）：全新会话 → 后台线程执行体检（UI 线程零阻塞）；
         # 进度经 after 派发主线程刷新；中止 = 置停止标志（C7 统一出口）。
         stop = threading.Event()
@@ -718,6 +827,25 @@ def build_scope_ui(
         abort_button.config(state="disabled")
         status_var.set(G2_TEXTS["status_aborting"])
 
+    def _on_admin_rescan() -> None:
+        """以管理员身份重扫（E-4/T4-01；U-3：全程序唯一提权发起路径 = 本点击回调）。
+
+        单击 → 写 tmp\\spec.json（范围+时间戳+唯一请求 ID，U-2 合规位）→
+        ShellExecuteW runas 重启自身（单点 _shell_execute_runas，AST 断言调用点
+        唯一、无重试/轮询/自动再触发——防重生设计，见 disk_audit/elevated.py）。
+        ShellExecuteW 返回码语义：>32 已发起 → 状态栏提示；ERROR_CANCELLED=UAC
+        取消（E-5，T4-02 接口位）；其余=发起失败（X-4，T4-03 接口位）——本卡
+        只留接口位：不弹框、不重试。
+        """
+        path = _resolve_selected_scope()
+        if path is None:
+            return
+        result_code = request_admin_rescan(path)
+        if result_code > 32:  # Win32：>32 = 已发起
+            status_var.set(H1_TEXTS["status_admin_launched"])
+        # 其余返回码（含 ERROR_CANCELLED=1223 取消）→ E-5/H2、X-4/T4-03 口径，
+        # 本卡不实现取消/失败 UX（不弹框、不重试、不轮询）。
+
 
 def _browse_folder(root: object, custom_var: object, scope_var: object, filedialog: object) -> None:
     """选择自定义文件夹：选定后写入输入框并切到自定义单选项。"""
@@ -765,10 +893,34 @@ def run(
     return EXIT_OK
 
 
+def _cmd_elevated_rescan() -> int:
+    """--elevated-rescan 提权实例分支（任务卡 T4-01；R9/防重生约束的 AST 断言锚点）。
+
+    消费 tmp\\spec.json（一次性：原子认领即焚，重复/陈旧/无请求一律
+    EXIT_BAD_REQUEST 拒绝退出）→ 复用 execute_audit 流水线（save=admin- 前缀、
+    prune/open 双 no-op、judge 只装配 winreg 只读证据源）→ 写
+    admin_rescan_done.json → 退出码三态 0/4/5。
+    本函数及其调用链 AST 断言零自启动、零网络、零 UI（tests/test_elevated.py）。
+    """
+    return elevated.run_elevated_rescan(deps=_elevated_deps(), audit=execute_audit)
+
+
 def main(argv: list[str] | None = None) -> int:
-    """独立入口（规范 §1：启动器在独立模块/入口）。范围经界面选择（U-1），无 CLI 子命令。"""
+    """独立入口（规范 §1：启动器在独立模块/入口）。
+
+    --elevated-rescan：提权实例分支（Q6 重启自身 = 同一入口；无 UI、零自启动、
+    零网络）；默认：范围选择界面（U-1 范围经界面选择）。
+    """
     _force_utf8_stdio()
-    argparse.ArgumentParser(prog="DiskAudit", description=LAUNCHER_TEXTS["window_title"]).parse_args(argv)
+    parser = argparse.ArgumentParser(prog="DiskAudit", description=LAUNCHER_TEXTS["window_title"])
+    parser.add_argument(
+        elevated.ELEVATED_FLAG,
+        action="store_true",
+        help=H1_TEXTS["cli_help_elevated"],
+    )
+    args = parser.parse_args(argv)
+    if args.elevated_rescan:  # 提权实例分支（防重生：零自启动，AST 断言锁定）
+        return _cmd_elevated_rescan()
     return run()
 
 

@@ -305,3 +305,34 @@ F3_TEXTS: dict[str, str] = {
     "csv_err_outside_dir": "CSV 写入路径越界，已拒绝写入：{target}",
 }
 
+# ======================================================================
+# H1 以管理员身份重扫文案（T4-01；方案 Q6/E-4/U-3/R9/S-3）。
+# 本区块 append-only：新增文案一律向文末追加，严禁改动上方既有键值。
+# 依据：E-4 入口文案取方案原文"以管理员身份重扫"；R9 披露口径"该证据源不可用"
+# （方案四节 UWP 行降级披露先例）；E-5 取消/失败 UX 归 T4-02/T4-03，本卡文案
+# 仅覆盖"已发起"事实与提权实例控制台日志、spec 校验错误。
+# ======================================================================
+H1_TEXTS: dict[str, str] = {
+    "admin_rescan_button": "以管理员身份重扫",
+    "status_admin_launched": (
+        "管理员重扫已发起：请在 UAC 提示中选择“是”；提权实例将以管理员模式重新扫描，"
+        "并在 reports\\ 目录生成以 admin- 开头的独立报告。"
+    ),
+    "cli_help_elevated": (
+        "提权实例入口：消费 tmp\\spec.json 请求并以管理员模式重扫"
+        "（仅由提权重启自身使用，不在界面中出现）"
+    ),
+    "elevated_started": "管理员模式重扫开始：{scope}",
+    "elevated_report_done": "管理员模式报告已生成：{path}",
+    "elevated_failed": "管理员重扫失败：{reason}",
+    "elevated_rejected": "管理员重扫请求被拒绝（退出码 {code}）：{reason}",
+    "elevated_err_incomplete": "扫描未完整（中止/异常出口），不生成体检结论",
+    "spec_err_missing": "管理员重扫请求缺失或已被消费，拒绝执行：{path}",
+    "spec_err_corrupt": "管理员重扫请求文件无法解析：{path}",
+    "spec_err_invalid": "管理员重扫请求不合法：{reason}",
+    "evidence_unavailable_reason": "提权模式不执行外部程序（R9），该证据源不可用",
+    "evidence_note_r9": (
+        "管理员模式：Appx/进程/服务三个证据源需调用外部程序（powershell）采集，"
+        "按 R9 硬约束在提权实例中不采集，相应判定证据降级。"
+    ),
+}
