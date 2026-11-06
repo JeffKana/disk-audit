@@ -811,3 +811,216 @@ def test_non_oserror_iteration_exception_still_x2(tmp_path, monkeypatch):
     result = scan_path(str(tmp_path), workers=1)
     assert result.incomplete is True  # X-2 语义不变
     assert result.stats.files == 1  # 异常前已采集的部分保留（部分出口口径）
+
+
+# ---------- T4-09/T3-09：段③（601B~<簇）目录级批查取数 ----------
+# 依据：DR-004 实测规模更正节（2026-11-01）——段③ Roaming 67,035 / Local 163,238
+# 个文件逐文件句柄 ≈30µs/次，AppData 合计 ~14.4s；本卡只改段③取数机制：目录级
+# 批查（FileIdExtdDirectoryInfo 一次目录句柄带回整目录 AllocationSize/EndOfFile/
+# FileAttributes/文件名），映射未命中/批查失败静默回退现行逐文件句柄（X-1 语义
+# 不变）；四段分流规则与双口径语义不变（DR-004 裁决节勿重议——①压缩/稀疏、
+# ②≤600B align8、④≥簇 簇对齐三段路径不动）。机制经本机实证（2026-11-05 探针，
+# 留档执行记录）：FILE_ID_EXTD_DIR_INFO 由 class 19(0x13) 触发（MSDN 结构体页
+# 明示；卡面提示"class 22"实证为 ERROR_INVALID_PARAMETER），批查 AllocationSize
+# 与逐文件 FileStandardInfo 同源同值（含驻留边界样本 600B→600）。
+
+def test_segment3_batch_hit_avoids_per_file_handle(tmp_path, monkeypatch):
+    """段③批查生效：601B~<簇 经批查映射取 AllocationSize、零逐文件句柄（懒加载
+    恰一次）；②④段无视映射值（999 罐头值不被采用，路径不动）。"""
+    entries = {
+        str(tmp_path): [
+            _FakeEntry(str(tmp_path / "r600.bin"), False, 600),
+            _FakeEntry(str(tmp_path / "m601.bin"), False, 601),
+            _FakeEntry(str(tmp_path / "big.bin"), False, 5000),
+        ],
+    }
+    monkeypatch.setattr(scanner, "_scandir", lambda path: _FakeIter(entries[path]))
+    loader_calls: list[str] = []
+
+    def fake_loader(directory):
+        loader_calls.append(directory)
+        # 罐头值 999：仅段③样本（m601）应被采用；②段/④段若误用即断言失败
+        return {
+            "r600.bin": (999, 0x20),
+            "m601.bin": (1048, 0x20),
+            "big.bin": (999, 0x20),
+        }
+
+    monkeypatch.setattr(scanner, "_batch_directory_allocation", fake_loader)
+
+    def boom(path, st):
+        raise AssertionError("段③批查命中时不得回退逐文件句柄")
+
+    monkeypatch.setattr(scanner, "_allocated_size", boom)
+    monkeypatch.setattr(scanner, "_cluster_bytes", lambda path: 4096)
+    result = scan_path(str(tmp_path), workers=2)
+    assert loader_calls == [str(tmp_path)]  # 懒加载：首个段③文件触发，整目录一次
+    assert result.stats.allocated_bytes == 600 + 1048 + 8192
+    # 600B→align8(600)=600（非 999）；601B→批查 1048；5000B→簇对齐 8192（非 999）
+    assert result.stats.skips.total == 0
+    assert result.incomplete is False
+
+
+def test_batch_parallel_phase_hit(tmp_path, monkeypatch):
+    """并行段（_scan_tree）同样走批查映射：每个前沿目录各自批查命中、零句柄。"""
+    entries = {
+        str(tmp_path): [_FakeEntry(str(tmp_path / f"d{i}"), True) for i in range(6)],
+    }
+    for i in range(6):
+        entries[str(tmp_path / f"d{i}")] = [
+            _FakeEntry(str(tmp_path / f"d{i}" / "f.bin"), False, 601)
+        ]
+
+    def fake_scandir(path):
+        return _FakeIter(entries[path])
+
+    monkeypatch.setattr(scanner, "_scandir", fake_scandir)
+
+    def fake_loader(directory):
+        return {"f.bin": (1048, 0x20)}
+
+    monkeypatch.setattr(scanner, "_batch_directory_allocation", fake_loader)
+
+    def boom(path, st):
+        raise AssertionError("并行段批查命中时不得回退逐文件句柄")
+
+    monkeypatch.setattr(scanner, "_allocated_size", boom)
+    monkeypatch.setattr(scanner, "_cluster_bytes", lambda path: 4096)
+    result = scan_path(str(tmp_path), workers=2)  # 6 顶层目录 ≥ min_parts=6 → 并行段
+    assert result.stats.files == 6
+    assert result.stats.allocated_bytes == 1048 * 6
+    assert result.incomplete is False
+
+
+def test_batch_none_falls_back_to_handle(tmp_path, monkeypatch):
+    """验收④：批查失败（返回 None）→ 静默回退现行逐文件句柄，X-1 计数语义不变。"""
+    entries = {str(tmp_path): [_FakeEntry(str(tmp_path / "m.bin"), False, 601)]}
+    monkeypatch.setattr(scanner, "_scandir", lambda path: _FakeIter(entries[path]))
+    monkeypatch.setattr(scanner, "_batch_directory_allocation", lambda directory: None)
+    monkeypatch.setattr(scanner, "_allocated_size", lambda path, st: 1048)
+    monkeypatch.setattr(scanner, "_cluster_bytes", lambda path: 4096)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.files == 1
+    assert result.stats.allocated_bytes == 1048
+    assert result.stats.skips.total == 0  # 批查失败静默：不新创计数（卡面实现约束）
+    assert result.incomplete is False
+
+
+def test_batch_exception_falls_back_to_handle(tmp_path, monkeypatch):
+    """验收④：批查注入异常 → 静默回退逐文件句柄，不逃逸进 X-2"不完整"出口。"""
+    entries = {str(tmp_path): [_FakeEntry(str(tmp_path / "m.bin"), False, 601)]}
+
+    def boom_loader(directory):
+        raise RuntimeError("注入的批查异常")
+
+    monkeypatch.setattr(scanner, "_scandir", lambda path: _FakeIter(entries[path]))
+    monkeypatch.setattr(scanner, "_batch_directory_allocation", boom_loader)
+    monkeypatch.setattr(scanner, "_allocated_size", lambda path, st: 1048)
+    monkeypatch.setattr(scanner, "_cluster_bytes", lambda path: 4096)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.files == 1
+    assert result.stats.allocated_bytes == 1048
+    assert result.stats.skips.total == 0
+    assert result.incomplete is False
+
+
+def test_batch_map_miss_falls_back_to_handle(tmp_path, monkeypatch):
+    """映射未命中（文件名不在批查结果中，如扫描间隙新建/批查不完整）→ 回退。"""
+    entries = {str(tmp_path): [_FakeEntry(str(tmp_path / "m.bin"), False, 601)]}
+    monkeypatch.setattr(scanner, "_scandir", lambda path: _FakeIter(entries[path]))
+    monkeypatch.setattr(
+        scanner, "_batch_directory_allocation", lambda directory: {"other.bin": (1048, 0x20)}
+    )
+    monkeypatch.setattr(scanner, "_allocated_size", lambda path, st: 1048)
+    monkeypatch.setattr(scanner, "_cluster_bytes", lambda path: 4096)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.files == 1
+    assert result.stats.allocated_bytes == 1048
+    assert result.stats.skips.total == 0
+
+
+def test_batch_parallel_phase_falls_back(tmp_path, monkeypatch):
+    """并行段批查失败 → 逐文件回退同样生效（与 BFS 段对称）。"""
+    entries = {
+        str(tmp_path): [_FakeEntry(str(tmp_path / f"d{i}"), True) for i in range(6)],
+    }
+    for i in range(6):
+        entries[str(tmp_path / f"d{i}")] = [
+            _FakeEntry(str(tmp_path / f"d{i}" / "f.bin"), False, 601)
+        ]
+
+    def fake_scandir(path):
+        return _FakeIter(entries[path])
+
+    monkeypatch.setattr(scanner, "_scandir", fake_scandir)
+    monkeypatch.setattr(scanner, "_batch_directory_allocation", lambda directory: None)
+    monkeypatch.setattr(scanner, "_allocated_size", lambda path, st: 1048)
+    monkeypatch.setattr(scanner, "_cluster_bytes", lambda path: 4096)
+    result = scan_path(str(tmp_path), workers=2)  # 6 顶层目录 → 并行段
+    assert result.stats.files == 6
+    assert result.stats.allocated_bytes == 1048 * 6
+    assert result.incomplete is False
+
+
+def test_batch_failure_and_handle_failure_still_occupied(tmp_path, monkeypatch):
+    """负例：批查失败且逐文件实查也失败 → X-1 计 occupied（现行语义不变）。"""
+    entries = {str(tmp_path): [_FakeEntry(str(tmp_path / "m.bin"), False, 601)]}
+    monkeypatch.setattr(scanner, "_scandir", lambda path: _FakeIter(entries[path]))
+    monkeypatch.setattr(scanner, "_batch_directory_allocation", lambda directory: None)
+    monkeypatch.setattr(scanner, "_allocated_size", lambda path, st: None)
+    monkeypatch.setattr(scanner, "_cluster_bytes", lambda path: 4096)
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.skips.occupied == 1
+    assert result.stats.files == 0
+
+
+def test_batch_non_windows_degradation_unchanged(tmp_path, monkeypatch):
+    """非 Windows 降级路径不变：无句柄 API 时占用空间=逻辑大小，批查零发起。"""
+    entries = {str(tmp_path): [_FakeEntry(str(tmp_path / "m.bin"), False, 601)]}
+    monkeypatch.setattr(scanner, "_scandir", lambda path: _FakeIter(entries[path]))
+    monkeypatch.setattr(scanner, "_create_file_w", None)  # 模拟非 Windows
+    loader_calls: list[str] = []
+    monkeypatch.setattr(
+        scanner, "_batch_directory_allocation", lambda d: loader_calls.append(d)
+    )
+    result = scan_path(str(tmp_path), workers=2)
+    assert result.stats.allocated_bytes == 601  # 逻辑大小降级（既有语义）
+    assert loader_calls == []  # 降级路径零批查开销
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="批查 API 仅 Windows")
+def test_batch_matches_handle_per_file_segment3(tmp_path):
+    """卡面一致性红线：批查结果与句柄实查逐文件一致（601B~<簇 样本集 + 驻留边界）。
+
+    真实 NTFS 文件 + 真实 FileIdExtdDirectoryInfo 批查（无替身）：每个样本的
+    批查 AllocationSize/FileAttributes 与逐文件 GetFileInformationByHandleEx
+    (FileStandardInfo) 同源同值；600B 驻留边界样本 align8 与批查一致。
+    """
+    sizes = [600, 601, 700, 1024, 2000, 3000, 4095]  # 段③主样本 + 600B 边界对照
+    for size in sizes:
+        (tmp_path / f"p{size}.bin").write_bytes(b"x" * size)
+    batch = scanner._batch_directory_allocation(str(tmp_path))
+    assert batch is not None
+    for size in sizes:
+        probe = tmp_path / f"p{size}.bin"
+        st = probe.stat()
+        record = batch.get(probe.name)
+        assert record is not None, f"批查未命中：{probe.name}"
+        handle_alloc = scanner._allocated_size(str(probe), st)
+        assert handle_alloc is not None
+        assert record[0] == handle_alloc, f"{size}B：批查 {record[0]} ≠ 句柄 {handle_alloc}"
+        assert record[1] == st.st_file_attributes
+    assert scanner._align8(600) == batch["p600.bin"][0]  # 驻留边界：align8 与批查一致
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="批查 API 仅 Windows")
+def test_batch_multi_call_continuation(tmp_path):
+    """超过单次调用缓冲的目录：句柄续位枚举直至 ERROR_NO_MORE_FILES，整目录取全。"""
+    for i in range(700):  # 700 条 × ~112B ≈ 78KB > 64KB 缓冲 → 至少两次系统调用
+        (tmp_path / f"f{i:04d}.bin").write_bytes(b"x" * 700)
+    batch = scanner._batch_directory_allocation(str(tmp_path))
+    assert batch is not None
+    assert len(batch) == 700  # 整目录条目一个不少（含非段③样本）
+    probe = tmp_path / "f0300.bin"
+    st = probe.stat()
+    assert batch[probe.name][0] == scanner._allocated_size(str(probe), st)  # 抽样同源

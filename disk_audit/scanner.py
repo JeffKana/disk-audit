@@ -19,12 +19,21 @@ X-2 统一"不完整"出口保留给真实中止（abort_check 命中）与非 O
 异常——VM AppX 服务窗口实时增删单元目录致首轮整体不完整的实证修复
 （T2-09 首轮 4/4 incomplete、08 报告 §3 裁决 2）。计数复用 skips.other
 （不动报告 JSON 键集，见 SkipStats.other 注释）。
+T4-09（任务卡 T4-09）：段③（601B~<簇）取数机制改目录级批查——首个段③文件
+命中时懒加载一次目录句柄批查（GetFileInformationByHandleEx +
+FileIdExtdDirectoryInfo，class=0x13，一次调用带回整目录条目的
+AllocationSize/EndOfFile/FileAttributes/文件名），_account_file 按文件名查
+映射取值；映射未命中/批查失败/批查异常静默回退现行逐文件句柄实查（X-1
+语义不变，不新创计数）；①压缩/稀疏、②≤600B align8、④≥簇 簇对齐三段路径
+与双口径汇总口径不变（DR-004 裁决节勿重议）。枚举仍走 os.scandir（T3-08
+折入语义与 C8 进度不变），批查数据仅供计量。
 """
 from __future__ import annotations
 
 import ctypes
 import os
 import stat as _stat
+import struct
 import threading
 import time
 from collections.abc import Callable
@@ -107,6 +116,19 @@ _OPEN_EXISTING = 3
 _FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
 _FILE_STANDARD_INFO_CLASS = 1  # GetFileInformationByHandleEx → FileStandardInfo
 _INVALID_HANDLE_VALUE = ctypes.c_void_p(-1).value if os.name == "nt" else 0
+# T4-09 段③批查：FileIdExtdDirectoryInfo = 0x13。MSDN FILE_ID_EXTD_DIR_INFO 页
+# 明示"returned when FileIdExtdDirectoryInfo (0x13) or FileIdExtdDirectoryRestartInfo
+# (0x14)"；本机 NTFS 实证（2026-11-05 探针，T4-09 执行记录留档）：class 19 一次
+# 调用带回整目录条目且 AllocationSize 与逐文件 FileStandardInfo 逐文件一致（含
+# 驻留边界样本 600B→600）；卡面提示"class 22"实证为 ERROR_INVALID_PARAMETER。
+_FILE_ID_EXTD_DIRECTORY_INFO_CLASS = 19
+_ERROR_NO_MORE_FILES = 18  # GetFileInformationByHandleEx 枚举结束错误码
+_FILE_LIST_DIRECTORY = 0x0001  # 目录枚举类必需访问权（与 FILE_READ_ATTRIBUTES 并用）
+_BATCH_BUFFER_BYTES = 65536  # 64KB 批查缓冲（实证 256KB 无续位调用次数收益）
+# 批查缓冲线程局部复用：并行段每 worker 一块（~8×64KB），免去每目录 64KB
+# 分配+清零（6.4 万段③目录 × ~3µs ≈ 0.2s GIL 串行开销）；缓冲内容即用即覆写，
+# 跨句柄复用无 API 侧状态（GetFileInformationByHandleEx 只写不读调用方缓冲）
+_BATCH_BUFFER_TLS = threading.local()
 
 
 class _FILE_STANDARD_INFO(ctypes.Structure):
@@ -119,6 +141,47 @@ class _FILE_STANDARD_INFO(ctypes.Structure):
         ("DeletePending", ctypes.c_int8),
         ("Directory", ctypes.c_int8),
     ]
+
+
+class _FILE_ID_EXTD_DIR_INFO(ctypes.Structure):
+    """Win32 FILE_ID_EXTD_DIR_INFO（FileIdExtdDirectoryInfo 类，仅目录句柄）。
+
+    变长结构：固定区 88 字节后跟 FileNameLength 字节的 UTF-16 文件名（无终止
+    符），下一条目由 NextEntryOffset 定位（0 为末条目）。字段偏移经实证探针
+    核对（2026-11-05，T4-09 执行记录留档）。解析热路径用 struct.unpack_from
+    按同一偏移解包（实测 ~0.7µs/条 vs ctypes 结构体 ~1.3µs/条，Local 段③
+    规模下省 ~0.4s），本结构体保留作布局定义与 FileName.offset 常量来源。
+    """
+
+    _fields_ = [
+        ("NextEntryOffset", ctypes.c_uint32),
+        ("FileIndex", ctypes.c_uint32),
+        ("CreationTime", ctypes.c_int64),
+        ("LastAccessTime", ctypes.c_int64),
+        ("LastWriteTime", ctypes.c_int64),
+        ("ChangeTime", ctypes.c_int64),
+        ("EndOfFile", ctypes.c_int64),
+        ("AllocationSize", ctypes.c_int64),
+        ("FileAttributes", ctypes.c_uint32),
+        ("FileNameLength", ctypes.c_uint32),
+        ("EaSize", ctypes.c_uint32),
+        ("ReparsePointTag", ctypes.c_uint32),
+        ("FileId", ctypes.c_uint8 * 16),
+        ("FileName", ctypes.c_wchar * 1),
+    ]
+
+
+# 解析格式串（packed，与 _FILE_ID_EXTD_DIR_INFO 字段偏移一致）：
+# NextEntryOffset/FileIndex(2×I)、CreationTime..AllocationSize(6×q)、
+# FileAttributes/FileNameLength/EaSize/ReparsePointTag(4×I)、FileId(16s)。
+_EXTD_DIR_PACK_FMT = "<II6qIIII16s"
+# 布局自证：固定区长度必须与结构体 FileName 偏移、格式串尺寸三方一致
+# （任一方漂移在 import 时即失败，不静默错位解析）
+assert (
+    _FILE_ID_EXTD_DIR_INFO.FileName.offset
+    == struct.calcsize(_EXTD_DIR_PACK_FMT)
+    == 88
+)
 
 
 def _long_path(path: str) -> str:
@@ -208,6 +271,103 @@ def _allocated_size(path: str, st: os.stat_result) -> int | None:
         return max(info.AllocationSize, 0)
     finally:
         _close_handle(handle)
+
+
+def _batch_directory_allocation(directory: str) -> dict[str, tuple[int, int]] | None:
+    """目录级批查（T4-09 段③）：一次目录句柄 + FileIdExtdDirectoryInfo 枚举取回
+    整目录条目，返回 {文件名: (AllocationSize, FileAttributes)}；任何失败返回
+    None（调用方静默回退现行逐文件句柄实查，X-1 语义不变）。仅 Windows。
+
+    机制依据（2026-11-05 MSDN 核实 + 本机 NTFS 实证探针，T4-09 执行记录留档）：
+    FILE_ID_EXTD_DIR_INFO 由 FileIdExtdDirectoryInfo(0x13) / RestartInfo(0x14)
+    触发（MSDN 结构体页明示）；目录枚举类需目录句柄带 FILE_LIST_DIRECTORY
+    访问权；同句柄多次调用按内部续位返回后续条目，ERROR_NO_MORE_FILES(18)
+    表示枚举结束，其余错误一律按批查失败整体降级（部分结果不作可用映射，
+    逐文件回退兜底精确性）；"."/".." 不入映射。批查 AllocationSize 与逐文件
+    FileStandardInfo 同源同值（实证含驻留边界样本 600B→600/601B→608）。
+    失败回退静默（卡面实现约束：不自创新计数，occupied/other 语义按现行规则）。
+    """
+    if _create_file_w is None:
+        return None
+    handle = _create_file_w(
+        _long_path(directory),
+        _FILE_READ_ATTRIBUTES | _FILE_LIST_DIRECTORY,
+        _FILE_SHARE_ALL,
+        None,
+        _OPEN_EXISTING,
+        _FILE_FLAG_BACKUP_SEMANTICS,
+        None,
+    )
+    if not handle or handle == _INVALID_HANDLE_VALUE:
+        return None
+    try:
+        buf = getattr(_BATCH_BUFFER_TLS, "buf", None)
+        if buf is None:
+            buf = _BATCH_BUFFER_TLS.buf = ctypes.create_string_buffer(
+                _BATCH_BUFFER_BYTES
+            )
+        base = ctypes.addressof(buf)
+        name_offset = _FILE_ID_EXTD_DIR_INFO.FileName.offset
+        result: dict[str, tuple[int, int]] = {}
+        unpack_from = struct.unpack_from
+        wstring_at = ctypes.wstring_at
+        while True:
+            ok = _get_file_information_by_handle_ex(
+                handle, _FILE_ID_EXTD_DIRECTORY_INFO_CLASS, buf, _BATCH_BUFFER_BYTES
+            )
+            if not ok:
+                if ctypes.get_last_error() == _ERROR_NO_MORE_FILES:
+                    break
+                return None
+            offset = 0
+            while True:
+                (
+                    next_offset, _file_index, _creation, _access, _write, _change,
+                    _end_of_file, allocation, attributes, name_len,
+                    _ea_size, _reparse_tag, _file_id,
+                ) = unpack_from(_EXTD_DIR_PACK_FMT, buf, offset)
+                if name_len:
+                    name = wstring_at(base + offset + name_offset, name_len >> 1)
+                    if name != "." and name != "..":
+                        result[name] = (max(allocation, 0), attributes)
+                if next_offset == 0:
+                    break
+                offset += next_offset
+        return result
+    finally:
+        _close_handle(handle)
+
+
+class _DirBatch:
+    """目录批查懒加载持有者（T4-09 段③）：首个 601B~<簇 文件命中时才发起批查。
+
+    懒加载动机：无段③文件的目录（纯小文件/大文件目录）零批查开销；有段③文件
+    的目录整目录仅一次"开句柄+枚举"（对比逐文件每条一次句柄，DR-004 实测规模
+    更正节：段③ Roaming 67,035 / Local 163,238 个 × ~30µs/句柄）。
+    线程安全：持有者随目录迭代循环创建、仅该循环所属线程使用（并行段每 worker
+    处理各自前沿子树），批查句柄即用即关，无跨线程共享。批查失败/异常静默
+    降级为"无映射"——lookup 返回 None，_account_file 回退逐文件句柄（X-1
+    语义不变）；结果缓存一次，目录迭代期内不重复批查。
+    """
+
+    __slots__ = ("_directory", "_map", "_loaded")
+
+    def __init__(self, directory: str) -> None:
+        self._directory = directory
+        self._map: dict[str, tuple[int, int]] | None = None
+        self._loaded = False
+
+    def lookup(self, name: str) -> tuple[int, int] | None:
+        """返回文件名对应的 (AllocationSize, FileAttributes)；未命中/失败为 None。"""
+        if not self._loaded:
+            self._loaded = True
+            try:
+                self._map = _batch_directory_allocation(self._directory)
+            except Exception:  # X-1 族：批查异常静默降级，不中断扫描
+                self._map = None
+        if self._map is not None:
+            return self._map.get(name)
+        return None
 
 
 @dataclass
@@ -467,15 +627,22 @@ def _reparse_or_symlink(st: os.stat_result) -> bool:
 
 
 def _account_file(
-    path: str, name: str, st: os.stat_result, stats: ScanStats, unit: UnitStats | None
+    path: str,
+    name: str,
+    st: os.stat_result,
+    stats: ScanStats,
+    unit: UnitStats | None,
+    batch: _DirBatch | None = None,
 ) -> None:
     """文件计量（DR-004 裁决节四段分流，2026-10-31）：
 
-    ① st_file_attributes 含压缩/稀疏 → 句柄实查；
-    ② 逻辑 ≤ 600B（_RESIDENT_LIMIT，本卷实测稳定驻留上限）→ align8；
-    ③ 601B ≤ 逻辑 < 簇 → 句柄实查（驻留与否均精确）；
-    ④ 逻辑 ≥ 簇 → 簇对齐（GetDiskFreeSpaceW 查询并缓存簇大小）。
-    ①③ 句柄实查失败按 X-1 计入 occupied（语义一致）；非 Windows 降级不变
+    ① st_file_attributes 含压缩/稀疏 → 句柄实查（路径不动）；
+    ② 逻辑 ≤ 600B（_RESIDENT_LIMIT，本卷实测稳定驻留上限）→ align8（路径不动）；
+    ③ 601B ≤ 逻辑 < 簇 → 目录级批查映射（T4-09：FileIdExtdDirectoryInfo 一次
+       系统调用带回整目录 AllocationSize，_DirBatch 懒加载）；映射未命中/批查
+       失败/批查异常 → 静默回退现行逐文件句柄实查（X-1 语义不变）；
+    ④ 逻辑 ≥ 簇 → 簇对齐（GetDiskFreeSpaceW 查询并缓存簇大小，路径不动）。
+    ①③ 实查失败按 X-1 计入 occupied（语义一致）；非 Windows 降级不变
     （占用空间=逻辑大小，验收在 Windows）。
     """
     if _create_file_w is None:
@@ -489,7 +656,10 @@ def _account_file(
         else:
             cluster = _cluster_bytes(path)
             if st.st_size < cluster:
-                allocated = _allocated_size(path, st)
+                record = batch.lookup(name) if batch is not None else None
+                allocated = (
+                    record[0] if record is not None else _allocated_size(path, st)
+                )
             else:
                 allocated = ((st.st_size + cluster - 1) // cluster) * cluster
         if allocated is None:
@@ -567,11 +737,14 @@ def _handle_entry(
     units: dict[str, UnitStats],
     sink: dict[str, UnitStats],
     parent_unit_path: str | None,
+    batch: _DirBatch | None = None,
 ) -> None:
     """单个目录项统一处理：异常/reparse 按 X-1 计数，目录收集，文件即层计量。
 
     单元归属：文件归其所在目录的单元；目录的 mtime 归目录自身解析出的单元。
     units 只读（成员判定）；聚合写入走 sink（BFS 段=共享，并行段=局部增量）。
+    batch（T4-09）：所在目录的段③批查懒加载持有者（None=禁用批查，段③直走
+    逐文件句柄）。
     """
     try:
         st = entry.stat(follow_symlinks=False)
@@ -589,7 +762,7 @@ def _handle_entry(
             unit.note_mtime(st.st_mtime)  # 目录 mtime 在发现时记；dirs 在展开时计
     else:
         unit = _sink_get(sink, parent_unit_path)
-        _account_file(entry.path, entry.name, st, stats, unit)
+        _account_file(entry.path, entry.name, st, stats, unit, batch)
 
 
 def _open_dir(directory: str, stats: ScanStats):
@@ -623,11 +796,12 @@ def _expand_dir(
     iterator = _open_dir(directory, stats)
     if iterator is None:
         return
+    batch = _DirBatch(directory)  # 段③批查懒加载（T4-09）：无段③文件零开销
     with iterator:
         seen = 0  # 目录内探测步长计数（C8：仅控制探测频率，非计量口径）
         try:
             for entry in iterator:
-                _handle_entry(entry, stats, subdirs, units, sink, unit_path)
+                _handle_entry(entry, stats, subdirs, units, sink, unit_path, batch)
                 if progress is not None:
                     seen += 1
                     if seen >= _PROGRESS_CHECK_STEP:
@@ -708,11 +882,12 @@ def _scan_tree(
         if iterator is None:
             continue
         subdirs: list[tuple[str, str | None]] = []
+        batch = _DirBatch(current)  # 段③批查懒加载（T4-09）：无段③文件零开销
         seen = 0  # 目录内探测步长计数（C8：仅控制探测频率，非计量口径）
         with iterator:
             try:
                 for entry in iterator:
-                    _handle_entry(entry, stats, subdirs, units, local_units, unit_path)
+                    _handle_entry(entry, stats, subdirs, units, local_units, unit_path, batch)
                     if progress is not None:
                         seen += 1
                         if seen >= _PROGRESS_CHECK_STEP:
