@@ -256,3 +256,52 @@ F4_TEXTS: dict[str, str] = {
 
 
 
+
+# ======================================================================
+# F3 CSV 导出与脱敏文案（待办 F3，任务卡 T4-06；方案 P7、第八节"脱敏"：
+# 四类 = 当前用户名 / 计算机名 / 用户 SID / 其他用户目录名；CSV 默认脱敏，
+# 显式 --raw 才出原文；分享提示在导出完成态展示）。
+# 本区块 append-only：新增文案一律向文末追加，严禁改动上方既有键值。
+# ======================================================================
+
+# 脱敏占位符（固定字面量：脱敏输出可全文检索，四类互不覆盖）
+SANITIZE_PLACEHOLDERS: dict[str, str] = {
+    "user": "<用户名>",
+    "computer": "<计算机名>",
+    "sid": "<SID>",
+    "other_user": "<其他用户>",
+}
+
+# CSV 表头（仅数据列：路径/大小双口径/置信度/来源/建议动作；无证据链全文——
+# 任务卡"控体量"约束。字节取整数便于 Excel 排序，列名标注单位）
+CSV_HEADERS: dict[str, str] = {
+    "path": "路径",
+    "logical_bytes": "逻辑大小（字节）",
+    "allocated_bytes": "占用空间（字节）",
+    "confidence": "置信度",
+    "verdict_source": "判定来源",
+    "suggested_action": "建议动作",
+}
+
+# 完成态与分享提示（R10 零假设原则：raw 模式提示升级为明确"未脱敏"警示）
+F3_TEXTS: dict[str, str] = {
+    "csv_done_default": "导出完成（已脱敏）：{path}",
+    "csv_share_notice": "注意：报告含本机路径，对外分享前请确认脱敏符合预期。",
+    "csv_done_raw": "导出完成（未脱敏）：{path}",
+    "csv_share_notice_raw": (
+        "警示：本次导出未脱敏，文件含用户名/计算机名/SID 等本机原文，"
+        "对外分享前务必自行确认并处理敏感信息。"
+    ),
+    "csv_err_read": "无法读取报告文件：{exc}",
+    "csv_err_json": "报告文件不是合法 JSON：{exc}",
+    "csv_err_encode": "报告文件不是 UTF-8 编码：{exc}",
+    "csv_err_not_object": "报告 JSON 顶层应为对象",
+    "csv_err_missing_fields": "报告 JSON 缺少必需字段：{fields}",
+    "csv_err_candidates_not_list": "报告 JSON candidates 应为数组",
+    "csv_err_candidate_not_object": "候选条目 #{index} 应为对象",
+    "csv_err_candidate_missing": "候选条目 #{index} 缺少导出必需字段：{fields}",
+    "csv_err_bad_number": "报告数值字段不是合法整数",
+    "csv_err_bad_filename": "CSV 文件名不合法：{filename}",
+    "csv_err_outside_dir": "CSV 写入路径越界，已拒绝写入：{target}",
+}
+
