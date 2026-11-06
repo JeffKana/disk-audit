@@ -18,11 +18,21 @@ disk_audit.reports 守卫写入 DATA_DIR\reports\）；除 B3 白名单外不发
 系统交互（U-4）。
 
 T4-01 防重生日志：自重启调用单点化于本模块 `_shell_execute_runas`（全仓库唯一
-ShellExecuteW 出口，仅 `_on_admin_rescan` 点击回调经 `request_admin_rescan` →
+ShellExecute 出口，仅 `_on_admin_rescan` 点击回调经 `request_admin_rescan` →
 `_launch_elevated_self` 抵达；AST 断言调用点唯一 + 提权分支零自启动，见
 tests/test_elevated.py）。前次执行曾出现 python 进程自重生链（根因未确证），
 本卡以四道结构性防线阻断：单点发起 / 提权分支 AST 零自启动 / spec 一次性消费 /
 UI 仅单击无重试。
+
+T4-03（H3）等待通道（方案 A）：发起升级 ShellExecuteExW + SEE_MASK_NOCLOSEPROCESS
+（成功时 SHELLEXECUTEINFO.hProcess 即提权实例进程句柄；对外返回码在本函数内归一化
+为 ShellExecuteW 风格哨兵 33，T4-02 admin_rescan_status_text 及其全部既有测试零改动）；
+发起成功后由后台 daemon 线程等待提权实例退出码（UI 线程零阻塞，G2 run_audit_async
+先例）：退出码 0 → 读 done 标记衔接 T4-01 完成态；非 0/超时/退出码未知 → X-4 状态栏
+文案（"管理员重扫失败，已保留上次结果"，R10 超时与崩溃同文案）+ tmp 日志（U-2 合规
+位，时间戳+退出码+等待摘要+done.error）。取消（发起阶段 1223）与发起失败不进等待链
+（T4-02 语义不重做）。等待/退出码读取 Win32 调用可注入替身，测试零真实等待
+（tests/test_launcher_h3.py）；等待链零重试/零弹窗/零自启动（AST 断言固化）。
 
 可注入点（验收①②）：build 探测 `get_windows_build`、盘符枚举 `enumerate_drive_types`
 均可经 `run(...)` 注入替换；体检流水线六环经 `AuditDeps` 注入（T3-06）；
@@ -47,8 +57,8 @@ import re
 import sys
 import threading
 from dataclasses import dataclass
-from datetime import datetime
-from typing import TYPE_CHECKING, Callable, Mapping, Sequence
+from datetime import datetime, timezone
+from typing import TYPE_CHECKING, Callable, Mapping, NamedTuple, Sequence
 
 from disk_audit import elevated, reports
 from disk_audit.engine import texts
@@ -62,6 +72,7 @@ G2_TEXTS = texts.G2_TEXTS
 F4_TEXTS = texts.F4_TEXTS
 H1_TEXTS = texts.H1_TEXTS
 H2_TEXTS = texts.H2_TEXTS
+H3_TEXTS = texts.H3_TEXTS
 
 # P5：Win11 22H2（build 22621）及以上，启动时检测
 MIN_BUILD = 22621
@@ -464,19 +475,44 @@ def run_audit_async(
 
 # ---------- T4-01（待办 H1）：以管理员身份重扫 · 宿主侧发起 ----------
 
-# 【防重生防线 1】自重启调用单点化：全仓库 ShellExecuteW/WinExec/os.system/os.popen/
-# subprocess/os.startfile 仅允许出现在 _shell_execute_runas 这一处（ctypes
-# ShellExecuteW；tests/test_elevated.py AST 断言全仓库唯一 + 提权分支零自启动）。
+# 【防重生防线 1】自重启调用单点化：全仓库 ShellExecuteW/ShellExecuteExW/WinExec/
+# os.system/os.popen/subprocess/os.startfile 仅允许出现在 _shell_execute_runas 这一
+# 处（ctypes ShellExecuteExW，H3 方案 A；tests/test_elevated.py AST 断言全仓库唯一
+# 双禁 + 提权分支零自启动）。
 # 【U-3】runas 发起只能由用户点击回调（_on_admin_rescan）经 request_admin_rescan
 # → _launch_elevated_self 抵达本函数，调用点唯一、无重试/轮询/自动再触发路径
-# （AST 断言固化）。取消（ERROR_CANCELLED）与发起失败的 UX 归 T4-02/T4-03（E-5/X-4
-# 接口位），本卡不弹框、不重试。
-def _shell_execute_runas(lp_file: str, lp_verb: str, lp_parameters: str) -> int:
-    """真实发起（全仓库唯一 ShellExecuteW 出口；仅由点击回调链抵达）。"""
-    result = ctypes.windll.shell32.ShellExecuteW(
-        None, lp_verb, lp_file, lp_parameters, None, elevated.SW_SHOWNORMAL
-    )
-    return int(result)
+# （AST 断言固化）。取消（ERROR_CANCELLED）的 UX 归 T4-02（E-5）；发起后的异常
+# 退出处置归 T4-03 等待链（X-4）。
+def _shell_execute_runas(lp_file: str, lp_verb: str, lp_parameters: str) -> "tuple[int, int | None]":
+    """真实发起（全仓库唯一 ShellExecute 出口；仅由点击回调链抵达）。
+
+    T4-03（H3）等待通道方案 A：ShellExecuteW 升级为 ShellExecuteExW +
+    SEE_MASK_NOCLOSEPROCESS——成功时 SHELLEXECUTEINFO.hProcess 即提权实例进程句柄，
+    宿主据此等待退出码（任务卡 T4-03"宿主侧等待提权实例退出码"）。对外返回码空间
+    保持 ShellExecuteW 风格（归一化在本函数内完成，T4-02 admin_rescan_status_text
+    及其全部既有测试零改动）：
+      ShellExecuteExW 成功 → (ADMIN_RESCAN_LAUNCHED_CODE=33 哨兵, 进程句柄)；
+      失败 → (GetLastError 错误码, None)，其中 ERROR_CANCELLED(1223)=UAC 取消
+      （E-5/T4-02 语义不变）；其余错误码沿用 T4-02 既有口径。
+    函数名保留 _shell_execute_runas：T4-01 AST 契约（调用点唯一）与防重生日志的
+    稳定锚点，实现升级不改名（tests/test_elevated.py 仅"ShellExecuteW 禁令扩为
+    ShellExecuteW/ShellExecuteExW 双禁"的最小修改，修改处已注明依据 H3 卡面）。
+    句柄生命周期：宿主单次用户触发流程，等待后不 CloseHandle（宿主进程退出回收，
+    无累积风险；记录于执行决策，不扩大方案范围）。
+    """
+    info = _ShellExecuteInfoW()
+    info.cbSize = ctypes.sizeof(_ShellExecuteInfoW)
+    info.fMask = _SEE_MASK_NOCLOSEPROCESS
+    info.lpVerb = lp_verb
+    info.lpFile = lp_file
+    info.lpParameters = lp_parameters
+    info.nShow = elevated.SW_SHOWNORMAL
+    if not _SHELL32.ShellExecuteExW(ctypes.byref(info)):
+        error_code = int(ctypes.get_last_error())
+        if error_code == elevated.ERROR_CANCELLED:
+            return elevated.ERROR_CANCELLED, None  # UAC 取消（E-5/T4-02 语义不变）
+        return error_code, None  # 发起失败：Win32 错误码（>32 非 1223 值按 T4-02 既有记录口径）
+    return ADMIN_RESCAN_LAUNCHED_CODE, info.hProcess
 
 
 def _launch_elevated_self(
@@ -484,13 +520,18 @@ def _launch_elevated_self(
     shell_execute: "elevated.ShellExecute | None" = None,
     executable: str | None = None,
     script: str | None = None,
-) -> int:
-    """构造"重启自身"命令并发起 runas（shell_execute 可注入供单测断言参数）。"""
+) -> "tuple[int, int | None]":
+    """构造"重启自身"命令并发起 runas（shell_execute 可注入供单测断言参数）。
+
+    替身路径返回 (替身返回码原样, None)——替身返回码即 ShellExecuteW 风格
+    （T4-01 契约不变），替身不产出句柄、不进入等待链（等待链接线单测经
+    monkeypatch 本函数依赖的 _shell_execute_runas 注入哨兵+替身句柄）。
+    """
     lp_file, lp_parameters = elevated.build_rescan_command(
         executable=executable, script=script
     )
-    if shell_execute is not None:  # 测试注入替身：不触达真实 ShellExecuteW
-        return shell_execute(lp_file, "runas", lp_parameters)
+    if shell_execute is not None:  # 测试注入替身：不触达真实 ShellExecuteExW
+        return shell_execute(lp_file, "runas", lp_parameters), None
     return _shell_execute_runas(lp_file, "runas", lp_parameters)
 
 
@@ -502,18 +543,46 @@ def request_admin_rescan(
     executable: str | None = None,
     script: str | None = None,
     now: datetime | None = None,
+    wait_completion: "Callable[[AdminRescanExit], None] | None" = None,
+    after: "Callable[[Callable[[], None]], None] | None" = None,
 ) -> int:
-    """宿主侧点击处理（纯逻辑，无 Tk；U-3：仅由 _on_admin_rescan 点击回调调用）。
+    """宿主侧点击处理（发起纯逻辑 + H3 等待接线，无 Tk；U-3：仅由
+    _on_admin_rescan 点击回调调用）。
 
     顺序：写 tmp\\spec.json（U-2 合规位，含范围/时间戳/唯一请求 ID）→ runas
-    重启自身。返回 ShellExecuteW 返回码：>32 已发起；ERROR_CANCELLED 取消
-    （E-5，T4-02 接口位）；其余发起失败（X-4，T4-03 接口位）——原样透传，
-    本卡不做取消/失败的 UX，不弹任何框、不重试。
+    重启自身（方案 A：ExW 取句柄）。返回 ShellExecuteW 风格返回码（对外契约不变，
+    T4-02 admin_rescan_status_text 及其全部既有测试零改动）：
+    ADMIN_RESCAN_LAUNCHED_CODE(33)=已发起（归一化哨兵，落 T4-02 ">32 已发起"分支）；
+    ERROR_CANCELLED(1223)=UAC 取消（E-5/T4-02 语义不变）；其余=发起失败
+    （Win32 错误码）。
+
+    H3 等待链（方案 A）：发起成功（哨兵 33 + 句柄有效）且 wait_completion/after
+    已接线时，经 _watch_admin_rescan_async 后台 daemon 线程等待提权实例退出码
+    （UI 线程零阻塞，G2 run_audit_async 先例）：异常退出 → X-4 状态栏文案 +
+    tmp 日志；成功 → done 衔接完成态。取消与发起失败不进等待链（T4-02 语义，
+    不重做）；wait_completion 缺省 None 时保持 T4-01 火后不管语义（既有调用方
+    兼容）。now 同时作为 spec created_at 与日志时间戳的注入位（生产 None=真实
+    时钟；测试注入固定时钟保证日志断言确定性）。
     """
-    elevated.write_rescan_request(scope, tmp_dir=tmp_dir, now=now)
-    return _launch_elevated_self(
+    request = elevated.write_rescan_request(scope, tmp_dir=tmp_dir, now=now)
+    result_code, process_handle = _launch_elevated_self(
         shell_execute=shell_execute, executable=executable, script=script
     )
+    if (
+        result_code == ADMIN_RESCAN_LAUNCHED_CODE
+        and process_handle is not None
+        and wait_completion is not None
+        and after is not None
+    ):
+        _watch_admin_rescan_async(
+            process_handle,
+            request_id=str(request["request_id"]),
+            tmp_dir=tmp_dir,
+            on_finished=wait_completion,
+            after=after,
+            now=now,
+        )
+    return result_code
 
 
 # ---------- T4-02（待办 H2）：UAC 取消处理 · 返回码 → 状态栏文案（E-5） ----------
@@ -540,6 +609,287 @@ def admin_rescan_status_text(result_code: int) -> str:
     if result_code > 32:  # Win32：>32 = 已发起（H1 口径不变；1223 已被上一分支截获）
         return H1_TEXTS["status_admin_launched"]
     return H2_TEXTS["status_admin_launch_failed"].format(code=result_code)
+
+
+# ---------- T4-03（待办 H3）：提权进程异常退出 · 宿主侧等待链（方案 A，X-4） ----------
+
+# 方案 A（任务卡三选一，选择依据见 PR/执行记录）：发起经 ShellExecuteExW +
+# SEE_MASK_NOCLOSEPROCESS 取得提权实例进程句柄（ShellExecuteW 不返回句柄，无法
+# 区分"硬杀无痕迹"与"长扫描未完成"——方案 B 被否；CreateProcess 重写发起链破坏
+# T4-01 verbs="runas" 契约面——方案 C 被否）。宿主后台线程 WaitForSingleObject →
+# GetExitCodeProcess：退出码 0=成功（读 done 衔接 T4-01 完成态）；非 0/超时/
+# 退出码未知 → X-4 状态栏文案 + tmp 日志。既有报告零改动（提权实例本就只写
+# admin- 前缀文件，宿主等待链零触碰 reports\ 与 done 标记）。
+
+# 发起成功归一化哨兵（>32 落 T4-02 admin_rescan_status_text"已发起"分支——对外
+# 契约不变的关键；与 ERROR_CANCELLED=1223 及经典 SE_ERR_* 失败空间语义不重叠）
+ADMIN_RESCAN_LAUNCHED_CODE = 33
+
+# 等待超时上限自决 = 15 分钟（900000ms）。依据（记录于 PR/执行记录）：卡面建议值；
+# 普通模式全盘扫描实测分钟级（方案 X4 风险项"全盘 > 60s → 降级目录级"），15 分钟
+# 远超常规扫描预算并给慢盘/大目录留余量。超时不清杀提权实例（可能仍在运行，
+# 日志如实标注"可能仍在运行"），呈现按 X-4（R10：不咬定崩溃）。
+ADMIN_RESCAN_WAIT_TIMEOUT_MS = 15 * 60 * 1000
+
+# tmp 崩溃/超时现场日志文件名（U-2 合规位：DATA_DIR\tmp\；随 tmp_dir 注入可重定向）
+ADMIN_RESCAN_FAILURE_LOG_FILENAME = "admin_rescan_failure.log"
+
+# Win32 常量与加载器（use_last_error=True：ShellExecuteExW 失败码经
+# ctypes.get_last_error() 可靠取回，不受 ctypes 内部调用扰抹）
+_SEE_MASK_NOCLOSEPROCESS = 0x00000040
+WAIT_OBJECT_0 = 0x00000000
+WAIT_TIMEOUT = 0x00000102
+_SHELL32 = ctypes.WinDLL("shell32", use_last_error=True)
+_KERNEL32 = ctypes.WinDLL("kernel32", use_last_error=True)
+
+
+class _ShellExecuteInfoW(ctypes.Structure):
+    """SHELLEXECUTEINFOW（64 位布局：指针成员一律 c_void_p 保持自然对齐）。"""
+
+    _fields_ = [
+        ("cbSize", ctypes.c_ulong),
+        ("fMask", ctypes.c_ulong),
+        ("hwnd", ctypes.c_void_p),
+        ("lpVerb", ctypes.c_wchar_p),
+        ("lpFile", ctypes.c_wchar_p),
+        ("lpParameters", ctypes.c_wchar_p),
+        ("lpDirectory", ctypes.c_wchar_p),
+        ("nShow", ctypes.c_int),
+        ("hInstApp", ctypes.c_void_p),
+        ("lpIDList", ctypes.c_void_p),
+        ("lpClass", ctypes.c_wchar_p),
+        ("hkeyClass", ctypes.c_void_p),
+        ("dwHotKey", ctypes.c_ulong),
+        ("hIconOrMonitor", ctypes.c_void_p),
+        ("hProcess", ctypes.c_void_p),
+    ]
+
+
+class AdminRescanExit(NamedTuple):
+    """提权实例退出码等待结果（H3 方案 A；纯数据，测试直接构造断言判定）。
+
+    timed_out: 等待超时（R10：不咬定崩溃，与异常退出同一 X-4 文案，细节进日志）。
+    exit_code: 提权实例退出码（0=成功 / 非 0=异常；elevated.py 契约 0/4/5，硬杀=
+      任意非 0 值）；None = 超时或等待/退出码读取失败（退出码未知）。退出码域无
+      "取消"语义——发起阶段 1223 不进等待链（T4-02 已实现，不重做）。
+    done: 等待命中后读取的完成标记（elevated.read_done_marker 同 tmp 目录；超时/
+      等待失败不读）。宿主对 done 只读不写不删（"done 标记不写不删"约束）。
+    """
+
+    timed_out: bool
+    exit_code: "int | None"
+    done: "dict | None"
+
+
+def _wait_for_single_object(process_handle: object, timeout_ms: int) -> int:
+    """真实 WaitForSingleObject（默认实现；测试一律注入 wait_fn 替身，零真实等待）。"""
+    return int(
+        _KERNEL32.WaitForSingleObject(
+            ctypes.c_void_p(process_handle), ctypes.c_uint(timeout_ms)
+        )
+    )
+
+
+def _get_exit_code_process(process_handle: object) -> "int | None":
+    """真实 GetExitCodeProcess（默认实现）；失败返回 None（退出码未知）。"""
+    code = ctypes.c_ulong()
+    if _KERNEL32.GetExitCodeProcess(
+        ctypes.c_void_p(process_handle), ctypes.byref(code)
+    ):
+        return int(code.value)
+    return None
+
+
+def wait_admin_rescan_exit(
+    process_handle: object,
+    *,
+    timeout_ms: int = ADMIN_RESCAN_WAIT_TIMEOUT_MS,
+    wait_fn: "Callable[[object, int], int] | None" = None,
+    exit_code_fn: "Callable[[object], int | None] | None" = None,
+    read_done: "Callable[[], dict | None] | None" = None,
+) -> AdminRescanExit:
+    """等待提权实例退出并取退出码（H3 方案 A 核心；Win32 调用可注入替身）。
+
+    返回 AdminRescanExit：
+    - 等待超时（WAIT_TIMEOUT）→ timed_out=True（退出码未知，R10 不咬定崩溃）；
+    - 等待失败（WAIT_FAILED 等）/ GetExitCodeProcess 失败 → exit_code=None
+      （退出码未知 → 按 X-4 处置，R10 不虚报成功）；
+    - 等待命中 → exit_code=退出码，并读取 done 标记（read_done 可注入）：
+      exit 0 用于衔接 T4-01 完成态；非 0 用于把 done.error 并入 tmp 日志。
+    零重试：单次等待单次返回，无循环（AST 断言固化 tests/test_launcher_h3.py）。
+    """
+    wait = wait_fn if wait_fn is not None else _wait_for_single_object
+    get_exit_code = exit_code_fn if exit_code_fn is not None else _get_exit_code_process
+    wait_result = wait(process_handle, timeout_ms)
+    if wait_result != WAIT_OBJECT_0:
+        if wait_result == WAIT_TIMEOUT:  # 超时：提权实例可能仍在运行
+            return AdminRescanExit(timed_out=True, exit_code=None, done=None)
+        return AdminRescanExit(timed_out=False, exit_code=None, done=None)  # 等待失败
+    exit_code = get_exit_code(process_handle)
+    if exit_code is None:  # GetExitCodeProcess 失败：退出码未知 → X-4 处置
+        return AdminRescanExit(timed_out=False, exit_code=None, done=None)
+    done = read_done() if read_done is not None else None
+    return AdminRescanExit(timed_out=False, exit_code=exit_code, done=done)
+
+
+def _admin_rescan_failed(outcome: AdminRescanExit) -> bool:
+    """X-4 判定（纯函数）：异常退出 = 超时 / 退出码未知 / 非 0 退出码 /
+    exit 0 但 done 缺失或未完成（契约违背，R10 不虚报成功——防御性按失败呈现，
+    细节进日志）。
+
+    退出码域无"取消"语义：发起阶段 1223（UAC 取消）不进等待链（T4-02 已实现，
+    不重做）；提权实例退出码 0=成功 / 4=拒绝 / 5=流水线失败（elevated.py 契约），
+    硬杀=任意非 0 值——非 0 即异常。
+    """
+    if outcome.timed_out or outcome.exit_code is None:
+        return True
+    if outcome.exit_code != 0:
+        return True
+    return not (
+        isinstance(outcome.done, dict) and outcome.done.get("status") == "completed"
+    )
+
+
+def admin_rescan_finish_text(outcome: AdminRescanExit) -> str:
+    """提权实例退出码 → 状态栏文案（纯函数，无 Tk/无 I/O；X-4/H3）。
+
+    异常退出（超时/退出码未知/非 0/done 异常）→ X-4 定稿原文"管理员重扫失败，
+    已保留上次结果"（R10：超时与崩溃不作区分性措辞，细节进 tmp 日志）；
+    成功（exit 0 且 done=completed）→ H3 完成文案，呈现 done.report_path
+    （读 done 标记衔接 T4-01 完成态）。
+    """
+    if _admin_rescan_failed(outcome):
+        return H3_TEXTS["status_admin_rescan_failed"]
+    report_path = ""
+    if isinstance(outcome.done, dict):
+        report_path = str(outcome.done.get("report_path") or "")
+    return H3_TEXTS["status_admin_rescan_completed"].format(path=report_path)
+
+
+def _admin_rescan_log_line(
+    outcome: AdminRescanExit,
+    *,
+    request_id: str,
+    timeout_ms: int,
+    now: "datetime | None" = None,
+) -> str:
+    """崩溃/超时现场日志行（纯函数不触盘）：时间戳 + request_id + 退出码 +
+    等待摘要 + done.error（若有）。R10 零假设：仅记录事实，不作成因断言。"""
+    moment = now if now is not None else datetime.now(timezone.utc)
+    if moment.tzinfo is None:  # 防御：naive datetime 视为 UTC（elevated 同款）
+        moment = moment.replace(tzinfo=timezone.utc)
+    stamp = moment.astimezone(timezone.utc).isoformat()
+    if outcome.timed_out:
+        event = "timeout"
+        code_repr = "unknown"
+        summary = f"等待超时（上限 {timeout_ms}ms），提权实例可能仍在运行"
+    elif outcome.exit_code is None:
+        event = "wait_failed"
+        code_repr = "unknown"
+        summary = "等待失败或退出码读取失败（WAIT_FAILED/GetExitCodeProcess）"
+    elif outcome.exit_code == 0:
+        event = "exit0_done_invalid"
+        code_repr = "0"
+        summary = "退出码为 0 但完成标记缺失或未完成（契约违背，按 X-4 呈现）"
+    else:
+        event = "abnormal_exit"
+        code_repr = str(outcome.exit_code)
+        summary = "提权实例异常退出（退出码非 0）"
+    done_error = ""
+    if isinstance(outcome.done, dict):
+        done_error = str(outcome.done.get("error") or "")
+    return (
+        f"{stamp} | request_id={request_id} | event={event} | exit_code={code_repr}"
+        f" | {summary} | done.error={done_error if done_error else '无'}"
+    )
+
+
+def _default_host_tmp_dir() -> str:
+    """运行时取包级 TMP_DIR（属性访问：测试 monkeypatch disk_audit.TMP_DIR 生效，
+    elevated._default_tmp_dir 同款先例）。"""
+    import disk_audit
+
+    return disk_audit.TMP_DIR
+
+
+def _admin_rescan_log_writer(tmp_dir: str | None) -> "Callable[[str], None]":
+    """默认日志写入口：追加写 tmp 目录 admin_rescan_failure.log（U-2 合规位）。
+
+    tmp_dir=None 时运行时取 disk_audit.TMP_DIR（monkeypatch 位见
+    _default_host_tmp_dir）；追加模式保留多次现场（时间戳逐行可追溯）。
+    """
+    directory = tmp_dir if tmp_dir is not None else _default_host_tmp_dir()
+
+    def append(line: str) -> None:
+        os.makedirs(directory, exist_ok=True)
+        with open(
+            os.path.join(directory, ADMIN_RESCAN_FAILURE_LOG_FILENAME),
+            "a",
+            encoding="utf-8",
+        ) as handle:
+            handle.write(line + "\n")
+
+    return append
+
+
+def _write_admin_rescan_failure_log(
+    outcome: AdminRescanExit,
+    *,
+    request_id: str,
+    tmp_dir: str | None,
+    timeout_ms: int = ADMIN_RESCAN_WAIT_TIMEOUT_MS,
+    now: "datetime | None" = None,
+    log_writer: "Callable[[str], None] | None" = None,
+) -> None:
+    """异常退出现场写 tmp 日志（U-2 合规位；写入口 log_writer 可注入便于测试）。
+
+    内容：时间戳 + request_id + 退出码（超时/未知如实标注）+ 等待摘要 +
+    done.error（提权实例失败细节，T4-01 done 标记 error 字段，若有）。写失败
+    不阻断 X-4 呈现（日志为排查辅助，X-1 风格降级，异常不外泄）。
+    """
+    line = _admin_rescan_log_line(
+        outcome, request_id=request_id, timeout_ms=timeout_ms, now=now
+    )
+    writer = log_writer if log_writer is not None else _admin_rescan_log_writer(tmp_dir)
+    try:
+        writer(line)
+    except OSError:
+        pass  # 日志为排查辅助：写失败不阻塞呈现，不掩盖 X-4 结论
+
+
+def _watch_admin_rescan_async(
+    process_handle: object,
+    *,
+    request_id: str,
+    tmp_dir: str | None,
+    on_finished: "Callable[[AdminRescanExit], None]",
+    after: "Callable[[Callable[[], None]], None]",
+    now: "datetime | None" = None,
+) -> None:
+    """后台 daemon 线程等待提权实例退出码（H3 方案 A；G2 run_audit_async 线程先例）。
+
+    等待/退出码/done 读取经 wait_admin_rescan_exit（Win32 默认实现可经模块属性
+    替换注入替身，测试零真实等待）；异常退出（_admin_rescan_failed）→ 先写 tmp
+    日志（U-2 位）再经 after 派发主线程呈现（X-4/完成文案，admin_rescan_finish_text
+    纯函数判定）。零重试：单次等待单次派发，无循环/无定时再触发/无第二次发起
+    （AST 断言固化 tests/test_launcher_h3.py）。daemon：窗口销毁不悬挂进程。
+    """
+
+    def watch() -> None:
+        outcome = wait_admin_rescan_exit(
+            process_handle,
+            read_done=lambda: elevated.read_done_marker(tmp_dir=tmp_dir),
+        )
+        if _admin_rescan_failed(outcome):
+            _write_admin_rescan_failure_log(
+                outcome, request_id=request_id, tmp_dir=tmp_dir, now=now
+            )
+        try:
+            after(lambda: on_finished(outcome))
+        except Exception:
+            pass  # 派发失败（窗口已销毁）：等待线程随之结束，日志已留档不掩盖事实
+
+    threading.Thread(target=watch, name="diskaudit-admin-rescan-watch", daemon=True).start()
 
 
 def _notify_unsupported(build: int) -> None:
@@ -854,22 +1204,45 @@ def build_scope_ui(
         abort_button.config(state="disabled")
         status_var.set(G2_TEXTS["status_aborting"])
 
+    def _dispatch_admin_finish(callback: "Callable[[], None]") -> None:
+        """等待线程 → 主线程派发（G2/run_audit_async 先例：UI 变更只在主线程）。"""
+        root.after(0, callback)
+
+    def _on_admin_rescan_finished(outcome: "AdminRescanExit") -> None:
+        """提权实例退出码呈现（T4-03/H3；主线程执行）：判定收敛纯函数后写状态栏。
+
+        异常退出（超时/非 0/退出码未知/done 异常）→ X-4 文案"管理员重扫失败，
+        已保留上次结果"；成功 → H3 完成文案（done 衔接 T4-01 完成态）。
+        零弹窗（E-5 风格）、零重试（等待链单次派发，AST 断言固化）。
+        """
+        status_var.set(admin_rescan_finish_text(outcome))
+
     def _on_admin_rescan() -> None:
         """以管理员身份重扫（E-4/T4-01；U-3：全程序唯一提权发起路径 = 本点击回调）。
 
         单击 → 写 tmp\\spec.json（范围+时间戳+唯一请求 ID，U-2 合规位）→
-        ShellExecuteW runas 重启自身（单点 _shell_execute_runas，AST 断言调用点
-        唯一、无重试/轮询/自动再触发——防重生设计，见 disk_audit/elevated.py）。
-        返回码呈现（T4-02/E-5）：>32 已发起 → 状态栏 H1 文案；ERROR_CANCELLED=
-        UAC 取消 → 状态栏"已取消，结果未变更"（保留原报告、零弹窗、零重试）；
-        其余=发起失败 → 独立状态栏文案（不冒充取消；X-4 完整失败语义归 T4-03）。
-        判定收敛于纯函数 admin_rescan_status_text，三态一律走非阻塞状态栏
-        （G2 先例），不弹任何框；单次发起后即返回，无自动重试路径。
+        ShellExecuteExW runas 重启自身（单点 _shell_execute_runas，方案 A 取句柄，
+        AST 断言调用点唯一、无重试/轮询/自动再触发——防重生设计，见
+        disk_audit/elevated.py 与本模块 T4-03 区块）。
+        发起码即时呈现（T4-02/E-5 判定精确收敛于纯函数 admin_rescan_status_text，
+        三态一律走非阻塞状态栏，不弹任何框；单次发起后即返回，无自动重试路径）：
+        >32（含哨兵 33）已发起 → H1 文案；ERROR_CANCELLED=UAC 取消 → 状态栏
+        "已取消，结果未变更"（保留原报告）；其余=发起失败 → 独立状态栏文案。
+        T4-03（H3）等待链：发起成功（哨兵 33 + 句柄有效）→ 后台 daemon 线程等待
+        提权实例退出码（UI 零阻塞）；异常退出 → X-4 文案"管理员重扫失败，已保留
+        上次结果" + tmp 日志；成功 → 完成文案。取消与发起失败不进等待链（T4-02
+        语义不重做）。呈现回调 _on_admin_rescan_finished 经 _dispatch_admin_finish
+        派发主线程（run_audit_async 先例），本回调内零循环/零 after/零线程引用
+        （AST 断言固化 tests/test_launcher_h2.py 与 tests/test_launcher_h3.py）。
         """
         path = _resolve_selected_scope()
         if path is None:
             return
-        result_code = request_admin_rescan(path)
+        result_code = request_admin_rescan(
+            path,
+            wait_completion=_on_admin_rescan_finished,
+            after=_dispatch_admin_finish,
+        )
         # T4-02/E-5：取消(1223)与发起失败（其余 ≤32 值）走状态栏文案，判定精确
         # 收敛于纯函数（仅 ERROR_CANCELLED 是取消，其他失败不冒充）；零弹窗、
         # 零重试——恰一次发起后即返回，无循环/after 调度/再触发（AST 断言固化）。

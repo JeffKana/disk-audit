@@ -642,16 +642,27 @@ def test_elevated_module_zero_selfstart_and_zero_network():
 
 
 def test_shell_execute_w_exists_only_in_launcher_single_point():
-    """全仓库（产品代码）ShellExecuteW 唯一出现点 = launcher._shell_execute_runas。"""
+    """全仓库（产品代码）ShellExecuteW/ShellExecuteExW 唯一出现点 =
+    launcher._shell_execute_runas。
+
+    【T4-03（H3）最小修改】禁令由 ShellExecuteW 扩为 ShellExecuteW/ShellExecuteExW
+    双禁：依据 H3 任务卡"宿主侧等待提权实例退出码"，等待通道方案 A 将发起升级为
+    ShellExecuteExW + SEE_MASK_NOCLOSEPROCESS（成功时取得提权实例进程句柄供等待），
+    对外返回码归一化为 ShellExecuteW 风格（T4-02 admin_rescan_status_text 及其全部
+    既有测试零改动）。单点语义不变——runas 发起仍全仓库唯一出口，提权路径零自启动
+    语义不变；本文件除本用例外其余用例零改动。
+    """
     tree = _launcher_tree()
     shell_calls = [
         n for n in ast.walk(tree)
-        if isinstance(n, ast.Call) and _call_name(n) == "ShellExecuteW"
+        if isinstance(n, ast.Call)
+        and _call_name(n) in ("ShellExecuteW", "ShellExecuteExW")  # H3：双禁（依据 T4-03 卡面）
     ]
     assert len(shell_calls) == 1
     single = _function(tree, "_shell_execute_runas")
     assert single is not None
-    assert _calls_of(single).count("ShellExecuteW") == 1
+    assert _calls_of(single).count("ShellExecuteExW") == 1  # H3 方案 A：发起实现升级 ExW
+    assert _calls_of(single).count("ShellExecuteW") == 0
 
 
 def test_runas_call_site_unique_and_only_in_click_callback_chain():
