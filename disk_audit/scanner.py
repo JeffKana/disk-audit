@@ -12,6 +12,13 @@ X-1：权限不足/超长/占用/reparse point 一律跳过+计数+继续，不�
 C8/E-1：可选线程安全进度回调 progress_cb（已扫描条目数/当前路径/已用时，
 双阈值节流 ≥500ms 或 2 万条目；回调异常按 X-1 计 other 不中断扫描；
 None 默认零开销路径；UI 侧自行调度主线程——待办 C8，任务卡 T3-01）。
+T3-08（任务卡 T4-08）：枚举段（迭代器 next() 段，_expand_dir/_scan_tree/
+_enumerate_units 的 for entry in iterator 期间）OSError 一并折入 X-1
+（跳过+计数+继续，已枚举条目保留、该目录未枚举部分放弃、不触发 X-2）；
+X-2 统一"不完整"出口保留给真实中止（abort_check 命中）与非 OSError 致命
+异常——VM AppX 服务窗口实时增删单元目录致首轮整体不完整的实证修复
+（T2-09 首轮 4/4 incomplete、08 报告 §3 裁决 2）。计数复用 skips.other
+（不动报告 JSON 键集，见 SkipStats.other 注释）。
 """
 from __future__ import annotations
 
@@ -51,6 +58,9 @@ _PROGRESS_CHECK_STEP = 1024
 
 # 模块级间接层：供测试 monkeypatch 替换，不污染全局 os
 _scandir = os.scandir
+# 判定单元枚举独立间接层：与 _scandir 分离——各自供测试注入互不干扰，
+# _enumerate_units 的调用序不计入 _scandir 夹具的调用计数（T4-08）
+_units_scandir = os.scandir
 
 if os.name == "nt":
     _kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
@@ -208,7 +218,11 @@ class SkipStats:
     occupied: int = 0  # 文件被占用 / 占用空间查询失败
     too_long: int = 0  # 路径超长（\\?\ 前缀后仍超限）
     reparse: int = 0  # reparse point（Junction/符号链接）
-    other: int = 0  # 其余 OSError（如条目在扫描间隙消失）
+    # 其余 OSError：条目在扫描间隙消失（stat 段）、枚举段目录抖动（T3-08：
+    # 目录在 for entry in iterator 期间被外部删除/系统抖动致迭代句柄失效，
+    # VM AppX 服务窗口实证场景）与回调异常（C8）等。不复用既有四类语义、
+    # 不新增对外子类（保持 scan 产物 JSON skipped 键集稳定，T4-08 决策）。
+    other: int = 0
 
     def merge(self, other_stats: "SkipStats") -> None:
         self.permission += other_stats.permission
@@ -488,35 +502,23 @@ def _account_file(
         unit.add_file(name, st.st_size, allocated, st.st_mtime)
 
 
-def _enumerate_units(root_abs: str) -> dict[str, UnitStats]:
+def _enumerate_units(root_abs: str, stats: ScanStats) -> dict[str, UnitStats]:
     """判定单元划分（9.2）：扫描根的每个顶层子目录为一个单元；顶层存在
     Programs/Packages 容器（大小写不敏感）时，其每个子目录亦为单元（对齐原型
     drill_programs/drill_packages 下钻一层口径）。reparse point 不作单元（X-1）。
+    枚举段（迭代器 next() 段）OSError 按 X-1 折入（T3-08）——此处正是 T2-09
+    实证的 Packages 容器枚举路径，AppX 服务窗口删容器内单元目录时迭代句柄
+    失效抛 OSError；折入后已发现单元保留、未枚举部分放弃，扫描继续不进 X-2。
     """
     units: dict[str, UnitStats] = {}
     containers: list[str] = []
     try:
-        iterator = os.scandir(root_abs)
+        iterator = _units_scandir(root_abs)
     except OSError:
         return units
     with iterator:
-        for entry in iterator:
-            try:
-                st = entry.stat(follow_symlinks=False)
-            except OSError:
-                continue
-            if _reparse_or_symlink(st) or not _stat.S_ISDIR(st.st_mode):
-                continue
-            units[entry.path] = UnitStats(path=entry.path)
-            if entry.name.lower() in _CONTAINER_NAMES:
-                containers.append(entry.path)
-    for container in containers:
         try:
-            sub_iterator = os.scandir(container)
-        except OSError:
-            continue
-        with sub_iterator:
-            for entry in sub_iterator:
+            for entry in iterator:
                 try:
                     st = entry.stat(follow_symlinks=False)
                 except OSError:
@@ -524,6 +526,27 @@ def _enumerate_units(root_abs: str) -> dict[str, UnitStats]:
                 if _reparse_or_symlink(st) or not _stat.S_ISDIR(st.st_mode):
                     continue
                 units[entry.path] = UnitStats(path=entry.path)
+                if entry.name.lower() in _CONTAINER_NAMES:
+                    containers.append(entry.path)
+        except OSError as exc:  # 枚举段（next() 段）抖动：X-1 折入（T3-08）
+            _count_skip(stats, exc)
+    for container in containers:
+        try:
+            sub_iterator = _units_scandir(container)
+        except OSError:
+            continue
+        with sub_iterator:
+            try:
+                for entry in sub_iterator:
+                    try:
+                        st = entry.stat(follow_symlinks=False)
+                    except OSError:
+                        continue
+                    if _reparse_or_symlink(st) or not _stat.S_ISDIR(st.st_mode):
+                        continue
+                    units[entry.path] = UnitStats(path=entry.path)
+            except OSError as exc:  # 枚举段（next() 段）抖动：X-1 折入（T3-08）
+                _count_skip(stats, exc)
     return units
 
 
@@ -602,13 +625,20 @@ def _expand_dir(
         return
     with iterator:
         seen = 0  # 目录内探测步长计数（C8：仅控制探测频率，非计量口径）
-        for entry in iterator:
-            _handle_entry(entry, stats, subdirs, units, sink, unit_path)
-            if progress is not None:
-                seen += 1
-                if seen >= _PROGRESS_CHECK_STEP:
-                    seen = 0
-                    progress.tick(stats, entry.path)
+        try:
+            for entry in iterator:
+                _handle_entry(entry, stats, subdirs, units, sink, unit_path)
+                if progress is not None:
+                    seen += 1
+                    if seen >= _PROGRESS_CHECK_STEP:
+                        seen = 0
+                        progress.tick(stats, entry.path)
+        except OSError as exc:
+            # 枚举段（next() 段）OSError 折入 X-1（T3-08）：目录在枚举期间被
+            # 外部删除/系统抖动致迭代句柄失效（VM AppX 服务窗口实证场景）——
+            # 已枚举条目保留，该目录未枚举部分放弃，计数后继续扫描，不进 X-2。
+            # 循环体内 stat/计量段已各自捕获，此处实际捕获迭代器 next() 段。
+            _count_skip(stats, exc)
 
 
 def _build_frontier(
@@ -680,13 +710,19 @@ def _scan_tree(
         subdirs: list[tuple[str, str | None]] = []
         seen = 0  # 目录内探测步长计数（C8：仅控制探测频率，非计量口径）
         with iterator:
-            for entry in iterator:
-                _handle_entry(entry, stats, subdirs, units, local_units, unit_path)
-                if progress is not None:
-                    seen += 1
-                    if seen >= _PROGRESS_CHECK_STEP:
-                        seen = 0
-                        progress.tick(stats, entry.path)
+            try:
+                for entry in iterator:
+                    _handle_entry(entry, stats, subdirs, units, local_units, unit_path)
+                    if progress is not None:
+                        seen += 1
+                        if seen >= _PROGRESS_CHECK_STEP:
+                            seen = 0
+                            progress.tick(stats, entry.path)
+            except OSError as exc:
+                # 枚举段（next() 段）OSError 折入 X-1（T3-08，同 _expand_dir）：
+                # 已枚举条目与已收集子目录保留，该目录未枚举部分放弃，
+                # 计数后继续扫描，不进 X-2。
+                _count_skip(stats, exc)
         stack.extend(subdirs)
     return stats, local_units
 
@@ -720,8 +756,8 @@ def scan_path(
         raise ValueError(f"扫描根路径不存在或不是目录：{root_abs}")
 
     start = time.perf_counter()
-    units = _enumerate_units(root_abs)
-    stats = ScanStats()
+    stats = ScanStats()  # 先于单元枚举创建：枚举段折入计数也汇入本 stats（T3-08）
+    units = _enumerate_units(root_abs, stats)
     incomplete = False
     frontier: list[tuple[str, str | None]] = []
     depth = 0
