@@ -16,7 +16,9 @@ from ..evidence.evidence import EvidenceBundle, collect_all
 from .judge import UnitInput, Verdict, judge_unit
 from .knowledge import KnowledgeBase, load_knowledge
 
-REPORT_SCHEMA_VERSION = "1.0"
+# 版本契约（Q7/F1 定稿语义）：T4-04 新增可选 admin_mode（S-3/H4）为非破坏可选
+# 新增 → minor+1（1.0 → 1.1）；1.0 旧记录无该键仍合法（旧记录可比，I3 预留）。
+REPORT_SCHEMA_VERSION = "1.1"
 
 # 5.2 可再生两档的类别归类（知识库 12 类 → 两档；其余类别不计入两档小计）
 _REGENERABLE_CATEGORIES = ("更新缓存", "缓存/转储")

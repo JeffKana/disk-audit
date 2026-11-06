@@ -788,3 +788,107 @@ def test_full_chain_stub_runas_to_admin_report_on_disk(tmp_path):
     assert done["status"] == "completed" and done["mode"] == "admin"
     assert done["report_path"] == str(files[0])
     assert not _spec_path(tmp_path).exists()
+
+
+# ---------- T4-04（待办 H4）：admin_mode 标志透传与独立记录可区分 ----------
+
+
+class _CapturingDeps(_StubDeps):
+    """在替身 render 处捕获装配完成后的报告 dict（验收③/④断言用）。"""
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.rendered: list[dict] = []
+
+    def render(self, report):
+        self.rendered.append(report)
+        return super().render(report)
+
+
+def test_mark_admin_report_sets_flag_in_place():
+    """标志注入纯逻辑：原 dict 置 admin_mode=True 并返回同一对象（不复制不重建）。"""
+    report = {"schema_version": "1.1", "candidates": []}
+    out = elevated.mark_admin_report(report)
+    assert out is report
+    assert report[elevated.ADMIN_MODE_FIELD] is True
+
+
+def test_run_elevated_rescan_marks_report_admin_mode(tmp_path):
+    """验收③透传链：提权实例装配的报告 dict 携带 admin_mode=True（duck 型替身 deps）。"""
+    elevated.write_rescan_request(r"C:\scope", tmp_dir=str(tmp_path), now=_NOW)
+    deps = _CapturingDeps()
+    rc = elevated.run_elevated_rescan(
+        audit=lambda scope, deps=None: launcher.execute_audit(scope, deps=deps),
+        deps=deps, tmp_dir=str(tmp_path), now=_NOW,
+    )
+    assert rc == elevated.EXIT_OK
+    assert len(deps.rendered) == 1
+    assert deps.rendered[0].get(elevated.ADMIN_MODE_FIELD) is True
+
+
+def test_run_elevated_rescan_marks_admin_with_frozen_dataclass_deps(tmp_path):
+    """透传对 frozen dataclass（launcher.AuditDeps，真实装配形态）同样生效
+    （dataclasses.replace 重建路径）。标志为装配后原地置位（mark_admin_report
+    设计口径）：原 judge 产出的 dict 与 render 收到的是同一对象，仅多出标志键。"""
+    elevated.write_rescan_request(r"C:\scope", tmp_dir=str(tmp_path), now=_NOW)
+    rendered: list[dict] = []
+    scan_result = {"root": r"C:\s", "units": [], "allocated_bytes": 0,
+                   "logical_bytes": 0, "skipped": {}}
+    judged: list[dict] = []
+
+    def judge(scan):
+        report = {"schema_version": "1.1", "scan_root": scan["root"], "candidates": []}
+        judged.append(report)
+        return report
+
+    def _capture_render(report):
+        rendered.append(report)
+        return "<html>admin</html>"
+
+    deps = launcher.AuditDeps(
+        scan=lambda path, progress_cb=None, abort_check=None: dict(scan_result, root=path),
+        judge=judge,
+        render=_capture_render,
+        save=lambda html: r"C:\reports\admin-report-x.html",
+        prune=lambda: [],
+        open=lambda report_path: None,
+    )
+    rc = elevated.run_elevated_rescan(
+        audit=lambda scope, deps=None: launcher.execute_audit(scope, deps=deps),
+        deps=deps, tmp_dir=str(tmp_path), now=_NOW,
+    )
+    assert rc == elevated.EXIT_OK
+    assert len(judged) == 1 and len(rendered) == 1
+    assert rendered[0] is judged[0]  # 装配产物原样流经流水线
+    assert rendered[0].get(elevated.ADMIN_MODE_FIELD) is True  # 装配后置标志
+    # 原 deps 对象未被破坏（frozen：replace 重建新对象，judge 引用不变）
+    assert callable(deps.judge)
+
+
+def test_admin_record_triple_distinguishable(tmp_path):
+    """验收③：管理员/普通体检记录三重可判定——报告 dict 键（admin_mode）、落盘
+    文件名前缀（admin-）、done 标记（mode=admin）三者一致；普通报告不含该键。
+    （记录存储/对比管理归 I1/M3，本卡只保证输出结构可区分。）"""
+    reports_dir = tmp_path / "reports"
+    from disk_audit import reports  # 局部导入：既有测试文件 import 区不动（只追加原则）
+
+    normal_path = reports.save_report(
+        "<html>normal</html>", reports_dir=str(reports_dir), now=_NOW
+    )
+    admin_path = elevated.save_admin_report(
+        "<html>admin</html>", reports_dir=str(reports_dir), now=_NOW
+    )
+    assert os.path.basename(admin_path).startswith(elevated.ADMIN_REPORT_PREFIX)
+    assert os.path.basename(normal_path).startswith("report-")
+    assert elevated.ADMIN_REPORT_PREFIX not in os.path.basename(normal_path)
+    elevated.write_done_marker(
+        request_id=_REQUEST_ID, status="completed",
+        report_path=admin_path, tmp_dir=str(tmp_path), now=_NOW,
+    )
+    done = elevated.read_done_marker(tmp_dir=str(tmp_path))
+    assert done is not None and done["mode"] == "admin"
+
+
+def test_h4_admin_badge_text_exists():
+    """S-3 徽标文案集中 texts（H4 文末区块）。"""
+    assert texts.ADMIN_MODE_BADGE == "管理员模式"

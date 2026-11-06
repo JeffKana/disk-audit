@@ -63,12 +63,19 @@ E-5/X-4（ERROR_CANCELLED 判定与失败呈现归 T4-02/T4-03，本卡仅返回
    需经 powershell 子进程采集的 Appx/进程/服务三源不采集，按方案口径"该证据源不可用"
    降级并以 reason/evidence_note 披露。
 
+7. 管理员模式报告字段（T4-04 承接）：run_elevated_rescan 对注入 deps 的 judge 包装
+   （_with_admin_judge → mark_admin_report），报告装配完成后置 ``admin_mode=true``
+   （report-v1 1.1 可选顶层 boolean，S-3/H4；普通流水线不产该键）。报告页眉
+   "管理员模式"徽标由 render 按该字段渲染（texts.ADMIN_MODE_BADGE，.adminbadge
+   配色类）；独立记录三重区分 = 本字段 + admin- 文件名前缀 + done 标记 mode=admin。
+
 模块边界：本模块零 UI、零网络、零子进程、零自启动；spec 写入与命令构造为宿主侧
 可注入纯逻辑，编排（run_elevated_rescan）经 audit/deps 双注入复用 launcher.execute_audit
 流水线（不 import launcher，依赖倒置防循环）。
 """
 from __future__ import annotations
 
+import dataclasses
 import json
 import os
 import sys
@@ -95,8 +102,13 @@ DONE_FILENAME = "admin_rescan_done.json"
 SPEC_SCHEMA_VERSION = "elevated-rescan-spec-v1"
 DONE_SCHEMA_VERSION = "elevated-rescan-done-v1"
 
-# 管理员报告命名标记（S-3 文件级可区分；完整 schema 字段/页眉徽标归 T4-04）
+# 管理员报告命名标记（S-3 文件级可区分；schema 字段/页眉徽标由 T4-04 承接）
 ADMIN_REPORT_PREFIX = "admin-"
+
+# 管理员模式报告字段名（report-v1 1.1 可选顶层 boolean，S-3/H4/T4-04；schema
+# docs/schemas/report-v1.schema.json properties.admin_mode——仅提权实例产出报告
+# 携带 true，普通报告不含本键，消费方缺省按非管理员处理）
+ADMIN_MODE_FIELD = "admin_mode"
 
 # 请求时效窗（防陈旧请求自决）：600s 覆盖 UAC 等待与慢环境；
 # 未来时间戳容差 60s（时钟轻微偏差不作废请求）。
@@ -381,6 +393,46 @@ def _elevated_print(message: str) -> None:
     print(message, flush=True)
 
 
+def mark_admin_report(report: dict) -> dict:
+    """装配完成的报告 dict → 原地置 ``admin_mode=True`` 并返回（S-3/H4，T4-04）。
+
+    仅提权实例装配链（``run_elevated_rescan`` 对注入 deps 的 judge 包装）调用；
+    普通流水线（launcher.default_deps → judge_scan_result）不经本函数，报告不含
+    该键——"输出结构可区分 + 不写普通记录键"。消费方以
+    ``report.get("admin_mode") is True`` 判定（1.0 旧记录无键按非管理员处理，
+    I3 联动预留）。独立记录三重区分的 dict 侧：另两项为文件名 admin- 前缀与
+    done 标记 mode=admin；记录存储/对比管理归 I1/M3。
+    """
+    report[ADMIN_MODE_FIELD] = True
+    return report
+
+
+def _with_admin_judge(deps: object) -> object:
+    """把注入 deps 的 judge 包装为"装配完成后置 admin_mode 标志"的版本（H4 透传）。
+
+    兼容两种装配形态：frozen dataclass（launcher.AuditDeps 真实装配——
+    dataclasses.replace 重建，不 import launcher，依赖倒置延续）与 duck 型替身
+    （属性可写时原对象换 judge）。包装只在原 judge 装配完成后追加标志，不改变
+    判定行为；judge 抛出异常时报告未产出、无标志可置（X-4 失败路径不变）。
+    """
+    judge = getattr(deps, "judge", None)
+    if not callable(judge):
+        return deps
+
+    def admin_judge(scan: dict) -> dict:
+        return mark_admin_report(judge(scan))
+
+    try:
+        return dataclasses.replace(deps, judge=admin_judge)  # type: ignore[arg-type]
+    except TypeError:
+        pass
+    try:
+        deps.judge = admin_judge  # type: ignore[attr-defined]
+    except AttributeError:
+        pass
+    return deps
+
+
 def run_elevated_rescan(
     *,
     audit: AuditPipeline,
@@ -393,7 +445,9 @@ def run_elevated_rescan(
     流程：一次性消费 spec（失败 → EXIT_BAD_REQUEST，不写 done）→ audit 流水线
     （launcher.execute_audit 同款：scan→judge→render→save=admin- 前缀→prune/open
     no-op）→ done 标记 → 退出码三态。audit/deps 双注入：编排不 import launcher
-    （依赖倒置防循环），测试以替身全链覆盖。
+    （依赖倒置防循环），测试以替身全链覆盖。注入 deps 的 judge 经
+    _with_admin_judge 包装——提权实例装配的报告携带 admin_mode=true（S-3/H4，
+    T4-04；普通流水线不经过此包装，报告不含该键）。
     """
     try:
         request = read_rescan_request(tmp_dir=tmp_dir, now=now)
@@ -402,6 +456,7 @@ def run_elevated_rescan(
         return EXIT_BAD_REQUEST
     scope = str(request["scope"])
     _elevated_print(H1_TEXTS["elevated_started"].format(scope=scope))
+    deps = _with_admin_judge(deps)  # H4/S-3：管理员模式标志注入（装配后置位）
     try:
         report_path = audit(scope, deps=deps)
     except Exception as exc:  # X-4 接口位：失败细节进 done 标记（T4-03 消费），不重试

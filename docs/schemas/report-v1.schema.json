@@ -14,8 +14,8 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "1.0",
-      "description": "Q7 版本语义：schema_version = major.minor。结构破坏性变更（删除/改名/改语义字段、收紧枚举致旧记录非法）→ major+1（如 1.0→2.0），消费方对不匹配版本提示'旧记录不可比'（联动 I3），不崩溃；可选字段新增等非破坏变更 → minor+1；禁止原地改义。定稿 1.0 = 候选七字段（E-2）+ totals 五字段 + 可选 incomplete（X-2）。"
+      "const": "1.1",
+      "description": "Q7 版本语义：schema_version = major.minor。结构破坏性变更（删除/改名/改语义字段、收紧枚举致旧记录非法）→ major+1（如 1.0→2.0），消费方对不匹配版本提示'旧记录不可比'（联动 I3），不崩溃；可选字段新增等非破坏变更 → minor+1；禁止原地改义。定稿 1.0 = 候选七字段（E-2）+ totals 五字段 + 可选 incomplete（X-2）。定稿 1.1 = 1.0 + 可选 admin_mode（S-3/H4，任务卡 T4-04：可选字段新增非破坏变更 → minor+1；1.0 旧记录无该键仍合法，旧记录可比）。"
     },
     "generated_at": {
       "type": "string",
@@ -72,6 +72,10 @@
     "incomplete": {
       "type": "boolean",
       "description": "X-2/C7：仅中止/异常产生的部分报告携带 true——此时 totals 与 candidates 为已采集部分，totals 判无效，不得作为完整体检结论使用；正常报告不含本键。"
+    },
+    "admin_mode": {
+      "type": "boolean",
+      "description": "S-3/H4（任务卡 T4-04）：管理员模式报告标注——仅提权实例（H1 run_elevated_rescan 装配链）产出的报告携带 true；普通报告不含本键（口径同 incomplete：非必需、消费方缺省按非管理员处理，1.0 旧记录自然兼容——I3 联动预留）。独立体检记录的结构性区分之一，另两项为文件名 admin- 前缀与 done 标记 mode=admin；记录存储/对比管理归 I1/M3。"
     }
   },
   "$defs": {

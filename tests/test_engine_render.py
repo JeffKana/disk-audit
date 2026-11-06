@@ -505,3 +505,60 @@ def test_big_report_5000_rows_within_5mb_budget():
     out = render.render_report(report)
     size = len(out.encode("utf-8"))
     assert size <= 5_000_000, f"5000 行渲染产物 {size} 字节，超出 5MB 预算"
+
+
+# ---------- T4-04（待办 H4）：管理员模式页眉徽标（S-3 显著标注） ----------
+
+
+def _admin_fixture_report() -> dict:
+    data = copy.deepcopy(EXAMPLE)
+    data["admin_mode"] = True
+    return data
+
+
+def test_admin_mode_badge_renders_in_header():
+    """验收②：管理员报告页眉含"管理员模式"徽标（DOM 断言：span.adminbadge）。"""
+    out = render.render_report(_admin_fixture_report())
+    assert texts.ADMIN_MODE_BADGE in out
+    assert f'<span class="adminbadge">{texts.ADMIN_MODE_BADGE}</span>' in out
+    dom = _dom(out)
+    # 徽标位于页眉区（S-3"报告显著位置"）：header 起始区段内出现徽标 span
+    header_start = out.index("<header")
+    header_end = out.index("</header>")
+    assert 'class="adminbadge"' in out[header_start:header_end]
+
+
+def test_normal_report_header_has_no_admin_badge():
+    """回归④：普通报告页眉零变化——徽标文案与配色类均不出现。"""
+    out = render.render_report(EXAMPLE)
+    assert texts.ADMIN_MODE_BADGE not in out
+    assert "adminbadge" not in out
+
+
+def test_admin_mode_requires_exact_true():
+    """与 incomplete 同款宽松口径：仅 admin_mode is True 渲染徽标，非布尔真值不触发。"""
+    data = copy.deepcopy(EXAMPLE)
+    data["admin_mode"] = "yes"
+    out = render.render_report(data)
+    assert texts.ADMIN_MODE_BADGE not in out
+
+
+def test_admin_and_normal_reports_structurally_distinguishable():
+    """验收③：管理员/普通报告输出结构双重可区分——dict 键（admin_mode 有/无）
+    与渲染产物（徽标有/无）一致可判定（独立体检记录 M3 预备）。"""
+    admin_report = _admin_fixture_report()
+    admin_out = render.render_report(admin_report)
+    normal_out = render.render_report(EXAMPLE)
+    assert admin_report.get("admin_mode") is True
+    assert "admin_mode" not in EXAMPLE
+    assert texts.ADMIN_MODE_BADGE in admin_out
+    assert texts.ADMIN_MODE_BADGE not in normal_out
+
+
+def test_admin_badge_dom_stays_within_whitelist():
+    """徽标不引入白名单外标签/属性（零外链与无按钮口径延续）。"""
+    out = render.render_report(_admin_fixture_report())
+    dom = _dom(out)
+    assert not _FORBIDDEN_TAGS & set(dom.tags)
+    assert dom.attr_names <= _ALLOWED_ATTRS
+    assert "http://" not in out and "https://" not in out
