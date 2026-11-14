@@ -240,12 +240,7 @@ def test_existing_regression_cases_remain_valid_and_available(case_id: str):
     sample = json.loads((CASES_DIR / f"{case_id}.json").read_text(encoding="utf-8"))
     _assert_schema_ok(sample)
     assert "availability" not in sample["evidence_scenario"]
-    bundle = _build_bundle(sample["evidence_scenario"])
-    assert bundle.uninstall.available is True
-    assert bundle.appx.available is True
-    assert bundle.processes.available is True
-    assert bundle.services.available is True
-    assert bundle.autostart.available is True
+    _assert_availability(sample, {source: True for source in SOURCES})
 
 
 # ---------- ③ schema 拒绝坏类型（不得被 boolean 宽松吞掉） ----------
