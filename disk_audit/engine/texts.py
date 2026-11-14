@@ -379,3 +379,34 @@ H3_TEXTS: dict[str, str] = {
     "status_admin_rescan_failed": "管理员重扫失败，已保留上次结果。",
     "status_admin_rescan_completed": "管理员重扫完成，管理员报告已生成：{path}",
 }
+
+# ======================================================================
+# T5-01 体检记录 JSON 存储基础文案（I1a；方案 Q7/U-2/X-2/S-3、
+# report-v1 1.0/1.1 兼容、Q3）。本区块 append-only：新增文案一律向文末追加，
+# 严禁改动上方既有键值（既有文案/判定措辞保持逐字不变）。
+# 本卡中文错误文案全部集中本独立资源区；"旧记录不可比" 由后续 UI/对比卡消费，
+# 本卡不接线 launcher、不实现对比或淘汰。
+# ======================================================================
+RECORDS_TEXTS: dict[str, str] = {
+    "records_err_not_object": "体检记录 JSON 顶层应为对象",
+    "records_err_missing_fields": "体检记录缺少必需字段：{fields}",
+    "records_err_extra_fields": "体检记录出现未定义字段：{fields}（已拒绝持久化额外数据）",
+    "records_err_bad_version": (
+        "不支持的体检记录版本 {version}：旧记录不可比，请使用对应版本的工具查看"
+    ),
+    "records_err_bad_field": "体检记录字段不合法：{detail}",
+    "records_err_bad_totals": "体检记录 totals 不合法：{detail}",
+    "records_err_bad_candidates": "体检记录候选条目不合法：{detail}",
+    "records_err_incomplete": "不完整报告不得存为完整体检记录",
+    "records_err_incomplete_type": "体检记录 incomplete 字段应为布尔值",
+    "records_err_bad_admin_mode": "1.0 版本记录不含 admin_mode 字段",
+    "records_err_bad_id": "体检记录 ID 不合法：{record_id}",
+    "records_err_outside_dir": "体检记录路径越界，已拒绝：{target}",
+    "records_err_read": "无法读取体检记录文件：{exc}",
+    "records_err_encode": "体检记录文件不是 UTF-8 编码：{exc}",
+    "records_err_json": "体检记录文件不是合法 JSON：{exc}",
+    "records_err_not_regular": (
+        "体检记录项不是普通文件（目录或重解析点），已跳过：{filename}"
+    ),
+    "records_err_conflict": "目标体检记录已存在，拒绝覆盖：{target}",
+}
