@@ -594,3 +594,356 @@ def test_existing_texts_zones_untouched():
     assert texts.CONFIDENCE_WORDING["高"] == "高度可能为残留；删除前请确认"
     assert texts.G3_TEXTS["reports_err_bad_filename"]
     assert texts.EVIDENCE_SOURCE_ENUM[0] == "硬保护"
+
+
+# ============================================================================
+# T501-RETURN-1 回归（第1次退回；先写后修，红为 f5e240 上的行为断言失败，
+# 不是缺模块 ImportError）。DEF-1 坏容器类型 / DEF-2 根与祖先 junction /
+# OBS-1 固定中文校验细节集中。保留上方原用例与语义。
+# ============================================================================
+
+_CMD_EXE = os.path.join(os.environ.get("SystemRoot", r"C:\Windows"), "System32", "cmd.exe")
+
+
+def _assert_within(path: str, sandbox: str) -> None:
+    path_abs = os.path.abspath(path)
+    root_abs = os.path.abspath(sandbox)
+    assert os.path.commonpath([path_abs, root_abs]) == root_abs
+
+
+def _junction_sandbox(tmp_path: Path, tag: str) -> tuple[Path, Path, Path]:
+    """在 tmp_path 内自建授权沙箱：target/ 与 link 均在沙箱内，link 为真实 junction。
+
+    创建前核对绝对路径、target 为已存在目录、link 不在 target 内；不指向真实目录。
+    """
+    import subprocess  # 仅测试侧；运行时 disk_audit/ 仍零外部进程
+
+    sandbox = tmp_path / f"junction-{tag}"
+    target = sandbox / "target"
+    target.mkdir(parents=True)
+    link = sandbox / "link"
+    link_abs, target_abs, root_abs = str(link), str(target), str(sandbox)
+    _assert_within(link_abs, root_abs)
+    _assert_within(target_abs, root_abs)
+    assert (
+        os.path.commonpath([os.path.abspath(link_abs), os.path.abspath(target_abs)])
+        != os.path.abspath(target_abs)
+    )
+    assert os.path.isdir(target_abs) and not os.path.lexists(link_abs)
+    proc = subprocess.run(
+        [_CMD_EXE, "/c", "mklink", "/J", link_abs, target_abs],
+        capture_output=True,
+        timeout=60,
+    )
+    assert proc.returncode == 0, proc.stderr
+    assert os.path.isjunction(link_abs)
+    return sandbox, target, link
+
+
+def _remove_junction(link: Path, sandbox: Path) -> None:
+    """只删除已核实位于沙箱内、且确为 junction 的链接本身，不递归删除 target。"""
+    link_abs, root_abs = str(link), str(sandbox)
+    _assert_within(link_abs, root_abs)
+    if not os.path.lexists(link_abs):
+        return
+    assert os.path.isjunction(link_abs)
+    os.rmdir(link_abs)
+
+
+def _tree_snapshot(root: Path) -> dict:
+    """目录树快照（相对路径 -> 类别/字节 mtime/文件 sha256）；不跟随 junction。"""
+    root_abs = os.path.abspath(str(root))
+    snapshot: dict = {}
+    for dirpath, dirnames, filenames in os.walk(root_abs, followlinks=False):
+        for name in sorted(dirnames):
+            full = os.path.join(dirpath, name)
+            st = os.lstat(full)
+            snapshot[os.path.relpath(full, root_abs)] = ("dir", st.st_mtime_ns, None)
+        for name in sorted(filenames):
+            full = os.path.join(dirpath, name)
+            st = os.lstat(full)
+            with open(full, "rb") as handle:
+                digest = hashlib.sha256(handle.read()).hexdigest()
+            snapshot[os.path.relpath(full, root_abs)] = ("file", st.st_mtime_ns, digest)
+    return snapshot
+
+
+def _seed_record_file(directory: Path, record_id: str = "record-20260101-000001") -> None:
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / (record_id + ".json")).write_text(
+        json.dumps(valid_report(), ensure_ascii=False), encoding="utf-8"
+    )
+
+
+# ---------- DEF-1：四枚举位置的坏容器类型（list/dict）不得中断整批 ----------
+
+_R1_ENUM_FIELDS = ("confidence", "verdict_source", "suggested_action")
+_R1_BAD_CONTAINERS = [[], {}]
+
+
+@pytest.mark.parametrize("field", _R1_ENUM_FIELDS)
+@pytest.mark.parametrize("container", _R1_BAD_CONTAINERS, ids=["list", "dict"])
+def test_r1_enum_bad_container_validate_rejected(field, container):
+    report = valid_report()
+    report["candidates"][0][field] = container
+    with pytest.raises(records.RecordValidationError):
+        records.validate_record(report)
+
+
+@pytest.mark.parametrize(
+    "container", [[], {}, 1, None], ids=["list", "dict", "int", "none"]
+)
+def test_r1_chain_source_bad_container_validate_rejected(container):
+    report = valid_report()
+    report["candidates"][0]["evidence_chain"][0]["source"] = container
+    with pytest.raises(records.RecordValidationError):
+        records.validate_record(report)
+
+
+@pytest.mark.parametrize("field", _R1_ENUM_FIELDS)
+@pytest.mark.parametrize("container", _R1_BAD_CONTAINERS, ids=["list", "dict"])
+def test_r1_enum_bad_container_save_rejected_no_dir(tmp_path: Path, field, container):
+    out = tmp_path / "records-not-created"
+    report = valid_report()
+    report["candidates"][0][field] = container
+    with pytest.raises(records.RecordValidationError):
+        records.save_record(report, records_dir=str(out), now=FIXED_NOW)
+    assert not os.path.lexists(str(out)), "坏输入不得先创建记录目录"
+
+
+def test_r1_chain_source_bad_container_save_rejected_no_dir(tmp_path: Path):
+    out = tmp_path / "records-not-created"
+    report = valid_report()
+    report["candidates"][0]["evidence_chain"][0]["source"] = []
+    with pytest.raises(records.RecordValidationError):
+        records.save_record(report, records_dir=str(out), now=FIXED_NOW)
+    assert not os.path.lexists(str(out))
+
+
+def test_r1_bad_container_record_isolated_in_listing(tmp_path: Path):
+    """合法 + 四个不同坏容器位置混排：合法项仍 comparable，坏项逐项披露。"""
+    _seed_record_file(tmp_path, "record-20260101-000001")
+    bad_reports: dict[str, dict] = {}
+    for field, container in (
+        ("confidence", []),
+        ("verdict_source", {}),
+        ("suggested_action", []),
+    ):
+        report = valid_report()
+        report["candidates"][0][field] = container
+        bad_reports[field] = report
+    report = valid_report()
+    report["candidates"][0]["evidence_chain"][0]["source"] = {}
+    bad_reports["chain_source"] = report
+    index = 2
+    for bad in bad_reports.values():
+        (tmp_path / f"record-20260101-00000{index}.json").write_text(
+            json.dumps(bad, ensure_ascii=False), encoding="utf-8"
+        )
+        index += 1
+
+    entries = records.list_records(records_dir=str(tmp_path))
+    by_name = {entry.filename: entry for entry in entries}
+    assert len(by_name) == 5, "整批列举不应中断"
+    assert by_name["record-20260101-000001.json"].comparable is True
+    for name, entry in by_name.items():
+        if name == "record-20260101-000001.json":
+            continue
+        assert entry.comparable is False, name
+        assert entry.record is None, name
+        assert entry.problem, name  # 可披露
+
+
+@pytest.mark.parametrize("field", _R1_ENUM_FIELDS)
+@pytest.mark.parametrize("container", _R1_BAD_CONTAINERS, ids=["list", "dict"])
+def test_r1_bad_container_read_raises_record_error(tmp_path: Path, field, container):
+    report = valid_report()
+    report["candidates"][0][field] = container
+    (tmp_path / "record-20260101-000001.json").write_text(
+        json.dumps(report, ensure_ascii=False), encoding="utf-8"
+    )
+    with pytest.raises(records.RecordError):
+        records.read_record("record-20260101-000001", records_dir=str(tmp_path))
+
+
+def test_r1_chain_source_bad_container_read_raises_record_error(tmp_path: Path):
+    report = valid_report()
+    report["candidates"][0]["evidence_chain"][0]["source"] = {}
+    (tmp_path / "record-20260101-000001.json").write_text(
+        json.dumps(report, ensure_ascii=False), encoding="utf-8"
+    )
+    with pytest.raises(records.RecordError):
+        records.read_record("record-20260101-000001", records_dir=str(tmp_path))
+
+
+# ---------- DEF-2：真实沙箱 root / ancestor junction，不得越逻辑授权根 ----------
+
+
+@pytest.mark.parametrize("operation", ["list", "read", "save"])
+def test_r1_root_junction_not_followed(tmp_path: Path, operation):
+    sandbox, target, link = _junction_sandbox(tmp_path, f"root-{operation}")
+    _seed_record_file(target)
+    before = _tree_snapshot(target)
+    try:
+        if operation == "list":
+            try:
+                entries = records.list_records(records_dir=str(link))
+            except records.RecordError:
+                entries = []
+            assert [entry.filename for entry in entries] == [], "根 junction 被 list 跟随"
+        elif operation == "read":
+            with pytest.raises(records.RecordError):
+                records.read_record("record-20260101-000001", records_dir=str(link))
+        else:
+            try:
+                records.save_record(
+                    valid_report(generated_at="2026-11-01T15:30:46+08:00"),
+                    records_dir=str(link),
+                    now=FIXED_NOW,
+                )
+            except records.RecordError:
+                pass
+    finally:
+        _remove_junction(link, sandbox)
+    assert _tree_snapshot(target) == before, "根 junction 的 target 文件清单/字节/哈希被改动"
+
+
+@pytest.mark.parametrize("operation", ["list", "read", "save"])
+def test_r1_ancestor_junction_not_followed(tmp_path: Path, operation):
+    sandbox, target, link = _junction_sandbox(tmp_path, f"ancestor-{operation}")
+    sub = target / "sub"
+    _seed_record_file(sub)
+    records_dir = link / "sub"
+    before = _tree_snapshot(target)
+    try:
+        if operation == "list":
+            try:
+                entries = records.list_records(records_dir=str(records_dir))
+            except records.RecordError:
+                entries = []
+            assert [entry.filename for entry in entries] == [], "祖先 junction 被 list 跟随"
+        elif operation == "read":
+            with pytest.raises(records.RecordError):
+                records.read_record("record-20260101-000001", records_dir=str(records_dir))
+        else:
+            try:
+                records.save_record(valid_report(), records_dir=str(records_dir), now=FIXED_NOW)
+            except records.RecordError:
+                pass
+    finally:
+        _remove_junction(link, sandbox)
+    assert _tree_snapshot(target) == before, "祖先 junction 的 target 被改动"
+
+
+def test_r1_ancestor_junction_missing_leaf_save_rejected(tmp_path: Path):
+    """祖先为 junction、末级目录不存在：不得只检查最终存在目录而放过创建。"""
+    sandbox, target, link = _junction_sandbox(tmp_path, "ancestor-missing")
+    (target / "sub").mkdir()
+    before = _tree_snapshot(target)
+    missing = link / "missing"
+    try:
+        try:
+            records.save_record(valid_report(), records_dir=str(missing), now=FIXED_NOW)
+        except records.RecordError:
+            pass
+        assert not os.path.lexists(str(missing)), "不得在 junction target 下新建目录"
+    finally:
+        _remove_junction(link, sandbox)
+    assert _tree_snapshot(target) == before
+
+
+def test_r1_normal_missing_root_can_be_created(tmp_path: Path):
+    """控制组：普通不存在根（无 junction 祖先）仍可合法创建，避免放宽为过度拒绝。"""
+    fresh = tmp_path / "fresh-records"
+    record_id = records.save_record(valid_report(), records_dir=str(fresh), now=FIXED_NOW)
+    assert (fresh / (record_id + ".json")).is_file()
+    assert records.read_record(record_id, records_dir=str(fresh))["schema_version"] == "1.1"
+
+
+def test_r1_real_file_symlink_or_documented_skip(tmp_path: Path):
+    """真实文件 symlink：有特权则实测拒绝；WinError 1314 则如实 skip 并注明限制。"""
+    target = tmp_path / "symlink-target.json"
+    target.write_text(json.dumps(valid_report(), ensure_ascii=False), encoding="utf-8")
+    records_dir = tmp_path / "records"
+    records_dir.mkdir()
+    link = records_dir / "record-20260101-000003.json"
+    try:
+        os.symlink(str(target), str(link))
+    except OSError as exc:
+        if getattr(exc, "winerror", None) == 1314:
+            pytest.skip("Windows 无创建文件符号链接特权（WinError 1314）；真实 junction 与 lstat 替身已覆盖")
+        raise
+    try:
+        by_name = {
+            entry.filename: entry
+            for entry in records.list_records(records_dir=str(records_dir))
+        }
+        assert by_name["record-20260101-000003.json"].comparable is False
+        with pytest.raises(records.RecordError):
+            records.read_record("record-20260101-000003", records_dir=str(records_dir))
+    finally:
+        if os.path.lexists(str(link)):
+            os.unlink(str(link))
+
+
+# ---------- OBS-1：固定中文校验细节集中 texts，真实异常清晰无 Q3 禁词 ----------
+
+_R1_DETAIL_KEYS = (
+    "records_detail_not_object",
+    "records_detail_not_array",
+    "records_detail_missing_fields",
+    "records_detail_extra_fields",
+    "records_detail_nonneg_int",
+    "records_detail_nonempty_str",
+    "records_detail_bool",
+    "records_detail_candidate_not_object",
+    "records_detail_candidate_missing",
+    "records_detail_candidate_extra",
+    "records_detail_enum_invalid",
+    "records_detail_chain_not_array",
+    "records_detail_chain_item_shape",
+    "records_detail_chain_source_invalid",
+    "records_detail_chain_content_not_str",
+    "records_err_root_reparse",
+    "records_err_root_not_dir",
+    "records_err_root_stat",
+)
+
+
+def test_r1_detail_templates_centralized_in_texts():
+    assert all(key in texts.RECORDS_TEXTS for key in _R1_DETAIL_KEYS)
+    blob = "".join(texts.RECORDS_TEXTS.values())
+    assert "可回收" not in blob  # Q3 禁词
+
+
+def test_r1_no_fixed_validation_details_inline_in_records():
+    source = Path(records.__file__).read_text(encoding="utf-8")
+    fixed_literals = [
+        "应为对象",
+        "缺少字段 {",
+        "出现未定义字段 {",
+        "应为非负整数",
+        "应为非空字符串",
+        "应为布尔值",
+        "应为数组",
+        "#{index} 应为对象",
+        "应为至少 1 项的数组",
+        "应为含 source/content 的对象",
+        "条 source 非法",
+        "条 content 应为字符串",
+        " confidence 非法",
+        " verdict_source 非法",
+        " suggested_action 非法",
+    ]
+    for literal in fixed_literals:
+        assert literal not in source, f"records.py 仍内联固定对外中文：{literal}"
+
+
+def test_r1_bad_container_exception_message_clear_and_no_q3():
+    report = valid_report()
+    report["candidates"][0]["confidence"] = []
+    with pytest.raises(records.RecordValidationError) as excinfo:
+        records.validate_record(report)
+    message = str(excinfo.value)
+    assert message and "confidence" in message  # 真实异常输出仍清晰
+    assert "可回收" not in message

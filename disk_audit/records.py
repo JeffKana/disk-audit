@@ -1,4 +1,4 @@
-r"""体检记录 JSON 存储基础（I1a，任务卡 T5-01 / T501-v1）。
+r"""体检记录 JSON 存储基础（I1a，任务卡 T5-01 / T501-v1；第1次退回整改 T501-RETURN-1）。
 
 依据：F1 定稿一节本地数据目录、三节 U-2/X-2/S-3、六节数据预算、七节 M3 与 Q7；
 `docs/schemas/report-v1.schema.json`（含 1.0→1.1 兼容声明）；`disk_audit/__init__.py`
@@ -21,6 +21,10 @@ r"""体检记录 JSON 存储基础（I1a，任务卡 T5-01 / T501-v1）。
 - 临时文件只落同一授权目录，写完后经原子改名完整发布，失败不残留可见的半条正式记录；
   列举/读取只操作授权目录下本模块严格命名的普通文件，不跟随目录/重解析点，不遍历
   被扫描目标；单点损坏/不兼容可披露且不阻断其他合法记录列举。
+- T501-RETURN-1 整改：根与祖先重解析点（root/ancestor junction）同样不跟随——三个
+  公共操作在任何 makedirs/listdir/读取/临时写入前逐段核验从路径根到记录目录的现有
+  组成部分；四枚举位置的 list/dict 坏容器文档化拒绝而非未包装 TypeError；固定中文
+  校验细节集中 texts.py 本卡资源区、动态值走模板参数（OBS-1）。
 - 运行时零第三方依赖（仅标准库 + 包内模块），无 UI import/网络/提权/子进程/自动重扫。
   对外中文文案集中在 texts.py 文末本卡独立资源区。
 """
@@ -127,63 +131,95 @@ def _is_nonneg_int(value: object) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value >= 0
 
 
+def _detail(template_key: str, **params: object) -> str:
+    """固定中文校验细节一律取自 texts 本卡资源区，动态值走模板参数（OBS-1）。"""
+    return texts.RECORDS_TEXTS[template_key].format(**params)
+
+
 def _validate_totals(totals: object) -> None:
-    def bad(detail: str) -> RecordValidationError:
+    def bad(key: str, **params: object) -> RecordValidationError:
         return RecordValidationError(
-            texts.RECORDS_TEXTS["records_err_bad_totals"].format(detail=detail)
+            texts.RECORDS_TEXTS["records_err_bad_totals"].format(detail=_detail(key, **params))
         )
 
     if not isinstance(totals, dict):
-        raise bad("应为对象")
+        raise bad("records_detail_not_object")
     missing = [key for key in _TOTALS_KEYS if key not in totals]
     if missing:
-        raise bad(f"缺少字段 {'、'.join(missing)}")
+        raise bad("records_detail_missing_fields", fields="、".join(missing))
     extra = sorted(set(totals) - set(_TOTALS_KEYS))
     if extra:
-        raise bad(f"出现未定义字段 {'、'.join(extra)}")
+        raise bad("records_detail_extra_fields", fields="、".join(extra))
     for key in _TOTALS_KEYS:
         if not _is_nonneg_int(totals[key]):
-            raise bad(f"{key} 应为非负整数")
+            raise bad("records_detail_nonneg_int", field=key)
 
 
 def _validate_candidates(candidates: object) -> None:
-    def bad(detail: str) -> RecordValidationError:
+    def bad(key: str, **params: object) -> RecordValidationError:
         return RecordValidationError(
-            texts.RECORDS_TEXTS["records_err_bad_candidates"].format(detail=detail)
+            texts.RECORDS_TEXTS["records_err_bad_candidates"].format(detail=_detail(key, **params))
         )
 
     if not isinstance(candidates, list):
-        raise bad("应为数组")
+        raise bad("records_detail_not_array")
     for index, candidate in enumerate(candidates):
         if not isinstance(candidate, dict):
-            raise bad(f"#{index} 应为对象")
+            raise bad("records_detail_candidate_not_object", index=index)
         missing = [key for key in _CANDIDATE_KEYS if key not in candidate]
         if missing:
-            raise bad(f"#{index} 缺少字段 {'、'.join(missing)}")
+            raise bad("records_detail_candidate_missing", index=index, fields="、".join(missing))
         extra = sorted(set(candidate) - set(_CANDIDATE_KEYS))
         if extra:
-            raise bad(f"#{index} 出现未定义字段 {'、'.join(extra)}")
+            raise bad("records_detail_candidate_extra", index=index, fields="、".join(extra))
         if not isinstance(candidate["path"], str) or not candidate["path"]:
-            raise bad(f"#{index} path 应为非空字符串")
+            raise bad("records_detail_candidate_nonempty_str", index=index, field="path")
         for key in ("logical_bytes", "allocated_bytes"):
             if not _is_nonneg_int(candidate[key]):
-                raise bad(f"#{index} {key} 应为非负整数")
-        if candidate["confidence"] not in _CONFIDENCES:
-            raise bad(f"#{index} confidence 非法")
-        if candidate["verdict_source"] not in _VERDICT_SOURCES:
-            raise bad(f"#{index} verdict_source 非法")
-        if candidate["suggested_action"] not in _ACTIONS:
-            raise bad(f"#{index} suggested_action 非法")
+                raise bad("records_detail_candidate_nonneg_int", index=index, field=key)
+        # DEF-1：枚举值先做类型守卫，再查 frozenset；坏容器（list/dict）或非字符串
+        # 一律文档化 RecordValidationError，绝不抛出未包装的 TypeError。
+        for key, allowed in (
+            ("confidence", _CONFIDENCES),
+            ("verdict_source", _VERDICT_SOURCES),
+            ("suggested_action", _ACTIONS),
+        ):
+            value = candidate[key]
+            if not isinstance(value, str) or value not in allowed:
+                raise bad("records_detail_enum_invalid", index=index, field=key)
         chain = candidate["evidence_chain"]
         if not isinstance(chain, list) or len(chain) == 0:
-            raise bad(f"#{index} evidence_chain 应为至少 1 项的数组")
+            raise bad(
+                "records_detail_chain_not_array",
+                index=index,
+                field="evidence_chain",
+                minimum=1,
+            )
         for position, item in enumerate(chain):
             if not isinstance(item, dict) or set(item) != {"source", "content"}:
-                raise bad(f"#{index} 证据链第 {position} 条应为含 source/content 的对象")
-            if item["source"] not in _EVIDENCE_SOURCES:
-                raise bad(f"#{index} 证据链第 {position} 条 source 非法")
+                raise bad(
+                    "records_detail_chain_item_shape",
+                    index=index,
+                    field="evidence_chain",
+                    position=position,
+                    keys="source/content",
+                )
+            source = item["source"]
+            if not isinstance(source, str) or source not in _EVIDENCE_SOURCES:
+                raise bad(
+                    "records_detail_chain_source_invalid",
+                    index=index,
+                    field="evidence_chain",
+                    position=position,
+                )
             if not isinstance(item["content"], str):
-                raise bad(f"#{index} 证据链第 {position} 条 content 应为字符串")
+                raise bad(
+                    "records_detail_chain_content_not_str",
+                    index=index,
+                    field="evidence_chain",
+                    position=position,
+                    sub="content",
+                )
 
 
 def validate_record(report: object) -> dict:
@@ -214,14 +250,18 @@ def validate_record(report: object) -> dict:
     for key in ("generated_at", "scan_root"):
         if not isinstance(report[key], str) or not report[key]:
             raise RecordValidationError(
-                texts.RECORDS_TEXTS["records_err_bad_field"].format(detail=f"{key} 应为非空字符串")
+                texts.RECORDS_TEXTS["records_err_bad_field"].format(
+                    detail=_detail("records_detail_nonempty_str", field=key)
+                )
             )
     if "admin_mode" in report:
         if version == "1.0":
             raise RecordValidationError(texts.RECORDS_TEXTS["records_err_bad_admin_mode"])
         if not isinstance(report["admin_mode"], bool):
             raise RecordValidationError(
-                texts.RECORDS_TEXTS["records_err_bad_field"].format(detail="admin_mode 应为布尔值")
+                texts.RECORDS_TEXTS["records_err_bad_field"].format(
+                    detail=_detail("records_detail_bool", field="admin_mode")
+                )
             )
     if "incomplete" in report:
         incomplete = report["incomplete"]
@@ -268,6 +308,56 @@ def _reserve_target(directory: str, stem: str) -> tuple[str, str]:
         if not os.path.lexists(target):
             return record_id, target
         sequence += 1
+
+
+def _path_chain(root: str) -> list[str]:
+    """从文件系统根到 root 的逐级路径（含 root 自身），由浅到深。root 应为 abspath。"""
+    chain: list[str] = []
+    current = root
+    while True:
+        chain.append(current)
+        parent = os.path.dirname(current)
+        if parent == current:  # 已到盘符根 / 文件系
+            break
+        current = parent
+    chain.reverse()
+    return chain
+
+
+def _is_reparse_point(st: os.stat_result) -> bool:
+    attrs = getattr(st, "st_file_attributes", 0)
+    flag = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+    return bool(attrs & flag)
+
+
+def _require_safe_root(directory: str) -> str:
+    """DEF-2：在 makedirs/listdir/文件读取/临时写入前核验从文件系统根到记录目录的
+    **现有组成部分**，任一现有组成部分是重解析点（junction/symlink/挂载点）或非目录
+    即以中文 RecordError 停止并披露，绝不继续访问其子路径/target。
+
+    由浅到深逐段 os.lstat（不跟随）；遇到第一个不存在的组成部分即停止（其下不可能
+    已存在，正常创建合法）。保持合法普通目录、正常新建目录与已存在叶文件守卫语义。
+    返回规范化后的绝对路径，供调用方后续所有文件系统动作复用。
+    """
+    root = os.path.abspath(directory)
+    for component in _path_chain(root):
+        try:
+            st = os.lstat(component)
+        except (FileNotFoundError, NotADirectoryError):
+            break  # 首个缺失组成部分：其下尚不存在，允许正常创建
+        except OSError as exc:
+            raise RecordError(
+                texts.RECORDS_TEXTS["records_err_root_stat"].format(exc=exc)
+            ) from exc
+        if _is_reparse_point(st):
+            raise RecordError(
+                texts.RECORDS_TEXTS["records_err_root_reparse"].format(target=component)
+            )
+        if not stat.S_ISDIR(st.st_mode):
+            raise RecordError(
+                texts.RECORDS_TEXTS["records_err_root_not_dir"].format(target=component)
+            )
+    return root
 
 
 # ---------------------------------------------------------------------------
@@ -326,7 +416,7 @@ def save_record(
     文件系统操作。
     """
     validated = validate_record(report)  # 校验先于任何目录创建/写盘
-    directory = records_dir if records_dir is not None else RECORDS_DIR
+    directory = _require_safe_root(records_dir if records_dir is not None else RECORDS_DIR)
     os.makedirs(directory, exist_ok=True)
     admin = validated.get("admin_mode") is True
     prefix = RECORD_ADMIN_PREFIX if admin else RECORD_NORMAL_PREFIX
@@ -347,12 +437,6 @@ def save_record(
 # ---------------------------------------------------------------------------
 # 读取 / 列举
 # ---------------------------------------------------------------------------
-
-
-def _is_reparse_point(st: os.stat_result) -> bool:
-    attrs = getattr(st, "st_file_attributes", 0)
-    flag = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
-    return bool(attrs & flag)
 
 
 def _require_regular_file(target: str) -> None:
@@ -403,7 +487,7 @@ def read_record(record_id: str, *, records_dir: str | None = None) -> dict:
     """按逻辑 ID 读取并校验一条记录，返回报告形状对象；ID 非法/越界、损坏、不兼容
     版本均抛可区分的 RecordError 子类。默认根 = RECORDS_DIR，测试根可注入。
     """
-    directory = records_dir if records_dir is not None else RECORDS_DIR
+    directory = _require_safe_root(records_dir if records_dir is not None else RECORDS_DIR)
     target = resolve_record_path(directory, record_id)
     return _load_record(target)
 
@@ -416,7 +500,7 @@ def list_records(*, records_dir: str | None = None) -> list[RecordEntry]:
     其他合法记录、不静默说可比。外来文件/临时文件/目录/重解析点不进入或不被跟随。
     默认根 = RECORDS_DIR，测试根可注入；不遍历被扫描目标。
     """
-    directory = records_dir if records_dir is not None else RECORDS_DIR
+    directory = _require_safe_root(records_dir if records_dir is not None else RECORDS_DIR)
     if not os.path.isdir(directory):
         return []
     try:

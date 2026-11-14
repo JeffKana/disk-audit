@@ -60,6 +60,23 @@
   符号链接/重解析点，目录、重解析点、非普通文件一律拒绝/披露，不遍历扫描目标。
   真实 junction 在支持环境中验证，或用 `os.lstat`/`_read_raw` 替身（本卡测试二者
   均覆盖：伪装目录用真实目录，重解析点用替身，断言从未读取该项）。
+- **根/祖先重解析点守卫（T501-RETURN-1 / DEF-2，PM 明确裁决）**：
+  `save_record` / `read_record` / `list_records` 在 `makedirs`/`listdir`/文件读取/
+  临时写入**之前**调用 `_require_safe_root(directory)`，由浅到深逐段 `os.lstat`
+  （不跟随）核验从文件系统根到记录目录的**现有组成部分**：任一现有组成部分是
+  junction/symlink/挂载点等重解析点或不是目录，即以中文 `RecordError` 停止并披露，
+  绝不继续访问其子路径/target。首个缺失组成部分即停止核验（其下尚不存在，正常
+  创建合法）；因此"祖先 junction + 末级目录缺失"同样被拒，"普通不存在根"仍可创建。
+  不因 `records_dir` 由调用方显式传入而放宽为调用方责任。真实沙箱 root/ancestor
+  junction 分别跑 list/read/save 验证 target 文件清单/字节/哈希不变、无临时或正式
+  新记录；link/target 均在自己授权测试沙箱、创建前核对绝对路径、仅删除已核实
+  junction 本身（不递归）。真实文件 symlink 无创建特权（WinError 1314）时保留
+  lstat 替身并登记限制，不改系统策略/不升权。
+- **坏容器类型（T501-RETURN-1 / DEF-1）**：四枚举位置（confidence/verdict_source/
+  suggested_action/证据链 source）先做 `isinstance(str)` 与取值双重校验，list/dict
+  等坏容器一律文档化 `RecordValidationError`；读取坏记录抛 `RecordError` 子类；
+  列举逐项 `comparable=False + problem`、合法项仍返回，**不靠捕获一切异常返回空
+  列表掩盖**。
 
 ## 4. 接口形状与异常类型（D-执行自决，已文档化）
 
@@ -88,6 +105,10 @@ RecordError(ValueError)
 
 中文错误文案全部集中在 `disk_audit/engine/texts.py` 文末本卡独立资源区
 `RECORDS_TEXTS`（append-only，不改既有区/判定措辞，无"可回收"字样）。
+T501-RETURN-1（OBS-1）进一步把 19 处固定校验细节（"应为对象/缺少字段/
+非负整数/…非法"等）收口为本区模板键，位置/字段名/计数/路径等动态值走模板
+参数；首轮 17 个键值逐字保持、仅在 T501 区扩充键，`records.py` 不再散落
+固定对外中文，真实异常输出仍清晰可分类且无 Q3 禁词。
 
 ## 5. 错误边界汇总
 
@@ -96,7 +117,9 @@ RecordError(ValueError)
 | 非对象 / 缺必需字段 / 多余字段 / 坏 totals / 坏候选（枚举、证据链、负数、布尔当整数） | `RecordValidationError`，不写盘 |
 | `incomplete=True` | `RecordValidationError`，不生成完整记录 |
 | 未知主/次版本、版本非字符串 | `RecordVersionError`（含"旧记录不可比"） |
-| 非法文件名 / 绝对路径 / `..` 上跳 / 伪装目录 / 重解析点 | 拒绝或披露，不在授权根外读写、不跟随 |
+| 非法文件名 / 绝对路径 / `..` 上跳 / 伪装目录 / 叶重解析点 | 拒绝或披露，不在授权根外读写、不跟随 |
+| 根或祖先为 junction/重解析点（含末级目录尚不存在） | `_require_safe_root` 在任何 FS 动作前逐段拒绝，`RecordError` 披露；target 文件清单/字节/哈希不变 |
+| 四枚举位置为 list/dict 等坏容器 | 文档化 `RecordValidationError`；读取 `RecordError` 子类；列举逐项披露且合法项仍返回 |
 | 损坏 JSON / 非 UTF-8 / 坏字段 / 不兼容版本（磁盘上） | 列举披露 `comparable=False`；读取抛 `RecordError` 子类；不阻断合法记录 |
 | 同秒多份 | 追加 `-N` 序号，内容互异、互不覆盖 |
 | 注入序列化/写盘/发布失败 | 既有记录 hash 不变，无半条正式记录、无临时残留 |
