@@ -114,9 +114,21 @@
               "kind": {"enum": ["registry", "startup_folder"]}
             }
           }
+        },
+        "availability": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "uninstall": {"type": "boolean"},
+            "appx": {"type": "boolean"},
+            "processes": {"type": "boolean"},
+            "services": {"type": "boolean"},
+            "autostart": {"type": "boolean"}
+          },
+          "description": "各证据源采集可用性（可选，T6-01）。整个对象缺省、空对象或只列部分源时，未列出的源沿用旧夹具的 true 含义；显式 false 表示该源不可用，但已给出的 entries/paths/packages/自启动记录等正证据仍保留。只允许这五个源键，值必须严格 boolean（0/1、字符串、null、数组/对象一律拒绝）。reason/incomplete/admin_mode/多 unit 不在本版本表达范围。"
         }
       },
-      "description": "触发/复现该误判边界所需的证据场景（罐装，判定为纯函数）"
+      "description": "触发/复现该误判边界所需的证据场景（罐装，判定为纯函数）；可选 availability 表达五源采集状态，缺省即旧语义（全部可用）"
     },
     "expect": {
       "type": "object",

@@ -35,6 +35,7 @@ REG_SCHEMA = json.loads(
     (REPO_ROOT / "docs" / "schemas" / "regression-case-v1.schema.json").read_text(encoding="utf-8")
 )
 NOW_TS = 1_800_000_000.0
+AVAILABILITY_SOURCES = ("uninstall", "appx", "processes", "services", "autostart")
 
 
 def _case_files() -> list[Path]:
@@ -45,18 +46,47 @@ def _case_ids() -> list[str]:
     return [p.stem for p in _case_files()]
 
 
+def _resolve_availability(scenario: dict) -> dict[str, bool]:
+    """解析样例可选 availability（T6-01）：缺省/未指源=True，显式值必须是 bool。
+
+    驱动层只消费状态，不做 truthiness 归一：绕过 schema 直接喂 0/1、字符串、
+    null、数组或对象时显式拒绝，避免"看起来是 False"被静默当默认值。
+    """
+    declared = scenario.get("availability", {})
+    if not isinstance(declared, dict):
+        raise ValueError("evidence_scenario.availability 必须是对象")
+    unknown = sorted(set(declared) - set(AVAILABILITY_SOURCES))
+    if unknown:
+        raise ValueError(f"evidence_scenario.availability 含未知源：{unknown}")
+    resolved: dict[str, bool] = {}
+    for source in AVAILABILITY_SOURCES:
+        value = declared.get(source, True)
+        if not isinstance(value, bool):
+            raise ValueError(f"evidence_scenario.availability.{source} 必须是 boolean")
+        resolved[source] = value
+    return resolved
+
+
 def _build_bundle(scenario: dict) -> EvidenceBundle:
+    availability = _resolve_availability(scenario)
     return EvidenceBundle(
         uninstall=UninstallResult(
-            available=True, entries=[UninstallEntry(**e) for e in scenario["uninstall"]]
+            available=availability["uninstall"],
+            entries=[UninstallEntry(**e) for e in scenario["uninstall"]],
         ),
         appx=AppxResult(
-            available=True, packages=[AppxPackage(**p) for p in scenario["appx"]]
+            available=availability["appx"],
+            packages=[AppxPackage(**p) for p in scenario["appx"]],
         ),
-        processes=ProcessResult(available=True, paths=list(scenario["processes"])),
-        services=ServiceResult(available=True, paths=list(scenario["services"])),
+        processes=ProcessResult(
+            available=availability["processes"], paths=list(scenario["processes"])
+        ),
+        services=ServiceResult(
+            available=availability["services"], paths=list(scenario["services"])
+        ),
         autostart=AutostartResult(
-            available=True, entries=[AutostartEntry(**a) for a in scenario["autostart"]]
+            available=availability["autostart"],
+            entries=[AutostartEntry(**a) for a in scenario["autostart"]],
         ),
     )
 
