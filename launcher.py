@@ -7,7 +7,8 @@ P5（启动即检 build >= 22621，不足拒绝并提示）、P6（仅固定本�
 独立入口，`disk_audit` 包内任何模块不得 import tkinter）。
 
 耦合边界（任务卡实现约束）：本模块对 `disk_audit` 包的依赖仅限文案资源
-`disk_audit.engine.texts`、报告落盘/淘汰/打开 `disk_audit.reports`、提权重扫
+`disk_audit.engine.texts`、报告落盘/淘汰/打开 `disk_audit.reports`、体检记录保存
+`disk_audit.records`（T5-02-A/I1b：完整路径至多一条，DR-012）、提权重扫
 `disk_audit.elevated`（T4-01：spec/done/命令构造/只读证据装配），以及
 scan/judge/render 三个接口入口（T3-06 接线，见 execute_audit；T3-05 经
 run_audit_async 把该流水线搬入后台线程，进度经 after() 派发主线程），以及
@@ -60,7 +61,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Callable, Mapping, NamedTuple, Sequence
 
-from disk_audit import elevated, reports
+from disk_audit import elevated, records, reports
 from disk_audit.engine import texts
 
 if TYPE_CHECKING:  # 仅类型标注引用（延迟导入模式：模块加载不拖入扫描栈）
@@ -122,6 +123,9 @@ class AuditDeps:
     save: Callable[[str], str]  # HTML → 落盘，返回报告绝对路径
     prune: Callable[[], list[str]]  # 旧报告淘汰（保留 12 份）
     open: Callable[[str], None]  # 默认浏览器打开报告（只读）
+    # T5-02-A（I1b/DR-012）：可选记录环。缺省 None = 不接线（旧六环替身与旧
+    # AuditDeps 实例保持兼容）；仅完整路径（save 之后、prune 之前）调用一次。
+    record: "Callable[[dict], str] | None" = None  # report-v1 dict → 记录 ID
 
 
 @dataclass(frozen=True)
@@ -247,16 +251,25 @@ def build_preset_rows(env: Mapping[str, str] | None = None) -> list[PresetRow]:
     return rows
 
 
-def default_deps(reports_dir: str | None = None) -> "AuditDeps":
+def default_deps(
+    reports_dir: str | None = None, records_dir: str | None = None
+) -> "AuditDeps":
     """真实装配（T3-06）：scan/judge/render 绑定引擎入口，save/prune/open 绑定 reports 模块。
 
     延迟 import：launcher 模块加载不拖入扫描/判定栈（T3-04 延迟导入模式延续）；
-    reports_dir 注入时 save/prune 落点随之替换（测试替身根），默认包内 REPORTS_DIR。
+    reports_dir 注入时 save/prune 落点随之替换（测试替身根），默认包内 REPORTS_DIR；
+    records_dir 注入时记录环落点随之替换（T5-02-A），默认包内 RECORDS_DIR。
     """
     from disk_audit.engine.render import render_report
     from disk_audit.engine.report import judge_scan_result
     from disk_audit.scanner import scan_path
 
+    # T5-02-A：记录环默认仍写 RECORDS_DIR；records_dir 仅测试临时根注入。
+    record = (
+        records.save_record
+        if records_dir is None
+        else (lambda report: records.save_record(report, records_dir=records_dir))
+    )
     return AuditDeps(
         scan=lambda path, progress_cb=None, abort_check=None: scan_path(
             path, progress_cb=progress_cb, abort_check=abort_check
@@ -266,10 +279,13 @@ def default_deps(reports_dir: str | None = None) -> "AuditDeps":
         save=lambda html_text: reports.save_report(html_text, reports_dir=reports_dir),
         prune=lambda: reports.prune_reports(reports_dir=reports_dir),
         open=reports.open_report,
+        record=record,
     )
 
 
-def _elevated_deps(reports_dir: str | None = None) -> AuditDeps:
+def _elevated_deps(
+    reports_dir: str | None = None, records_dir: str | None = None
+) -> AuditDeps:
     """提权实例流水线装配（T4-01；与 default_deps 的差异即 R9 边界，逐环说明）：
 
     save=elevated.save_admin_report（admin- 前缀，S-3 文件级可区分）；
@@ -283,6 +299,13 @@ def _elevated_deps(reports_dir: str | None = None) -> AuditDeps:
     from disk_audit.engine.report import judge_scan_result
     from disk_audit.scanner import scan_path
 
+    # T5-02-A：管理员记录同样经 records.save_record；report 的 admin_mode=True
+    # 由 _with_admin_judge 在判定后置位，模块据前缀自动区分普通/管理员记录。
+    record = (
+        records.save_record
+        if records_dir is None
+        else (lambda report: records.save_record(report, records_dir=records_dir))
+    )
     return AuditDeps(
         scan=lambda path, progress_cb=None, abort_check=None: scan_path(
             path, progress_cb=progress_cb, abort_check=abort_check
@@ -294,7 +317,61 @@ def _elevated_deps(reports_dir: str | None = None) -> AuditDeps:
         save=lambda html_text: elevated.save_admin_report(html_text, reports_dir=reports_dir),
         prune=lambda: [],
         open=lambda report_path: None,
+        record=record,
     )
+
+
+def _record_after_save(
+    record: "Callable[[dict], str]",
+    report: dict,
+    report_path: str,
+    on_record: "Callable[[dict], None] | None" = None,
+) -> None:
+    """保存环（T5-02-A/DR-012）：HTML 已落盘后至多一次记录尝试，失败仅降级回执。
+
+    载荷固定四键（saved / record_id / report_path / error），不携带原始异常对象
+    或完整报告；记录失败（RecordError/OSError/其它 Exception）不改变已保存报告与
+    调用方返回，也不阻断后续 prune/open。不捕获 BaseException（中止/中断语义归
+    既有路径）；on_record 自身异常同样不外泄，避免通知通道反向破坏流水线。
+    """
+    payload: dict = {
+        "saved": False,
+        "record_id": None,
+        "report_path": report_path,
+        "error": None,
+    }
+    try:
+        record_id = record(report)
+    except Exception as exc:  # 记录失败降级：报告已保存，不重扫/不提权/不删除
+        payload["error"] = str(exc)
+    else:
+        payload["saved"] = True
+        payload["record_id"] = record_id
+    if on_record is not None:
+        try:
+            on_record(dict(payload))
+        except Exception:  # 通知失败不反向影响流水线（窗口销毁等）
+            pass
+
+
+def _record_notification(
+    on_record: "Callable[[dict], None]", payload: dict
+) -> "Callable[[], None]":
+    """构造延期执行的新记录通知闭包（T5-02-A-R1 / DR-013）。
+
+    after 只负责排队，真正执行点在主线程稍后发生；因此保护必须位于**执行闭包**
+    内，而不是排队处。只隔离新增 on_record 的普通 Exception，不改变既有
+    on_report/on_complete/on_error 策略，也不捕获 BaseException
+    （KeyboardInterrupt 等仍按既有语义向外传播）。
+    """
+
+    def notify() -> None:
+        try:
+            on_record(payload)
+        except Exception:  # 仅新增通知执行点：普通异常不外泄、不阻断后续完成回调
+            pass
+
+    return notify
 
 
 def execute_audit(
@@ -304,13 +381,15 @@ def execute_audit(
     progress_cb: "Callable[[ProgressEvent], None] | None" = None,
     abort_check: "Callable[[], bool] | None" = None,
     on_report: "Callable[[dict], None] | None" = None,
+    on_record: "Callable[[dict], None] | None" = None,
 ) -> str | None:
     """一次完整体检流水线（M2 闸①：选范围 → 扫描 → 浏览器自动打开 = 3 步）。
 
     分段清晰（每环一步）：① scan 只读采集（透传 C8 进度回调与 C7 中止谓词）
     → ② judge 六层判定 →（on_report：judge 输出的 report-v1 dict 原样透传，
     T4-07 完成态建议动作区的数据源；在 render/save 前回调，缺省不回调）
-    → ③ render 离线 HTML → ④ save 落盘（U-2 唯一写入位）
+    → ③ render 离线 HTML → ④ save 落盘（U-2 唯一写入位）→（T5-02-A：report 完整
+    时经 record 环保存一条体检记录，至多一次、失败仅降级回执，见 _record_after_save）
     → ⑤ prune 淘汰保留 12 份 → ⑥ open 默认浏览器打开（只读）。
     完整路径返回报告绝对路径；环节异常向上抛出，由调用方统一呈现失败态。
     中止/异常路径（X-2：scan 结果置 incomplete=True）：短路返回 None，不
@@ -329,6 +408,9 @@ def execute_audit(
         on_report(report)
     html_text = pipeline.render(report)
     report_path = pipeline.save(html_text)
+    record_ring = getattr(pipeline, "record", None)  # DR-012：旧六环替身可不提供
+    if record_ring is not None:  # T5-02-A：仅在报告保存后尝试一次记录
+        _record_after_save(record_ring, report, report_path, on_record)
     pipeline.prune()
     pipeline.open(report_path)
     return report_path
@@ -419,6 +501,7 @@ def run_audit_async(
     on_complete: Callable[[str | None], None],
     on_error: Callable[[Exception], None],
     on_report: "Callable[[dict], None] | None" = None,
+    on_record: "Callable[[dict], None] | None" = None,
 ) -> threading.Thread:
     """把体检流水线搬入后台 daemon 线程执行（G2/T3-05：UI 线程零阻塞）。
 
@@ -439,6 +522,7 @@ def run_audit_async(
         on_complete: 主线程执行的完成处理；参数为报告路径，None = 不完整（X-2）。
         on_error: 主线程执行的失败处理（scan/judge 等环节异常）。
         on_report: 主线程执行的报告透传（report-v1 dict，T4-07；缺省不透传）。
+        on_record: 主线程执行的记录回执（T5-02-A/DR-012 四键载荷；缺省不透传）。
     """
 
     def _dispatch(callback: Callable[[], None]) -> None:
@@ -455,12 +539,18 @@ def run_audit_async(
                 if on_report is not None
                 else None
             )
+            record_cb = (
+                (lambda payload: _dispatch(_record_notification(on_record, payload)))
+                if on_record is not None
+                else None
+            )
             report_path = execute_audit(
                 path,
                 deps=deps,
                 progress_cb=lambda event: _dispatch(lambda: on_progress(event)),
                 abort_check=stop.is_set,
                 on_report=report_cb,
+                on_record=record_cb,
             )
         except Exception as exc:  # 环节失败统一出口：主线程呈现失败态，程序不中断
             failure = exc  # except 块结束时解释器删除 exc，先绑定再进派发闭包
