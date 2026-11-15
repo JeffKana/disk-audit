@@ -5378,7 +5378,7 @@
       "lifecycle": "未知",
       "regex_family": null,
       "source": "公开软件名",
-      "notes": "Azure CLI（Microsoft）公开产品的数据目录命名；用途：Azure CLI 配置与登录数据"
+      "notes": "Azure CLI（Microsoft）公开产品的数据目录命名；用途：Azure CLI 配置与登录数据；仅诊断，不读取内容"
     },
     {
       "name": ".aws",
@@ -5400,7 +5400,7 @@
       "lifecycle": "未知",
       "regex_family": null,
       "source": "公开软件名",
-      "notes": "Docker 配置（Docker Inc.）公开产品的数据目录命名；用途：Docker 客户端配置"
+      "notes": "Docker 配置（Docker Inc.）公开产品的数据目录命名；用途：Docker 客户端配置；仅诊断，不读取内容"
     },
     {
       "name": "gcloud",
@@ -5533,6 +5533,228 @@
       "regex_family": null,
       "source": "公开软件名",
       "notes": "Crashpad 崩溃转储（Google (Chromium 系)）公开产品的数据目录命名；用途：Electron/Chromium 系应用崩溃转储,可再生"
-    }
+    },
+    {
+  "name": "notepad++",
+  "product": "Notepad++",
+  "vendor": "Don Ho",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "Notepad++（Don Ho）公开产品的数据目录命名；用途：编辑器用户配置与插件设置"
+},
+    {
+  "name": "alacritty",
+  "product": "Alacritty",
+  "vendor": "Alacritty",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "Alacritty（Alacritty）公开产品的数据目录命名；用途：终端模拟器配置"
+},
+    {
+  "name": "audacity",
+  "product": "Audacity",
+  "vendor": "Muse Group",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "Audacity（Muse Group）公开产品的数据目录命名；用途：音频编辑器设置与配置"
+},
+    {
+  "name": "winmerge",
+  "product": "WinMerge",
+  "vendor": "WinMerge Project",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "WinMerge（WinMerge Project）公开产品的数据目录命名；用途：比较工具用户数据（父目录；WinWebDiff 不单列）；仅诊断，不读取内容"
+},
+    {
+  "name": "prismlauncher",
+  "product": "Prism Launcher",
+  "vendor": "Prism Launcher",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "Prism Launcher（Prism Launcher）公开产品的数据目录命名；用途：Minecraft 启动器实例与配置；仅诊断，不读取内容"
+},
+    {
+  "name": "scooter software",
+  "product": "Beyond Compare",
+  "vendor": "Scooter Software",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "Beyond Compare（Scooter Software）公开产品的数据目录命名；用途：比较工具设置（父目录；Beyond Compare 5 不单列）"
+},
+    {
+  "name": "mobaxterm",
+  "product": "MobaXterm",
+  "vendor": "Mobatek",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "MobaXterm（Mobatek）公开产品的数据目录命名；用途：终端/会话工具配置（官方说明仅部分版本使用该目录）；仅诊断，不读取内容"
+},
+    {
+  "name": "kicad",
+  "product": "KiCad",
+  "vendor": "KiCad",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "KiCad（KiCad）公开产品的数据目录命名；用途：EDA 用户设置（版本子目录 8.0 不单列）"
+},
+    {
+  "name": "musescore",
+  "product": "MuseScore",
+  "vendor": "Muse Group",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "MuseScore（Muse Group）公开产品的数据目录命名；用途：乐谱编辑器偏好设置（MuseScore4.ini 的父目录）"
+},
+    {
+  "name": "anki2",
+  "product": "Anki",
+  "vendor": "Anki",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "Anki（Anki）公开产品的数据目录命名；用途：用户牌组与媒体集合数据；仅诊断，不读取内容"
+},
+    {
+  "name": "helix",
+  "product": "Helix",
+  "vendor": "Helix",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "Helix（Helix）公开产品的数据目录命名；用途：终端编辑器配置"
+},
+    {
+  "name": "nushell",
+  "product": "Nushell",
+  "vendor": "Nushell",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "Nushell（Nushell）公开产品的数据目录命名；用途：Shell 配置目录"
+},
+    {
+  "name": "nvim",
+  "product": "Neovim",
+  "vendor": "Neovim",
+  "aliases": [
+    "nvim-data"
+  ],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "Neovim（Neovim）公开产品的数据目录命名；用途：编辑器配置与数据/状态目录（nvim-data 作为同产品精确别名登记，不另计条目）"
+},
+    {
+  "name": "stellarium",
+  "product": "Stellarium",
+  "vendor": "Stellarium",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "Stellarium（Stellarium）公开产品的数据目录命名；用途：天文馆软件用户配置"
+},
+    {
+  "name": "zed",
+  "product": "Zed",
+  "vendor": "Zed Industries",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "Zed（Zed Industries）公开产品的数据目录命名；用途：编辑器扩展与本地状态"
+},
+    {
+  "name": "qgis",
+  "product": "QGIS",
+  "vendor": "QGIS",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "QGIS（QGIS）公开产品的数据目录命名；用途：GIS 用户配置与 profiles（QGIS3 子目录不单列）"
+},
+    {
+  "name": "draw.io",
+  "product": "draw.io Desktop",
+  "vendor": "draw.io (JGraph)",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "draw.io Desktop（draw.io (JGraph)）公开产品的数据目录命名；用途：本地存储与会话存储；仅诊断，不读取内容"
+},
+    {
+  "name": "zettlr",
+  "product": "Zettlr",
+  "vendor": "Zettlr",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "Zettlr（Zettlr）公开产品的数据目录命名；用途：Markdown 编辑器配置"
+},
+    {
+  "name": "syncthing",
+  "product": "Syncthing",
+  "vendor": "Syncthing",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "Syncthing（Syncthing）公开产品的数据目录命名；用途：配置与数据库目录；仅诊断，不读取内容"
+},
+    {
+  "name": "keepassxc",
+  "product": "KeePassXC",
+  "vendor": "KeePassXC Team",
+  "aliases": [],
+  "category": "已安装应用",
+  "lifecycle": "未知",
+  "regex_family": null,
+  "source": "公开软件名",
+  "notes": "KeePassXC（KeePassXC Team）公开产品的数据目录命名；用途：密码管理器配置；仅诊断，不读取内容"
+}
   ]
 }

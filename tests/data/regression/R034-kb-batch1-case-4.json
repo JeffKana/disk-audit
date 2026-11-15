@@ -1,0 +1,42 @@
+{
+  "case_id": "R034",
+  "title": "WinMerge 同时存在注册表卸载项时仍以知识库归属优先",
+  "registered_at": "2026-11-16",
+  "registered_by": "CodeBuddy-KB-E4-Batch1（任务卡 T6-03-KB1）",
+  "root_cause": "旧库无 winmerge；仅有注册表时会以注册表来源定档，新增后应改为知识库来源",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\WinMerge",
+  "unit": {
+    "files": 4,
+    "dirs": 2,
+    "logical_bytes": 8192,
+    "allocated_bytes": 8192,
+    "max_mtime": 0,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [
+      {
+        "display_name": "WinMerge",
+        "publisher": "WinMerge Project",
+        "install_location": "C:\\Program Files\\WinMerge",
+        "install_date": "2026-01-01",
+        "uninstall_string": "C:\\Program Files\\WinMerge\\uninst.exe",
+        "reg_path": "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\WinMerge"
+      }
+    ],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "知识库",
+    "forbidden_terms": [
+      "已停止",
+      "残留"
+    ]
+  },
+  "notes": "期望=知识库/高（已安装应用）；注册表条目仅作在用证据，不改变归属来源；旧库红。",
+  "source_ref": "F1 §5.1 层序（知识库先于注册表）；T5-03/T506 既有断言口径"
+}
