@@ -455,3 +455,20 @@ T506_TEXTS: dict[str, str] = {
     "unavailable_services": "服务证据源不可用：未核验服务匹配，不作无匹配结论",
     "unavailable_autostart": "自启动证据源不可用：未核验自启动项，不作无匹配结论",
 }
+
+# ======================================================================
+# T5-03 两份体检记录纯比较文案（I2a；F1 E-3 / Q7 / §7-M3；纯内存无 I/O）。
+# 本区块 append-only：新增文案向文末追加，严禁改动上方既有键值
+# （RECORDS_TEXTS 37 键、T506_TEXTS 10 键及其它全部内容逐字保留）。
+# 比较层只接受同扫描范围、同模式的两份已知版本记录；固定中文文案只在本区。
+# ======================================================================
+COMPARISON_TEXTS: dict[str, str] = {
+    # 侧别标签：用于错误定位，不是 UI 组件。
+    "comparison_side_before": "前一份",
+    "comparison_side_after": "后一份",
+    # 不可比：范围/模式不同（动态值走模板参数）。
+    "comparison_err_root_mismatch": "两份体检记录的扫描范围不同，不可比较：前一份 {before}，后一份 {after}",
+    "comparison_err_mode_mismatch": "普通体检记录与管理员体检记录不可比较：前一份 admin_mode={before}，后一份 admin_mode={after}",
+    # 同一份报告内路径重复：拒绝后者静默覆盖。
+    "comparison_err_duplicate_path": "{side}报告内候选路径重复，拒绝后者静默覆盖：{path}",
+}
