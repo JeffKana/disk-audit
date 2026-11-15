@@ -297,6 +297,7 @@ def test_launcher_imports_engine_only_via_declared_interfaces():
         "disk_audit.reports",
         "disk_audit.scanner",
         "disk_audit.system_actions",  # T4-07/F4：A1~A3 经 B3 白名单（唯一系统交互出口）
+        "disk_audit.records",  # T5-02-A/I1b：完整路径记录保存环（DR-012）
     }
 
 
