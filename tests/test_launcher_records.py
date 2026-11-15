@@ -199,13 +199,21 @@ def test_record_failure_keeps_report_and_continues(exc: Exception):
     assert [c[0] for c in calls] == ["scan", "judge", "render", "save", "record", "prune", "open"]
 
 
-def test_record_base_exception_is_not_swallowed():
+class _SentinelAbort(BaseException):
+    """测试专用 BaseException 哨兵：验证实现不吞 BaseException。
+
+    不使用真实 KeyboardInterrupt / 信号（launcher.py 模块契约：产品侧同测试侧
+    一律禁抛真 KeyboardInterrupt），避免影响 pytest 进程的中断语义。
+    """
+
+
+def test_record_base_exception_sentinel_is_not_swallowed():
     calls: list[tuple] = []
 
     def record(report: dict) -> str:
-        raise KeyboardInterrupt("不可吞")
+        raise _SentinelAbort("sentinel-not-a-real-interrupt")
 
-    with pytest.raises(KeyboardInterrupt):
+    with pytest.raises(_SentinelAbort):
         launcher.execute_audit(r"C:\scope", deps=_deps(calls, record=record))
 
 
@@ -491,3 +499,307 @@ def test_real_record_unsafe_root_degrades_without_writing(tmp_path: Path):
     assert got[0]["saved"] is False and got[0]["record_id"] is None
     assert blocker.read_text(encoding="utf-8") == "occupied"
     assert list(tmp_path.glob("*.json")) == []
+
+
+# ---------------------------------------------------------------------------
+# T5-02-A-R1：记录调用计数见证（零调用断言必须真能看到调用）
+# ---------------------------------------------------------------------------
+
+
+class _RecordCounter:
+    """可调用记录环替身：真实累计调用次数与入参，供零调用/恰一次断言。"""
+
+    def __init__(self, record_id: str = "record-counted") -> None:
+        self.calls = 0
+        self.reports: list[dict] = []
+        self.record_id = record_id
+
+    def __call__(self, report: dict) -> str:
+        self.calls += 1
+        self.reports.append(report)
+        return self.record_id
+
+
+def test_incomplete_never_calls_record_counter():
+    counter = _RecordCounter()
+    launcher.execute_audit(
+        r"C:\scope", deps=_deps([], scan_result={"incomplete": True}, record=counter)
+    )
+    assert counter.calls == 0
+
+
+def test_scan_failure_never_calls_record_counter():
+    counter = _RecordCounter()
+    deps = _deps([], record=counter)
+
+    def scan(path: str, progress_cb=None, abort_check=None):
+        raise RuntimeError("scan-boom")
+
+    object.__setattr__(deps, "scan", scan)
+    with pytest.raises(RuntimeError, match="scan-boom"):
+        launcher.execute_audit(r"C:\scope", deps=deps)
+    assert counter.calls == 0
+
+
+def test_judge_failure_never_calls_record_counter():
+    counter = _RecordCounter()
+    deps = _deps([], record=counter)
+
+    def judge(scan_data: dict) -> dict:
+        raise RuntimeError("judge-boom")
+
+    object.__setattr__(deps, "judge", judge)
+    with pytest.raises(RuntimeError, match="judge-boom"):
+        launcher.execute_audit(r"C:\scope", deps=deps)
+    assert counter.calls == 0
+
+
+def test_render_failure_never_calls_record_counter():
+    counter = _RecordCounter()
+    deps = _deps([], record=counter)
+
+    def render(report: dict) -> str:
+        raise RuntimeError("render-boom")
+
+    object.__setattr__(deps, "render", render)
+    with pytest.raises(RuntimeError, match="render-boom"):
+        launcher.execute_audit(r"C:\scope", deps=deps)
+    assert counter.calls == 0
+
+
+def test_save_failure_never_calls_record_counter():
+    counter = _RecordCounter()
+    deps = _deps([], record=counter, save_error=OSError("save-boom"))
+    with pytest.raises(OSError, match="save-boom"):
+        launcher.execute_audit(r"C:\scope", deps=deps)
+    assert counter.calls == 0
+
+
+def test_cooperative_abort_never_calls_record_counter():
+    """协作式中止（stop 已置位 → scan 返回 incomplete）不得落记录。"""
+    counter = _RecordCounter()
+    stop = threading.Event()
+    stop.set()
+    pending: list = []
+
+    def scan(path: str, progress_cb=None, abort_check=None):
+        assert abort_check is not None and abort_check() is True
+        return {"incomplete": True, "root": path}
+
+    deps = launcher.AuditDeps(
+        scan=scan,
+        judge=lambda scan_data: _valid_report(),
+        render=lambda report: "<html></html>",
+        save=lambda html: r"C:\reports\report-1.html",
+        prune=lambda: [],
+        open=lambda path: None,
+        record=counter,
+    )
+    thread = launcher.run_audit_async(
+        r"C:\scope",
+        deps=deps,
+        stop=stop,
+        after=pending.append,
+        on_progress=lambda event: None,
+        on_complete=lambda path: None,
+        on_error=lambda exc: None,
+        on_record=lambda payload: None,
+    )
+    thread.join(5)
+    assert not thread.is_alive()
+    for callback in list(pending):
+        callback()
+    assert counter.calls == 0
+
+
+# ---------------------------------------------------------------------------
+# T5-02-A-R1：真实延期 after 队列（主线程逐条执行）
+# ---------------------------------------------------------------------------
+
+
+def _run_queued(deps, *, on_record, on_complete=None, on_error=None):
+    """after 只排队（模拟 Tk）：worker 结束后由调用方在主线程逐条执行。"""
+    pending: list = []
+    thread = launcher.run_audit_async(
+        r"C:\scope",
+        deps=deps,
+        stop=threading.Event(),
+        after=pending.append,
+        on_progress=lambda event: None,
+        on_complete=on_complete if on_complete is not None else (lambda path: None),
+        on_error=on_error if on_error is not None else (lambda exc: None),
+        on_record=on_record,
+    )
+    thread.join(5)
+    assert not thread.is_alive()
+    return pending
+
+
+def test_deferred_record_success_exactly_once_on_main_thread():
+    ui: list = []
+    completed: list = []
+    main_thread = threading.get_ident()
+    pending = _run_queued(
+        _deps([], record=lambda r: "record-1"),
+        on_record=lambda payload: ui.append((threading.get_ident(), payload["saved"])),
+        on_complete=completed.append,
+    )
+    assert ui == [] and completed == []  # worker 只排队，不直接碰 UI
+    for callback in list(pending):
+        callback()
+    assert ui == [(main_thread, True)]
+    assert completed == [r"C:\reports\report-1.html"]
+
+
+def test_deferred_record_failure_notification_exactly_once_on_main_thread():
+    ui: list = []
+    completed: list = []
+    main_thread = threading.get_ident()
+
+    def record(report: dict) -> str:
+        raise records.RecordWriteError("写失败")
+
+    pending = _run_queued(
+        _deps([], record=record),
+        on_record=lambda payload: ui.append(
+            (threading.get_ident(), payload["saved"], payload["record_id"], payload["error"])
+        ),
+        on_complete=completed.append,
+    )
+    for callback in list(pending):
+        callback()
+    assert ui == [(main_thread, False, None, "写失败")]
+    assert completed == [r"C:\reports\report-1.html"]
+
+
+def test_deferred_on_record_error_does_not_escape_nor_block_complete():
+    """回归（R1 缺陷）：延期执行的 on_record 抛普通异常不得漏给调度者/驱动者。"""
+    completed: list = []
+    pending = _run_queued(
+        _deps([], record=lambda r: "record-1"),
+        on_record=lambda payload: (_ for _ in ()).throw(RuntimeError("通知坏")),
+        on_complete=completed.append,
+    )
+    for callback in list(pending):
+        callback()  # 不应抛出
+    assert completed == [r"C:\reports\report-1.html"]
+
+
+def test_deferred_on_record_error_after_record_failure_does_not_escape():
+    completed: list = []
+
+    def record(report: dict) -> str:
+        raise records.RecordWriteError("写失败")
+
+    pending = _run_queued(
+        _deps([], record=record),
+        on_record=lambda payload: (_ for _ in ()).throw(RuntimeError("通知坏-失败路径")),
+        on_complete=completed.append,
+    )
+    for callback in list(pending):
+        callback()
+    assert completed == [r"C:\reports\report-1.html"]
+
+
+def test_deferred_on_record_base_exception_sentinel_not_swallowed():
+    pending = _run_queued(
+        _deps([], record=lambda r: "record-1"),
+        on_record=lambda payload: (_ for _ in ()).throw(_SentinelAbort("sentinel")),
+    )
+    with pytest.raises(_SentinelAbort):
+        for callback in list(pending):
+            callback()
+
+
+# ---------------------------------------------------------------------------
+# T5-02-A-R1：普通 / admin 真实临时 HTML + JSON 联动
+# ---------------------------------------------------------------------------
+
+
+def _real_deps(reports_dir: Path, records_dir: Path, report: dict, html: str):
+    import dataclasses
+
+    base = launcher.default_deps(reports_dir=str(reports_dir), records_dir=str(records_dir))
+    return dataclasses.replace(
+        base,
+        scan=lambda path, progress_cb=None, abort_check=None: {
+            "root": path, "entries": 0, "skipped": {}, "units": []
+        },
+        judge=lambda scan_data: report,
+        render=lambda r: html,
+    )
+
+
+def test_normal_execute_audit_writes_real_html_and_record(tmp_path: Path):
+    reports_dir = tmp_path / "reports"
+    records_dir = tmp_path / "records"
+    report = _valid_report()
+    before = copy.deepcopy(report)
+    deps = _real_deps(reports_dir, records_dir, report, "<html>normal-real</html>")
+
+    got = launcher.execute_audit(r"C:\scope", deps=deps)
+
+    html_path = Path(got)
+    assert html_path.is_file()
+    assert html_path.read_text(encoding="utf-8") == "<html>normal-real</html>"
+    ids = sorted(p.stem for p in records_dir.glob("*.json"))
+    assert len(ids) == 1 and ids[0].startswith("record-")
+    assert records.read_record(ids[0], records_dir=str(records_dir)) == before
+    assert report == before
+
+
+def test_admin_execute_audit_writes_real_admin_html_and_record(tmp_path: Path):
+    import dataclasses
+
+    reports_dir = tmp_path / "reports"
+    records_dir = tmp_path / "records"
+    report = _valid_report(admin=True)
+    base = launcher._elevated_deps(reports_dir=str(reports_dir), records_dir=str(records_dir))
+    deps = dataclasses.replace(
+        base,
+        scan=lambda path, progress_cb=None, abort_check=None: {
+            "root": path, "entries": 0, "skipped": {}, "units": []
+        },
+        judge=lambda scan_data: report,
+        render=lambda r: "<html>admin-real</html>",
+    )
+
+    got = launcher.execute_audit(r"C:\scope", deps=deps)
+
+    html_path = Path(got)
+    assert html_path.is_file() and html_path.name.startswith("admin-")
+    assert html_path.read_text(encoding="utf-8") == "<html>admin-real</html>"
+    ids = sorted(p.stem for p in records_dir.glob("*.json"))
+    assert len(ids) == 1 and ids[0].startswith("admin-record-")
+    stored = records.read_record(ids[0], records_dir=str(records_dir))
+    assert stored["admin_mode"] is True
+
+
+# ---------------------------------------------------------------------------
+# T5-02-A-R1：记录失败时真实 HTML 清单/字节/hash 保留、无记录残留
+# ---------------------------------------------------------------------------
+
+
+def test_record_failure_preserves_real_html_bytes_and_leaves_no_record(tmp_path: Path):
+    import hashlib
+
+    reports_dir = tmp_path / "reports"
+    occupied = tmp_path / "records-occupied"
+    occupied.write_text("occupied", encoding="utf-8")
+    deps = _real_deps(reports_dir, occupied, _valid_report(), "<html>keep-me</html>")
+    # records_dir 指向已存在文件：真实 RecordError（根不是目录），不会创建目录/文件。
+
+    got = launcher.execute_audit(r"C:\scope", deps=deps)
+
+    html_path = Path(got)
+    assert html_path.is_file()
+    body = html_path.read_bytes()
+    assert body == b"<html>keep-me</html>"
+    digest = hashlib.sha256(body).hexdigest()
+    # 第二次失败运行也只是新增报告文件，不改既有 HTML 字节；这里校验清单与 hash 稳定。
+    files = sorted(p.name for p in reports_dir.glob("*"))
+    assert files == [html_path.name]
+    assert hashlib.sha256(html_path.read_bytes()).hexdigest() == digest
+    assert occupied.read_text(encoding="utf-8") == "occupied"
+    assert list(tmp_path.rglob("*.json")) == []
+    assert list(tmp_path.rglob(".tmp-record-*")) == []

@@ -354,6 +354,26 @@ def _record_after_save(
             pass
 
 
+def _record_notification(
+    on_record: "Callable[[dict], None]", payload: dict
+) -> "Callable[[], None]":
+    """构造延期执行的新记录通知闭包（T5-02-A-R1 / DR-013）。
+
+    after 只负责排队，真正执行点在主线程稍后发生；因此保护必须位于**执行闭包**
+    内，而不是排队处。只隔离新增 on_record 的普通 Exception，不改变既有
+    on_report/on_complete/on_error 策略，也不捕获 BaseException
+    （KeyboardInterrupt 等仍按既有语义向外传播）。
+    """
+
+    def notify() -> None:
+        try:
+            on_record(payload)
+        except Exception:  # 仅新增通知执行点：普通异常不外泄、不阻断后续完成回调
+            pass
+
+    return notify
+
+
 def execute_audit(
     path: str,
     *,
@@ -520,7 +540,7 @@ def run_audit_async(
                 else None
             )
             record_cb = (
-                (lambda payload: _dispatch(lambda: on_record(payload)))
+                (lambda payload: _dispatch(_record_notification(on_record, payload)))
                 if on_record is not None
                 else None
             )
