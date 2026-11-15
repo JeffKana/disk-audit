@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+"""Build self-contained skill directories from the single shared source."""
+
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+import re
+import sys
+
+ROOT = Path(__file__).resolve().parent.parent
+SKILLS = ("project-bootstrap", "plan-cards", "exec-sop", "accept-verify", "ci-cd-ops", "ops-runbook", "independent-test")
+REF = re.compile(r"\.\./references/([^\s)]+\.md)")
+
+
+def build(destination: Path) -> None:
+    destination = destination.resolve()
+    protected = [ROOT, ROOT / "references", *(ROOT / skill for skill in SKILLS)]
+    if destination in protected or any(path in destination.parents for path in protected[1:]):
+        raise ValueError("输出目录不能是源包或源技能目录")
+    if destination.exists() and (not destination.is_dir() or any(destination.iterdir())):
+        raise ValueError("输出目录必须不存在或为空；不会覆盖现有文件")
+
+    # Check all inputs before creating any output.
+    changelog = (ROOT / "CHANGELOG.md").read_bytes()
+    plans: list[tuple[str, str, dict[str, bytes]]] = []
+    for skill in SKILLS:
+        content = (ROOT / skill / "SKILL.md").read_text(encoding="utf-8")
+        refs = {}
+        for name in set(REF.findall(content)):
+            if Path(name).name != name:
+                raise ValueError(f"不支持的引用：{name}")
+            refs[name] = (ROOT / "references" / name).read_bytes()
+        if "契约字典.md" not in refs:
+            raise ValueError(f"{skill} 缺少契约引用")
+        plans.append((skill, content.replace("../references/", "references/"), refs))
+
+    destination.mkdir(parents=True, exist_ok=True)
+    (destination / "CHANGELOG.md").write_bytes(changelog)
+    for skill, content, refs in plans:
+        folder = destination / skill
+        folder.mkdir()
+        (folder / "SKILL.md").write_text(content, encoding="utf-8", newline="\n")
+        (folder / "references").mkdir()
+        for name, data in refs.items():
+            (folder / "references" / name).write_bytes(data)
+    print(f"已生成 {len(SKILLS)} 个技能：{destination}")
+    print("共享资料来自维护源；发布副本应重新生成，不应独立维护。")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("destination", type=Path, help="不存在或为空的输出目录")
+    args = parser.parse_args()
+    try:
+        build(args.destination)
+    except (OSError, ValueError) as exc:
+        print(f"生成失败：{exc}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

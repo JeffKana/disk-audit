@@ -1,0 +1,369 @@
+import importlib.util
+from pathlib import Path
+import shutil
+import tempfile
+import unittest
+from unittest.mock import patch
+
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def load(name):
+    spec = importlib.util.spec_from_file_location(name, ROOT / "scripts" / (name + ".py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+check = load("check")
+build = load("build_distribution")
+
+
+def fields(values):
+    return "# 制品\n" + "".join(f"- {key}: {value}\n" for key, value in values.items())
+
+
+class ProjectChecks(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.task_dir = self.root / "TASK-001"
+        self.task_dir.mkdir()
+        self.task = {
+            "type": "task", "id": "TASK-001", "writer": "planner", "revision": "3",
+            "contract_version": "1", "status": "已完成",
+            "history": "待执行 > 执行中 > 待验收 > 已完成", "risk": "标准",
+            "assignee": "worker", "merge_required": "yes",
+        }
+        self.execution = {
+            "type": "execution", "id": "TASK-001", "writer": "worker", "version": "2",
+            "task_contract": "1", "task_ack_by": "worker", "task_ack_at": "2026-11-12",
+            "head": "abc123",
+        }
+        self.acceptance = {
+            "type": "acceptance", "id": "TASK-001", "writer": "reviewer", "version": "1",
+            "task_contract": "1", "execution_version": "2", "execution_ack_by": "reviewer",
+            "execution_ack_at": "2026-11-12", "head": "abc123", "conclusion": "通过", "returns": "0",
+        }
+        self.merge = {
+            "type": "merge", "id": "TASK-001", "writer": "merger", "version": "1",
+            "acceptance_version": "1", "acceptance_ack_by": "merger",
+            "acceptance_ack_at": "2026-11-12", "head": "abc123", "merged": "yes",
+        }
+
+    def run_check(self):
+        for name, data in (("task.md", self.task), ("execution.md", self.execution),
+                           ("acceptance.md", self.acceptance), ("merge-record.md", self.merge)):
+            (self.task_dir / name).write_text(fields(data), encoding="utf-8")
+        report = check.Report()
+        check.check_project(self.root, report)
+        return report
+
+    def test_valid_complete_task(self):
+        self.assertEqual([], self.run_check().errors)
+
+    def test_stale_head_and_contract_rejected(self):
+        self.execution["task_contract"] = "old"
+        self.acceptance["head"] = "old-head"
+        report = self.run_check()
+        self.assertTrue(any("task_contract" in item for item in report.errors))
+        self.assertTrue(any("head" in item for item in report.errors))
+
+    def test_skipped_acceptance_and_wrong_writer_rejected(self):
+        self.task["history"] = "待执行 > 已完成"
+        self.execution["writer"] = "another-worker"
+        report = self.run_check()
+        self.assertTrue(any("非法状态迁移" in item for item in report.errors))
+        self.assertTrue(any("writer" in item for item in report.errors))
+
+    def test_resume_blocked_must_return_to_previous_state(self):
+        self.task["status"] = "待验收"
+        self.task["history"] = "待执行 > 执行中 > 阻塞 > 待验收"
+        report = self.run_check()
+        self.assertTrue(any("阻塞 → 待验收" in item for item in report.errors))
+
+    def test_independent_reviewer_and_ack(self):
+        self.acceptance["writer"] = "worker"
+        self.acceptance["execution_ack_by"] = "worker"
+        self.merge["acceptance_ack_by"] = ""
+        report = self.run_check()
+        self.assertTrue(any("独立" in item for item in report.errors))
+        self.assertTrue(any("acceptance_ack_by" in item for item in report.errors))
+
+    def test_two_returns_raise_escalation_warning(self):
+        self.acceptance["returns"] = "2"
+        report = self.run_check()
+        self.assertTrue(any("升级阈值" in item for item in report.warnings))
+
+    def test_project_check_does_not_modify_artifacts(self):
+        self.run_check()
+        before = {path: path.read_bytes() for path in self.task_dir.iterdir()}
+        report = check.Report()
+        check.check_project(self.root, report)
+        after = {path: path.read_bytes() for path in self.task_dir.iterdir()}
+        self.assertEqual(before, after)
+
+    def test_merge_requires_a_real_head(self):
+        self.merge["head"] = "n/a"
+        report = self.run_check()
+        self.assertTrue(any("待合 head" in item for item in report.errors))
+
+    def test_duplicate_task_ids_are_rejected(self):
+        self.run_check()
+        other = self.root / "another-task"
+        other.mkdir()
+        (other / "task.md").write_text(fields(self.task), encoding="utf-8")
+        report = check.Report()
+        check.check_project(self.root, report)
+        self.assertTrue(any("任务 ID" in item and "重复" in item for item in report.errors))
+
+    def test_return_requires_a_recorded_count(self):
+        self.task["status"] = "退回"
+        self.task["history"] = "待执行 > 执行中 > 待验收 > 退回"
+        self.acceptance["conclusion"] = "退回"
+        self.acceptance["returns"] = "0"
+        report = self.run_check()
+        self.assertTrue(any("退回次数" in item for item in report.errors))
+
+    def test_returned_task_with_merged_yes_is_rejected(self):
+        self.task["status"] = "退回"
+        self.task["history"] = "待执行 > 执行中 > 待验收 > 退回"
+        self.acceptance["conclusion"] = "退回"
+        self.acceptance["returns"] = "1"
+        self.merge["merged"] = "yes"
+        report = self.run_check()
+        self.assertTrue(any("merged=yes" in item for item in report.errors))
+
+    def test_head_mismatch_in_returned_state_is_error_not_warning(self):
+        self.task["status"] = "退回"
+        self.task["history"] = "待执行 > 执行中 > 待验收 > 退回"
+        self.acceptance["conclusion"] = "退回"
+        self.acceptance["returns"] = "1"
+        self.acceptance["head"] = "old-head"
+        self.merge["head"] = "other-head"
+        report = self.run_check()
+        self.assertTrue(any("head 不一致" in item for item in report.errors))
+
+    def test_test_report_version_mismatch_with_acceptance_reference(self):
+        self.task["status"] = "待验收"
+        self.task["history"] = "待执行 > 执行中 > 待验收"
+        self.acceptance["test_report_version"] = "1"
+        self.write_test_report({"version": "2"})
+        report = self.run_check()
+        self.assertTrue(any("test_report_version 不一致" in item for item in report.errors))
+
+    def test_matching_test_report_reference_passes(self):
+        self.task["status"] = "待验收"
+        self.task["history"] = "待执行 > 执行中 > 待验收"
+        self.acceptance["test_report_version"] = "1"
+        self.write_test_report({"version": "1"})
+        report = self.run_check()
+        self.assertEqual([], report.errors)
+
+    def write_test_report(self, overrides):
+        data = {
+            "type": "test-report", "id": "TASK-001", "writer": "tester", "version": "1",
+            "task_contract": "1", "execution_version": "2", "execution_ack_by": "tester",
+            "execution_ack_at": "2026-11-12", "head": "abc123", "result": "通过",
+        }
+        data.update(overrides)
+        (self.task_dir / "test-report.md").write_text(fields(data), encoding="utf-8")
+
+    def test_failed_test_with_passing_conclusion_rejected(self):
+        self.task["status"] = "待验收"
+        self.task["history"] = "待执行 > 执行中 > 待验收"
+        self.acceptance["test_report_version"] = "1"
+        self.write_test_report({"result": "失败"})
+        report = self.run_check()
+        self.assertTrue(any("不得覆盖测试结论" in item for item in report.errors))
+
+    def test_failed_test_with_merged_yes_rejected(self):
+        self.task["status"] = "待验收"
+        self.task["history"] = "待执行 > 执行中 > 待验收"
+        self.acceptance["test_report_version"] = "1"
+        self.write_test_report({"result": "失败"})
+        self.merge["merged"] = "yes"
+        report = self.run_check()
+        self.assertTrue(any("测试结论为失败或阻塞时不得标记 merged=yes" in item for item in report.errors))
+
+    def test_blocked_test_with_completed_task_rejected(self):
+        self.acceptance["test_report_version"] = "1"
+        self.write_test_report({"result": "阻塞"})
+        report = self.run_check()
+        self.assertTrue(any("测试结论为失败或阻塞时任务不得已完成" in item for item in report.errors))
+
+    def test_failed_test_correctly_returned_passes(self):
+        self.task["status"] = "退回"
+        self.task["history"] = "待执行 > 执行中 > 待验收 > 退回"
+        self.acceptance["conclusion"] = "退回"
+        self.acceptance["returns"] = "1"
+        self.acceptance["test_report_version"] = "1"
+        self.merge["merged"] = "no"
+        self.write_test_report({"result": "失败"})
+        report = self.run_check()
+        self.assertEqual([], report.errors)
+
+    def test_strict_state_escalates_test_report_mismatches(self):
+        self.task["status"] = "待验收"
+        self.task["history"] = "待执行 > 执行中 > 待验收"
+        self.acceptance["test_report_version"] = "1"
+        self.write_test_report({"task_contract": "old"})
+        report = self.run_check()
+        self.assertTrue(any("task_contract 不一致" in item for item in report.errors))
+
+    def test_missing_reference_is_error_in_strict_state(self):
+        self.task["status"] = "待验收"
+        self.task["history"] = "待执行 > 执行中 > 待验收"
+        self.write_test_report({})
+        report = self.run_check()
+        self.assertTrue(any("未引用其版本" in item for item in report.errors))
+
+    def test_declared_version_without_local_file_is_error_when_completed(self):
+        self.acceptance["test_report_version"] = "1"
+        report = self.run_check()
+        self.assertTrue(any("本地无 test-report.md" in item for item in report.errors))
+
+    def test_lenient_state_keeps_warnings_for_test_report(self):
+        self.task["status"] = "执行中"
+        self.task["history"] = "待执行 > 执行中"
+        self.write_test_report({"task_contract": "old"})
+        report = self.run_check()
+        self.assertEqual([], report.errors)
+        self.assertTrue(any("task_contract 不一致" in item for item in report.warnings))
+
+
+class DistributionChecks(unittest.TestCase):
+    def test_build_missing_changelog_leaves_no_output(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary) / "source"
+            shutil.copytree(ROOT, source)
+            (source / "CHANGELOG.md").unlink()
+            target = Path(temporary) / "out"
+            with patch.object(build, "ROOT", source):
+                with self.assertRaisesRegex(FileNotFoundError, "CHANGELOG"):
+                    build.build(target)
+            self.assertFalse(target.exists())
+
+    def test_distribution_copies_root_changelog_only(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary) / "out"
+            build.build(target)
+            self.assertEqual((ROOT / "CHANGELOG.md").read_bytes(),
+                             (target / "CHANGELOG.md").read_bytes())
+            for name in build.SKILLS:
+                self.assertEqual([], list((target / name).rglob("CHANGELOG.md")))
+
+    def test_missing_changelog_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary) / "out"
+            build.build(target)
+            (target / "CHANGELOG.md").unlink()
+            report = check.Report()
+            check.check_package(target, report)
+            self.assertTrue(any("CHANGELOG.md" in item for item in report.errors))
+
+    def test_changelog_version_mismatch_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary) / "out"
+            build.build(target)
+            (target / "CHANGELOG.md").write_text(
+                "# CHANGELOG\n\n## 9.9.9 · 最新\n\n## 1.0.0 · 历史\n", encoding="utf-8")
+            report = check.Report()
+            check.check_package(target, report)
+            self.assertTrue(any("CHANGELOG 最新版本与契约字典版本锚点不一致" in item
+                                for item in report.errors))
+
+    def test_changelog_uses_first_version_entry(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary) / "out"
+            build.build(target)
+            (target / "CHANGELOG.md").write_text(
+                "# CHANGELOG\n\n## 1.0.0 · 最新\n\n## 9.9.9 · 历史\n", encoding="utf-8")
+            report = check.Report()
+            check.check_package(target, report)
+            self.assertEqual([], report.errors)
+
+    def test_malformed_changelog_version_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary) / "out"
+            build.build(target)
+            for heading in ("## 1.0", "## 1.0.0.1", "## 1.0.0-preview", "正文 ## 1.0.0"):
+                with self.subTest(heading=heading):
+                    (target / "CHANGELOG.md").write_text(heading + "\n", encoding="utf-8")
+                    report = check.Report()
+                    check.check_package(target, report)
+                    self.assertTrue(any("CHANGELOG 缺少合法版本条目" in item
+                                        for item in report.errors))
+
+    def test_build_rewrites_links_and_refuses_overwrite(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary) / "out"
+            build.build(target)
+            report = check.Report()
+            check.check_package(target, report)
+            self.assertEqual([], report.errors)
+            for name in build.SKILLS:
+                content = (target / name / "SKILL.md").read_text(encoding="utf-8")
+                self.assertNotIn("../references/", content)
+                copied = {p.name for p in (target / name / "references").glob("*.md")}
+                # 每个技能目录只携带其正文实际引用的共享资料（按需加载，无孤儿副本）。
+                self.assertEqual(
+                    {f for f in copied if f"references/{f}" in content}, copied,
+                    f"{name} 携带了正文未引用的共享资料",
+                )
+                self.assertIn("契约字典.md", copied)
+                for copied_name in copied:
+                    self.assertEqual(
+                        (ROOT / "references" / copied_name).read_bytes(),
+                        (target / name / "references" / copied_name).read_bytes(),
+                    )
+            # 模板库被七个技能引用，GitHub 排障手册只被 ops-runbook 引用。
+            self.assertIn("模板库.md", {p.name for p in (target / "ci-cd-ops" / "references").glob("*.md")})
+            self.assertIn("GitHub-故障排查.md", {p.name for p in (target / "ops-runbook" / "references").glob("*.md")})
+            self.assertNotIn("GitHub-故障排查.md", {p.name for p in (target / "plan-cards" / "references").glob("*.md")})
+            marker = target / "keep.txt"
+            marker.write_text("untouched", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                build.build(target)
+            self.assertEqual("untouched", marker.read_text(encoding="utf-8"))
+
+    def replace_anchor_line(self, target, replacement):
+        path = target / "accept-verify" / "references" / "契约字典.md"
+        content = path.read_text(encoding="utf-8")
+        lines = [line for line in content.splitlines() if not line.startswith("契约字典版本：")]
+        if replacement is not None:
+            lines.insert(2, replacement)
+        path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    def test_missing_anchor_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary) / "out"
+            build.build(target)
+            self.replace_anchor_line(target, None)
+            report = check.Report()
+            check.check_package(target, report)
+            self.assertTrue(any("缺少版本锚点" in item for item in report.errors))
+
+    def test_mismatched_anchor_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary) / "out"
+            build.build(target)
+            self.replace_anchor_line(target, "契约字典版本：9.9.9（生效日期 2026-11-15）")
+            report = check.Report()
+            check.check_package(target, report)
+            self.assertTrue(any("锚点不一致" in item for item in report.errors))
+
+    def test_malformed_anchor_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary) / "out"
+            build.build(target)
+            self.replace_anchor_line(target, "契约字典版本：1.0（生效日期 2026-11-15）")
+            report = check.Report()
+            check.check_package(target, report)
+            self.assertTrue(any("格式非法" in item for item in report.errors))
+
+
+if __name__ == "__main__":
+    unittest.main()
