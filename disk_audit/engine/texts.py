@@ -472,3 +472,39 @@ COMPARISON_TEXTS: dict[str, str] = {
     # 同一份报告内路径重复：拒绝后者静默覆盖。
     "comparison_err_duplicate_path": "{side}报告内候选路径重复，拒绝后者静默覆盖：{path}",
 }
+
+# ======================================================================
+# T5-02-B1 记录UI展示与I3只读列表文案（I1；DR-018 / DR-012 四键 / DR-013）。
+# 本区块 append-only：新增文案一律向文末追加，严禁改动上方既有键值
+# （tests/test_engine_wording.py 与 tests/test_launcher_record_ui.py 对照断言）。
+# 口径：独立"普通体检记录状态"行按本次会话回执呈现，晚回调只改该行、不覆盖报告
+# 完成文案；缺失/损坏回执只说"未提供"，不按数量/mtime 猜成功失败；失败仅显示友好
+# 通用错误，不透传原异常。I3 列表只读：list_records 返回 [] 无法区分不存在/为空/
+# 暂不可读取，故用中性文案；坏项 version/mode 一律未知（admin_mode=False 是回退值，
+# 不得当普通模式）；有效 1.0/1.1 按既有兼容支持，不一律标旧版不可比；按记录ID排序，
+# 不称最新/时间排序，不截前12条，不承诺毫秒级；不提供比较/删除/打开历史报告入口。
+# ======================================================================
+RECORD_UI_TEXTS: dict[str, str] = {
+    "record_group": "普通体检记录状态",
+    "record_idle": "本次会话尚未发起体检，暂无记录回执。",
+    "record_pending": "本次体检记录状态：等待回执…",
+    "record_saved": "本次体检记录已保存：{record_id}",
+    "record_failed": "本次体检记录未保存（记录保存失败）；已生成的报告不受影响。",
+    "record_not_provided": "本次体检记录状态：未提供回执，无法确认是否保存。",
+    "record_incomplete": "本次体检未完成，未产生体检记录回执。",
+    "records_group": "体检记录列表（只读）",
+    "records_refresh": "刷新记录列表",
+    "records_idle": "尚未加载记录列表，点击“刷新记录列表”加载。",
+    "records_summary_fmt": "共 {count} 条记录（按记录ID排序）",
+    "records_empty": "未加载到记录（目录可能不存在、为空或暂不可读取）",
+    "records_read_failed": "记录列表读取失败，未能加载记录（不代表目录为空）。",
+    "records_note": (
+        "本列表只读展示已保存的体检记录，按记录ID排序，不按时间排序、不声称最新；"
+        "不提供比较、删除或打开历史报告的入口。"
+    ),
+    "record_row_valid_fmt": "{record_id} · 版本 {version} · {mode} · 格式可比",
+    "record_row_invalid_fmt": "{record_id} · 版本 未知 · 模式 未知 · 格式不可比 · {problem}",
+    "record_mode_normal": "普通模式",
+    "record_mode_admin": "管理员模式",
+    "record_problem_unknown": "问题未提供",
+}

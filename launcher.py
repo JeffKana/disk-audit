@@ -374,6 +374,76 @@ def _record_notification(
     return notify
 
 
+# ---------- T5-02-B1（I1/DR-018）：记录回执与只读列表的呈现收敛 ----------
+
+RECORD_UI_TEXTS = texts.RECORD_UI_TEXTS
+_RECORD_PAYLOAD_KEYS = frozenset(("saved", "record_id", "report_path", "error"))
+
+
+def record_status_text(payload: object) -> str:
+    """四键回执 → 独立记录状态行文案（纯函数，主线程消费）。
+
+    DR-018：缺失/损坏回执只说"未提供"，不按数量/mtime 猜成功失败；失败只显示
+    友好通用错误，不透传原异常字符串（原 error 协议不变，仅本 UI 不呈现）。
+    """
+    if not isinstance(payload, dict) or set(payload) != _RECORD_PAYLOAD_KEYS:
+        return RECORD_UI_TEXTS["record_not_provided"]
+    saved = payload["saved"]
+    if not isinstance(saved, bool):
+        return RECORD_UI_TEXTS["record_not_provided"]
+    if not saved:
+        return RECORD_UI_TEXTS["record_failed"]
+    record_id = payload["record_id"]
+    if not isinstance(record_id, str) or not record_id:
+        return RECORD_UI_TEXTS["record_not_provided"]
+    return RECORD_UI_TEXTS["record_saved"].format(record_id=record_id)
+
+
+def load_records_snapshot() -> dict:
+    """后台线程只读枚举（I3）：只经 records.list_records，不绕路径守卫二次读 JSON。
+
+    list_records 返回 [] 时无法区分目录不存在/为空/暂不可读取（records 517-522），
+    故不在此猜测；能观察到的异常如实标记为读取失败，由呈现层给中性/失败文案。
+    """
+    try:
+        entries = records.list_records()
+    except Exception:
+        return {"entries": None, "error": True}
+    return {"entries": entries, "error": None}
+
+
+def record_entry_text(entry: "records.RecordEntry") -> str:
+    """单条记录 → 列表行文案。坏项 version/mode 一律未知。
+
+    DR-018/DR-012：损坏记录的 RecordEntry.admin_mode=False 是回退值，不得当普通
+    模式；schema_version=None 即未知，不从文件名或坏字段捏造版本。problem 原样
+    可见（含"旧记录不可比"）。有效 1.0/1.1 按既有兼容支持，标格式可比。
+    """
+    if entry.comparable:
+        mode = (RECORD_UI_TEXTS["record_mode_admin"] if entry.admin_mode
+                else RECORD_UI_TEXTS["record_mode_normal"])
+        return RECORD_UI_TEXTS["record_row_valid_fmt"].format(
+            record_id=entry.record_id, version=entry.schema_version, mode=mode
+        )
+    return RECORD_UI_TEXTS["record_row_invalid_fmt"].format(
+        record_id=entry.record_id,
+        problem=entry.problem or RECORD_UI_TEXTS["record_problem_unknown"],
+    )
+
+
+def records_view_model(snapshot: object) -> "tuple[str, list[str]]":
+    """枚举快照 → (汇总文案, 全部行文案)；纯函数，不截断、不排序改写。"""
+    if not isinstance(snapshot, dict) or snapshot.get("error"):
+        return RECORD_UI_TEXTS["records_read_failed"], []
+    entries = snapshot.get("entries")
+    if not isinstance(entries, list):
+        return RECORD_UI_TEXTS["records_read_failed"], []
+    if not entries:
+        return RECORD_UI_TEXTS["records_empty"], []
+    rows = [record_entry_text(entry) for entry in entries]
+    return RECORD_UI_TEXTS["records_summary_fmt"].format(count=len(rows)), rows
+
+
 def execute_audit(
     path: str,
     *,
@@ -1184,6 +1254,40 @@ def build_scope_ui(
             return
         status_var.set(run_suggested_action(action, operable_paths[index]))
 
+    # T5-02-B1（I1/DR-018）：独立"普通体检记录状态"行 + I3 只读记录列表。
+    # 记录行与底部报告状态栏物理分离：晚到的记录回执只改本行，绝不覆盖报告完成文案。
+    record_frame = tk.LabelFrame(root, text=RECORD_UI_TEXTS["record_group"])
+    record_frame.pack(fill="x", padx=12, pady=4)
+    record_status_var = tk.StringVar(value=RECORD_UI_TEXTS["record_idle"])
+    tk.Label(
+        record_frame, textvariable=record_status_var, anchor="w",
+        wraplength=660, justify="left",
+    ).pack(fill="x", padx=8, pady=(4, 6))
+
+    records_frame = tk.LabelFrame(root, text=RECORD_UI_TEXTS["records_group"])
+    records_frame.pack(fill="both", expand=True, padx=12, pady=4)
+    records_summary_var = tk.StringVar(value=RECORD_UI_TEXTS["records_idle"])
+    tk.Label(
+        records_frame, textvariable=records_summary_var, anchor="w",
+        wraplength=660, justify="left",
+    ).pack(fill="x", padx=8, pady=(4, 2))
+    records_refresh_button = tk.Button(
+        records_frame, text=RECORD_UI_TEXTS["records_refresh"],
+        command=lambda: _refresh_records(),
+    )
+    records_refresh_button.pack(anchor="w", padx=8, pady=(0, 4))
+    records_list_row = tk.Frame(records_frame)
+    records_list_row.pack(fill="both", expand=True, padx=8)
+    records_box = tk.Listbox(records_list_row, height=8, activestyle="none")
+    records_scroll = tk.Scrollbar(records_list_row, command=records_box.yview)
+    records_box.config(yscrollcommand=records_scroll.set)
+    records_box.pack(side="left", fill="both", expand=True)
+    records_scroll.pack(side="right", fill="y")
+    tk.Label(
+        records_frame, text=RECORD_UI_TEXTS["records_note"], anchor="w",
+        wraplength=660, justify="left", fg="#6b7280",
+    ).pack(fill="x", padx=8, pady=(4, 6))
+
     bottom = tk.Frame(root)
     bottom.pack(fill="x", padx=12, pady=(4, 12))
     start_button = tk.Button(bottom, text=LAUNCHER_TEXTS["start_button"], command=lambda: _on_start())
@@ -1196,7 +1300,11 @@ def build_scope_ui(
 
     # 一次体检的会话状态：每次"开始体检"整体替换（新停止标志/新线程）——
     # 重新发起扫描天然无跨次残留（验收③）。
-    session: dict = {"stop": None}
+    # T5-02-B1：generation 为本次会话 latch（跨会话迟到回执按此丢弃）；
+    # record_received 记录本次是否已收到回执，供完成态判定"未提供"。
+    session: dict = {"stop": None, "generation": 0, "record_received": False}
+    # I3 列表刷新独立 generation：乱序返回只回填最新一次（DR-018 §5）。
+    records_state: dict = {"generation": 0}
 
     def _set_audit_state(running: bool) -> None:
         """扫描期间锁定范围选择与开始按钮，启用中止；结束后还原（含自定义联动）。"""
@@ -1228,6 +1336,39 @@ def build_scope_ui(
             return None
         return selected
 
+    def _dispatch_records(callback: "Callable[[], None]") -> None:
+        """记录列表派发兜底：窗口销毁后 after 失败安静收尾（run_audit_async 先例）。"""
+        try:
+            root.after(0, callback)
+        except Exception:
+            pass  # 无 UI 可更新时静默收尾，不掩盖枚举本身的结果
+
+    def _apply_records(snapshot: dict, generation: int) -> None:
+        """主线程回填：过期 generation 直接丢弃（乱序刷新只认最新一次）。"""
+        if generation != records_state["generation"]:
+            return
+        summary, rows = records_view_model(snapshot)
+        records_summary_var.set(summary)
+        records_box.delete(0, "end")
+        for row in rows:
+            records_box.insert("end", row)
+
+    def _refresh_records() -> None:
+        """I3 只读刷新：后台线程枚举 records.list_records，经 after 回主线程写控件。
+
+        DR-018 §5：主线程零 I/O、worker 零 Tk；只读——不发起扫描/提权/保存/淘汰/
+        外部程序，不绕路径守卫二次读 JSON，不改 records 接口。全部行入列表控件
+        （配滚动条），不截前 12 条、不承诺毫秒级。
+        """
+        records_state["generation"] += 1
+        generation = records_state["generation"]
+
+        def worker() -> None:
+            snapshot = load_records_snapshot()
+            _dispatch_records(lambda: _apply_records(snapshot, generation))
+
+        threading.Thread(target=worker, name="diskaudit-records", daemon=True).start()
+
     def _on_start() -> None:
         path = _resolve_selected_scope()
         if path is None:
@@ -1236,6 +1377,11 @@ def build_scope_ui(
         # 进度经 after 派发主线程刷新；中止 = 置停止标志（C7 统一出口）。
         stop = threading.Event()
         session["stop"] = stop
+        # T5-02-B1：新会话 latch 递增 + 记录行清空为"等待回执"（旧状态零残留）。
+        session["generation"] += 1
+        generation = session["generation"]
+        session["record_received"] = False
+        record_status_var.set(RECORD_UI_TEXTS["record_pending"])
         progress_var.set(G2_TEXTS["progress_status"].format(entries=0, seconds=0))
         current_path_var.set("")
         banner_var.set("")
@@ -1258,6 +1404,18 @@ def build_scope_ui(
             # 建议动作区（先于 on_complete 的状态栏完成文案，after 队列 FIFO）。
             _populate_actions(report)
 
+        def on_record(payload: dict) -> None:
+            """记录回执 → 独立记录状态行（DR-018 §2；主线程经 after 执行）。
+
+            只写本行，绝不触碰报告状态栏；跨会话迟到回执按 generation 丢弃。
+            普通 Exception 的隔离由 run_audit_async 的 _record_notification 执行点
+            承担（DR-013），本闭包不另吞异常，BaseException 仍向外传播。
+            """
+            if generation != session["generation"]:
+                return
+            session["record_received"] = True
+            record_status_var.set(record_status_text(payload))
+
         def on_complete(report_path: "str | None") -> None:
             progressbar.stop()
             _set_audit_state(running=False)
@@ -1265,13 +1423,23 @@ def build_scope_ui(
                 banner_var.set(G2_TEXTS["incomplete_banner"])
                 banner_label.pack(fill="x", padx=12, pady=(0, 4), before=progress_frame)
                 status_var.set(G2_TEXTS["status_incomplete"])
+                if generation == session["generation"]:
+                    # 不完整出口不伪造"已保存/未保存"，只陈述未产生回执。
+                    record_status_var.set(RECORD_UI_TEXTS["record_incomplete"])
             else:
                 status_var.set(G3_TEXTS["status_report_opened"].format(path=report_path))
+                if generation == session["generation"]:
+                    if not session["record_received"]:
+                        # 合法报告但无回执（记录环未启用等）：只说未提供，不猜成功失败。
+                        record_status_var.set(RECORD_UI_TEXTS["record_not_provided"])
+                    _refresh_records()
 
         def on_error(exc: Exception) -> None:
             progressbar.stop()
             _set_audit_state(running=False)
             status_var.set(G3_TEXTS["status_audit_failed"].format(reason=exc))
+            if generation == session["generation"] and not session["record_received"]:
+                record_status_var.set(RECORD_UI_TEXTS["record_incomplete"])
 
         session["thread"] = run_audit_async(
             path,
@@ -1282,6 +1450,7 @@ def build_scope_ui(
             on_report=on_report,
             on_complete=on_complete,
             on_error=on_error,
+            on_record=on_record,
         )
 
     def _on_abort() -> None:
@@ -1337,6 +1506,9 @@ def build_scope_ui(
         # 收敛于纯函数（仅 ERROR_CANCELLED 是取消，其他失败不冒充）；零弹窗、
         # 零重试——恰一次发起后即返回，无循环/after 调度/再触发（AST 断言固化）。
         status_var.set(admin_rescan_status_text(result_code))
+
+    # T5-02-B1：启动即后台只读加载一次记录列表（DR-018 §5；不阻塞开窗、不扫描）。
+    _refresh_records()
 
 
 def _browse_folder(root: object, custom_var: object, scope_var: object, filedialog: object) -> None:
