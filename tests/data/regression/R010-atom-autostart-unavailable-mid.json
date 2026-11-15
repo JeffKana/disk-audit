@@ -1,0 +1,33 @@
+{
+  "case_id": "R010",
+  "title": "KB已停止残留：仅自启动源不可用→中",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §5.1/R9；judge.py@7fc6826:288（group_autostart=autostart.available）:316-320；texts.py@7fc6826:456（unavailable_autostart）",
+  "root_cause": "合成边界（潜在回归）：自启动源单独不可用降一档；若自启动不可用被忽略或虚写已核验无匹配，本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\atom",
+  "unit": {
+    "files": 11,
+    "dirs": 2,
+    "logical_bytes": 458752,
+    "allocated_bytes": 462848,
+    "max_mtime": 1784361600,
+    "exe_files": 1
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": [],
+    "availability": {
+      "autostart": false
+    }
+  },
+  "expect": {
+    "confidence": "中",
+    "verdict_source": "知识库",
+    "forbidden_terms": ["已核验：自启动无匹配", "无匹配进程/服务/自启动"]
+  },
+  "notes": "合成样例（非真实误判）。与 R006 仅 autostart 可用性之差→established=4→中；降级链披露'自启动证据源不可用：未核验自启动项，不作无匹配结论'，其余三源已核验缺席合法出现"
+}

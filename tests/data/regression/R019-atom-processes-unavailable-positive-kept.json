@@ -1,0 +1,32 @@
+{
+  "case_id": "R019",
+  "title": "KB已停止+进程源不可用但单元下正进程路径保留→高/进程服务",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §9.2；judge.py@7fc6826:148-174（_active_under 不检查 available）:321:442-455；schema availability（显式false不丢paths）",
+  "root_cause": "合成边界（潜在回归）：进程源不可用不得丢弃已采集的单元下正进程路径；若不可用即清空 paths 或残留判定压过运行证据，本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\atom",
+  "unit": {
+    "files": 12,
+    "dirs": 3,
+    "logical_bytes": 524288,
+    "allocated_bytes": 532480,
+    "max_mtime": 1784361600,
+    "exe_files": 1
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": ["C:\\Users\\u\\AppData\\Roaming\\atom\\atom.exe"],
+    "services": [],
+    "autostart": [],
+    "availability": {
+      "processes": false
+    }
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "进程服务"
+  },
+  "notes": "合成样例（非真实误判）。进程路径用驱动 <user>→u 替换后的形态（driver 事实，见 tests/test_regression_cases.py）；_active_under 前缀匹配命中→KB 让位→进程服务层高/A5。正命中反例组 B：与 R008 同为 processes=false，仅多一条正路径→中/知识库变高/进程服务"
+}

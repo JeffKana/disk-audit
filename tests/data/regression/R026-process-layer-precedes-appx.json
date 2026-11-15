@@ -1,0 +1,35 @@
+{
+  "case_id": "R026",
+  "title": "进程服务层先于Appx层短路（点号norm4本会中/Appx，正进程路径抢先定档）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §四架构③层序；judge.py@7fc6826:185-189（点号norm≥4双向包含）:442-455（进程服务层）:458-467（Appx层在后）",
+  "root_cause": "合成边界（潜在回归）：进程服务正命中先于 Appx 定档；若层序④⑤颠倒（本例将给中/Appx），本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\m.vbx",
+  "unit": {
+    "files": 4,
+    "dirs": 1,
+    "logical_bytes": 131072,
+    "allocated_bytes": 135168,
+    "max_mtime": 0,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [
+      {
+        "name": "m.vbx.app",
+        "package_full_name": "m.vbx.app_1.0.0_x64__abcdef01",
+        "install_location": "C:\\Program Files\\WindowsApps\\m.vbx.app_1.0.0_x64__abcdef01"
+      }
+    ],
+    "processes": ["C:\\Users\\u\\AppData\\Roaming\\m.vbx\\m.vbx.exe"],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "进程服务"
+  },
+  "notes": "合成样例（非真实误判，包名/进程为合成数据，KB 无 m.vbx 已只读核验）。nname='mvbx'(4) 与 family_norm='mvbxapp' 双向包含本会给中/Appx；单元下正进程路径使进程服务层先短路→高/A5。与 R027 同族点号边界但层序不同，非等价复制"
+}

@@ -1,0 +1,29 @@
+{
+  "case_id": "R016",
+  "title": "KB已停止残留：180天+1秒即陈旧→高（严格>180阈值上界）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §5.1 >180天；judge.py@7fc6826:46:380-382（浮点天数比较，不取整）",
+  "root_cause": "合成边界（潜在回归）：180天零1秒已越过阈值→陈旧→established=5→高；若阈值被改成>181、或天数先取整再比较（本例将降中），本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\atom",
+  "unit": {
+    "files": 12,
+    "dirs": 3,
+    "logical_bytes": 524288,
+    "allocated_bytes": 532480,
+    "max_mtime": 1784447999,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "知识库"
+  },
+  "notes": "合成样例（非真实误判）。max_mtime=1784447999→age≈180.0000116>180→陈旧；与 R015 仅 1 秒之差→中/高翻转，锁定浮点严格比较语义。证据链含'目录陈旧：180 天未修改（> 180 天）'（int 截断呈现，不影响判定）"
+}

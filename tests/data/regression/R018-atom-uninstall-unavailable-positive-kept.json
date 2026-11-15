@@ -1,0 +1,41 @@
+{
+  "case_id": "R018",
+  "title": "KB已停止+注册表源不可用但已采集正命中保留→高/注册表（在用为准）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §9.2 在用为准；judge.py@7fc6826:130-145（_match_registry 不检查 available）:321（reg_hits→KB让位）:428-439；schema availability（显式false不丢正证据）",
+  "root_cause": "合成边界（潜在回归）：available=false 只表示采集未完成，不得丢弃已给出的正证据；若不可用即清空 entries 或 KB 已停止压过在用正命中，本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\atom",
+  "unit": {
+    "files": 12,
+    "dirs": 3,
+    "logical_bytes": 524288,
+    "allocated_bytes": 532480,
+    "max_mtime": 1784361600,
+    "exe_files": 1
+  },
+  "evidence_scenario": {
+    "uninstall": [
+      {
+        "display_name": "Atom",
+        "publisher": "GitHub",
+        "install_location": "C:\\Program Files\\Atom",
+        "install_date": "2025-06-01",
+        "uninstall_string": "\"C:\\Program Files\\Atom\\unins000.exe\"",
+        "reg_path": "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Atom"
+      }
+    ],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": [],
+    "availability": {
+      "uninstall": false
+    }
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "注册表"
+  },
+  "notes": "合成样例（非真实误判，卸载记录为合成数据）。norm('Atom')='atom' 精确命中（len4≥2）；_match_registry 不看 available→reg_hits 非空→KB 已停止让位（9.2）→注册表层高/A3，证据链携带 KB 归属上下文。与 R007 同为 uninstall=false：无正证据→中/知识库，有正证据→高/注册表，证明可用性语义与正证据保真正交"
+}

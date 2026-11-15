@@ -1,0 +1,29 @@
+{
+  "case_id": "R017",
+  "title": "KB已停止残留：max_mtime=0无mtime信息不判陈旧→中",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "schema regression-case-v1 unit.max_mtime（0=无mtime信息不判陈旧）；judge.py@7fc6826:380-382（max_mtime>0 才计龄）",
+  "root_cause": "合成边界（潜在回归）：0 是'无信息'哨兵而非极古老时间戳；若把 0 当极陈旧（本例将变高）或当负数异常，本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\atom",
+  "unit": {
+    "files": 12,
+    "dirs": 3,
+    "logical_bytes": 524288,
+    "allocated_bytes": 532480,
+    "max_mtime": 0,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "中",
+    "verdict_source": "知识库"
+  },
+  "notes": "合成样例（非真实误判）。age_days=None→stale=False→established=4→中。与 R006 同为 atom 五源可用，仅 mtime 信息有无之差→高/中，证明陈旧项独立可辨；避免与 R006(181天) 构成等价复制"
+}

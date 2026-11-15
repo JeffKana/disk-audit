@@ -1,0 +1,33 @@
+{
+  "case_id": "R008",
+  "title": "KB已停止残留：仅进程源不可用→中（进程服务合组不成立）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §5.1/R9；judge.py@7fc6826:285-287（进程服务合组=processes.available AND services.available）:316-320；texts.py@7fc6826:454（unavailable_processes）",
+  "root_cause": "合成边界（潜在回归）：进程源单独不可用即令进程服务合组不成立；若合组被拆成单源计分、或不可用被虚写为已核验无匹配，本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\atom",
+  "unit": {
+    "files": 10,
+    "dirs": 2,
+    "logical_bytes": 393216,
+    "allocated_bytes": 397312,
+    "max_mtime": 1784361600,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": [],
+    "availability": {
+      "processes": false
+    }
+  },
+  "expect": {
+    "confidence": "中",
+    "verdict_source": "知识库",
+    "forbidden_terms": ["已核验：进程无匹配", "无匹配进程/服务/自启动"]
+  },
+  "notes": "合成样例（非真实误判）。与 R006 仅 processes 可用性之差→established=4→中；服务源仍可用故'已核验：服务无匹配'合法出现。正命中反例组 B：对照 R019（同 processes=false，仅多一条单元下正进程路径→高/进程服务）"
+}

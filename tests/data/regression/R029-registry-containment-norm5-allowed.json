@@ -1,0 +1,38 @@
+{
+  "case_id": "R029",
+  "title": "注册表包含匹配norm恰5允许（qpvnm⊂qpvnmsuite，R004泛化边界细化）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "judge.py@7fc6826:134-145（len(nname)≥5才包含，含publisher）；R004 先例（长名包含允许）；R003 先例（短名拒绝）",
+  "root_cause": "合成边界（潜在回归）：注册表包含门槛恰 5 是下界；若门槛被抬到≥6（本例将落启发式低），本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\qpvnm",
+  "unit": {
+    "files": 7,
+    "dirs": 2,
+    "logical_bytes": 327680,
+    "allocated_bytes": 331776,
+    "max_mtime": 0,
+    "exe_files": 1
+  },
+  "evidence_scenario": {
+    "uninstall": [
+      {
+        "display_name": "Qpvnm Suite",
+        "publisher": "Sample Publisher",
+        "install_location": "C:\\Program Files\\Qpvnm Suite",
+        "install_date": "",
+        "uninstall_string": "",
+        "reg_path": "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\qpvnm"
+      }
+    ],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "注册表"
+  },
+  "notes": "合成样例（非真实误判，产品名/卸载记录为合成数据，KB 无 qpvnm 已只读核验）。精确不中（'qpvnm'≠'qpvnmsuite'）→包含：len('qpvnm')=5≥5 且 'qpvnm'⊂'qpvnmsuite'→高/注册表/A3。与 R003(4拒绝)/R004(≥5允许) 构成注册表包含门槛三点组，本例取恰 5 边界"
+}

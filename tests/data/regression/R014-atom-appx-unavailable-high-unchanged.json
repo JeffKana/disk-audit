@@ -1,0 +1,32 @@
+{
+  "case_id": "R014",
+  "title": "KB已停止残留：仅Appx不可用不改变五证据→高不变（Appx不在四必要源）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §5.1 五证据口径；judge.py@7fc6826:203-214（_necessary_source_status 只含 uninstall/processes/services/autostart）:284-296",
+  "root_cause": "合成边界（潜在回归）：Appx 不是五证据必要源；若把 Appx 可用性误当高档必要条件（本例将降中），本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\atom",
+  "unit": {
+    "files": 13,
+    "dirs": 3,
+    "logical_bytes": 589824,
+    "allocated_bytes": 593920,
+    "max_mtime": 1784361600,
+    "exe_files": 1
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": [],
+    "availability": {
+      "appx": false
+    }
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "知识库"
+  },
+  "notes": "合成样例（非真实误判）。availability 差异反例组 A 第二对：与 R009 同形（单源 false），但 appx=false→高不变、services=false→中，证明五源地位不等价、Appx 不计入分组。其余四源可用→正向守护链，established=5"
+}

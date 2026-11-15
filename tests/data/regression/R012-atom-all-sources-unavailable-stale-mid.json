@@ -1,0 +1,36 @@
+{
+  "case_id": "R012",
+  "title": "KB已停止残留：四必要源全不可用+181天陈旧→中（established=2中档下界）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §5.1/R9；judge.py@7fc6826:284-296（established≥2→中）:316-320；texts.py@7fc6826:453-456",
+  "root_cause": "合成边界（潜在回归）：四必要源全不可用时仅剩陈旧+KB已停止两项成立；若不可用被当作已核验缺席补足数量虚抬高档，本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\atom",
+  "unit": {
+    "files": 14,
+    "dirs": 4,
+    "logical_bytes": 655360,
+    "allocated_bytes": 659456,
+    "max_mtime": 1784361600,
+    "exe_files": 2
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": [],
+    "availability": {
+      "uninstall": false,
+      "processes": false,
+      "services": false,
+      "autostart": false
+    }
+  },
+  "expect": {
+    "confidence": "中",
+    "verdict_source": "知识库",
+    "forbidden_terms": ["已核验：", "无匹配进程/服务/自启动", "注册表无卸载记录"]
+  },
+  "notes": "合成样例（非真实误判）。established=0+0+0+1(陈旧)+1(KB已停止)=2→中档下界；全链只有不可用披露+陈旧+KB标注，任何'已核验：'字样都属虚写（禁词全锁）。与 R013 仅陈旧之差→中/低分界"
+}

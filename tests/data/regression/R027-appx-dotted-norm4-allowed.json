@@ -1,0 +1,35 @@
+{
+  "case_id": "R027",
+  "title": "Appx点号包含匹配norm恰4允许（a.bcd→abcd，R002同族正向边界细化）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "judge.py@7fc6826:185-189（含点号且len(nname)≥4双向包含）；F1 §四架构③；R002 先例（com.sample 点号允许）",
+  "root_cause": "合成边界（潜在回归）：点号名 norm 长度恰 4 是包含匹配下界；若门槛被抬到≥5（本例将落启发式低），本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Local\\Packages\\a.bcd",
+  "unit": {
+    "files": 2,
+    "dirs": 1,
+    "logical_bytes": 65536,
+    "allocated_bytes": 69632,
+    "max_mtime": 0,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [
+      {
+        "name": "a.bcd.app",
+        "package_full_name": "a.bcd.app_1.0.0_x64__abcdef01",
+        "install_location": "C:\\Program Files\\WindowsApps\\a.bcd.app_1.0.0_x64__abcdef01"
+      }
+    ],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "中",
+    "verdict_source": "Appx"
+  },
+  "notes": "合成样例（非真实误判，包名为合成数据，KB 无 a.bcd 已只读核验）。精确不中→点号分支：nname='abcd'(4)≥4，'abcd'⊂'abcdapp' 命中→中/Appx/A3。包含匹配边界对：R027(4允许) vs R028(3拒绝)，非等价（一档之差+来源不同）"
+}
