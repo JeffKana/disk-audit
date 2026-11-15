@@ -1,0 +1,33 @@
+{
+  "case_id": "R009",
+  "title": "KB已停止残留：仅服务源不可用→中（与R006仅一源之差，高变中）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §5.1/R9；judge.py@7fc6826:285-287（合组）:316-320；texts.py@7fc6826:455（unavailable_services）",
+  "root_cause": "合成边界（潜在回归）：服务源单独不可用即令进程服务合组不成立；若服务不可用被忽略仍计五证据，本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\atom",
+  "unit": {
+    "files": 9,
+    "dirs": 3,
+    "logical_bytes": 327680,
+    "allocated_bytes": 331776,
+    "max_mtime": 1784361600,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": [],
+    "availability": {
+      "services": false
+    }
+  },
+  "expect": {
+    "confidence": "中",
+    "verdict_source": "知识库",
+    "forbidden_terms": ["已核验：服务无匹配", "无匹配进程/服务/自启动"]
+  },
+  "notes": "合成样例（非真实误判）。availability 差异反例组 A 核心对：与 R006 输入仅 services 可用与否之差，判定高/知识库→中/知识库，证明可用性真实参与分组而非装饰字段；对照 R014（appx=false 不改变高档）证明五源地位不等价"
+}

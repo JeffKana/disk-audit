@@ -1,0 +1,29 @@
+{
+  "case_id": "R015",
+  "title": "KB已停止残留：180天整不判陈旧→中（严格>180阈值下界）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §5.1 >180天；judge.py@7fc6826:46（_STALE_DAYS=180）:380-382（stale=age_days>180 严格大于）",
+  "root_cause": "合成边界（潜在回归）：180天整恰在阈值上，不陈旧→established=4→中；若阈值被改成≥180（本例将变高），本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\atom",
+  "unit": {
+    "files": 12,
+    "dirs": 3,
+    "logical_bytes": 524288,
+    "allocated_bytes": 532480,
+    "max_mtime": 1784448000,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "中",
+    "verdict_source": "知识库"
+  },
+  "notes": "合成样例（非真实误判）。max_mtime=1784448000→age=(1800000000-1784448000)/86400=180.0 整，严格>180 不成立→不陈旧；五源可用但 established=4→中。180/181 边界三点组：R015(180整→中)、R016(180+1秒→高)、R006(181天→高)"
+}

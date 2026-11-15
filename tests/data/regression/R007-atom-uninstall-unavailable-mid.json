@@ -1,0 +1,33 @@
+{
+  "case_id": "R007",
+  "title": "KB已停止残留：仅注册表源不可用→中，且不得虚写'已核验无卸载记录'",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §5.1/R9 降级披露；judge.py@7fc6826:203-214（_necessary_source_status）:284（group_registry）:316-320（降级链）；texts.py@7fc6826:453（unavailable_registry）；schema availability（T6-01 严格 bool）",
+  "root_cause": "合成边界（潜在回归）：T5-06 纠偏语义——采集源未完成不得充当已核验的缺席证据；若不可用被当作'已核验无匹配'补足计分或虚写措辞，本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\atom",
+  "unit": {
+    "files": 8,
+    "dirs": 2,
+    "logical_bytes": 262144,
+    "allocated_bytes": 266240,
+    "max_mtime": 1784361600,
+    "exe_files": 1
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": [],
+    "availability": {
+      "uninstall": false
+    }
+  },
+  "expect": {
+    "confidence": "中",
+    "verdict_source": "知识库",
+    "forbidden_terms": ["已核验：注册表卸载项无卸载记录", "注册表无卸载记录"]
+  },
+  "notes": "合成样例（非真实误判）。与 R006 仅 uninstall 可用性之差：group_registry=False→established=4→中；降级链逐源披露'注册表卸载项证据源不可用：未核验卸载记录，不作无匹配结论'，其余三源仍为已核验缺席。禁词锁住不可用不得冒充已核验缺席（T5-06 缺陷复现防线）"
+}

@@ -1,0 +1,29 @@
+{
+  "case_id": "R022",
+  "title": "硬保护Junction先于KB层短路（Application Data兼容链接KB在册仍受保护）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §9.1 底线一；hardprotect.py@7fc6826:61-66（HARDPROTECT-JUNCTION）；judge.py@7fc6826:273-278（兼容链接·严禁删除→高/知识库A5）:364-374；生产 KB application data 条目",
+  "root_cause": "合成边界（潜在回归）：Application Data 是 Junction 兼容链接，KB 虽有'兼容链接·严禁删除'条目（本会高/知识库A5），硬保护必须先短路；若 KB 层抢先或 Junction 名单漏项，本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Local\\Application Data",
+  "unit": {
+    "files": 3,
+    "dirs": 1,
+    "logical_bytes": 8192,
+    "allocated_bytes": 12288,
+    "max_mtime": 0,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "受保护",
+    "verdict_source": "硬保护"
+  },
+  "notes": "合成样例（非真实误判）。KB 精确匹配 name/别名（无包含），'application data' 在册（已只读核验，lifecycle=未知）；_judge_kb_hit 对兼容链接·严禁删除返回高/知识库A5，但硬保护第一层先返回受保护/A5。层序反例：若层序①②颠倒，本例来源将变知识库"
+}

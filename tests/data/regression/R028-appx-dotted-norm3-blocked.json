@@ -1,0 +1,36 @@
+{
+  "case_id": "R028",
+  "title": "Appx点号包含匹配norm仅3拒绝（a.bc→abc，短名子串不得误判）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "judge.py@7fc6826:185（len(nname)≥4 门槛）；R003 先例（短名包含拒绝）；F1 §9.1 底线二（宁低勿误）",
+  "root_cause": "合成边界（潜在回归）：norm 长度 3 低于包含门槛，不得借子串命中 Appx；若门槛被降到≥3（本例将给中/Appx 且出现包名），本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Local\\Packages\\a.bc",
+  "unit": {
+    "files": 2,
+    "dirs": 1,
+    "logical_bytes": 65536,
+    "allocated_bytes": 69632,
+    "max_mtime": 0,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [
+      {
+        "name": "a.bc.app",
+        "package_full_name": "a.bc.app_1.0.0_x64__abcdef01",
+        "install_location": "C:\\Program Files\\WindowsApps\\a.bc.app_1.0.0_x64__abcdef01"
+      }
+    ],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "低",
+    "verdict_source": "启发式",
+    "forbidden_terms": ["a.bc.app"]
+  },
+  "notes": "合成样例（非真实误判，包名为合成数据，KB 无 a.bc 已只读核验）。nname='abc'(3)<4 拒绝包含，精确亦不中→启发式低/A5（files>0且exe=0信号）；禁词锁住被拒包名不得出现在判定输出。与 R027 仅一个字符之差→中/Appx vs 低/启发式"
+}

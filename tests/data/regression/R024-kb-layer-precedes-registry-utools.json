@@ -1,0 +1,38 @@
+{
+  "case_id": "R024",
+  "title": "KB层先于注册表层短路（utools已安装应用/未知，即使有注册表正命中）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §四架构③层序；judge.py@7fc6826:329-334（已安装应用/未知→高/知识库A3）:388-396（KB先于注册表）:428；生产 KB utools 条目（已安装应用/未知）",
+  "root_cause": "合成边界（潜在回归）：KB 命中即定档，注册表正命中不得抢先；若层序②③颠倒（本例将给高/注册表），本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\utools",
+  "unit": {
+    "files": 9,
+    "dirs": 2,
+    "logical_bytes": 393216,
+    "allocated_bytes": 397312,
+    "max_mtime": 0,
+    "exe_files": 1
+  },
+  "evidence_scenario": {
+    "uninstall": [
+      {
+        "display_name": "uTools",
+        "publisher": "Sample Publisher",
+        "install_location": "C:\\Program Files\\uTools",
+        "install_date": "2026-02-01",
+        "uninstall_string": "\"C:\\Program Files\\uTools\\unins000.exe\"",
+        "reg_path": "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\uTools"
+      }
+    ],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "知识库"
+  },
+  "notes": "合成样例（非真实误判，卸载记录为合成数据）。KB 无'在用'条目（502未知+1已停止，冻结输入），故用 utools（已安装应用/未知）分支锁 KB>注册表层序；norm('uTools')='utools' 精确命中本会给高/注册表。层序反例组 C：对照 R025（同形正证据但 KB 无命中→高/注册表）"
+}

@@ -1,0 +1,29 @@
+{
+  "case_id": "R006",
+  "title": "KB已停止残留：五证据全成立且181天陈旧→高（正向守护基线）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §5.1 四档五证据；judge.py@7fc6826:279-321（_judge_kb_hit 已停止分支五项分组，established=5 正向守护链）；生产 KB knowledge/entries.json atom（已停止/已安装应用）",
+  "root_cause": "合成边界（潜在回归）：锁定五证据全成立的高档正向路径；若任一必要源被误计为不可用、或进程服务合组被拆分，本例将降档，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\atom",
+  "unit": {
+    "files": 12,
+    "dirs": 3,
+    "logical_bytes": 524288,
+    "allocated_bytes": 532480,
+    "max_mtime": 1784361600,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "知识库"
+  },
+  "notes": "合成样例（非真实误判）。无 availability 键=五源全可用（旧语义）；NOW_TS=1800000000，max_mtime=1784361600→181天>180→陈旧；①注册表②进程服务③自启动④陈旧⑤KB已停止全成立→established=5→高，正向守护链含'注册表无卸载记录'与'无匹配进程/服务/自启动'。availability 差异反例组 A 基线（对照 R007~R014）；正命中反例组 B 基线（对照 R020）"
+}

@@ -1,0 +1,38 @@
+{
+  "case_id": "R025",
+  "title": "注册表层先于进程服务层短路（KB无命中，norm包含len5与单元下正进程并存）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §四架构③层序；judge.py@7fc6826:141（len≥5包含）:428-439（注册表层）:442-455（进程服务层在后）",
+  "root_cause": "合成边界（潜在回归）：注册表与进程服务正命中并存时注册表层先定档；若层序③④颠倒（本例将给高/进程服务），本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\zrtkw",
+  "unit": {
+    "files": 6,
+    "dirs": 2,
+    "logical_bytes": 204800,
+    "allocated_bytes": 208896,
+    "max_mtime": 0,
+    "exe_files": 1
+  },
+  "evidence_scenario": {
+    "uninstall": [
+      {
+        "display_name": "Zrtkw Tools",
+        "publisher": "Sample Publisher",
+        "install_location": "C:\\Program Files\\Zrtkw Tools",
+        "install_date": "",
+        "uninstall_string": "",
+        "reg_path": "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\zrtkw"
+      }
+    ],
+    "appx": [],
+    "processes": ["C:\\Users\\u\\AppData\\Roaming\\zrtkw\\zrtkw.exe"],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "注册表"
+  },
+  "notes": "合成样例（非真实误判，产品名/卸载记录/进程均为合成数据，KB 无 zrtkw 已只读核验）。nname='zrtkw'(5)⊂norm('Zrtkw Tools')='zrtkwtools' 包含命中；进程正路径同时成立但注册表层先短路。层序反例组 C：对照 R024（KB 命中与否决定来源）"
+}

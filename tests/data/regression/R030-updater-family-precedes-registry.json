@@ -1,0 +1,39 @@
+{
+  "case_id": "R030",
+  "title": "更新缓存正则族先于注册表层（*-updater即使有注册表正命中仍高/知识库）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §5.2 可再生两档；judge.py@7fc6826:409-425（'-updater' in name_l→更新缓存正则族，先于:428注册表层）",
+  "root_cause": "合成边界（潜在回归）：*-updater 命名属可再生更新缓存，正则族层先于注册表定档；若注册表抢先（本例将给高/注册表且出现卸载记录措辞），本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Local\\sample-updater",
+  "unit": {
+    "files": 15,
+    "dirs": 2,
+    "logical_bytes": 2097152,
+    "allocated_bytes": 2101248,
+    "max_mtime": 0,
+    "exe_files": 3
+  },
+  "evidence_scenario": {
+    "uninstall": [
+      {
+        "display_name": "Sample Updater",
+        "publisher": "Sample Publisher",
+        "install_location": "C:\\Program Files\\Sample Updater",
+        "install_date": "",
+        "uninstall_string": "",
+        "reg_path": "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\sample-updater"
+      }
+    ],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "知识库",
+    "forbidden_terms": ["注册表卸载记录："]
+  },
+  "notes": "合成样例（非真实误判，产品名/卸载记录为合成数据，KB 无 sample-updater 已只读核验）。norm('Sample Updater')='sampleupdater' 精确命中本会给高/注册表；'-updater' in name_l 先短路→高/知识库/A2（更新缓存，5.2 可再生措辞）。禁词锁住注册表措辞不得出现；与 R024 同为'正命中被前层短路'但层不同（正则族 vs KB），非等价"
+}

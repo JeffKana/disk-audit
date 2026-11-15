@@ -1,0 +1,38 @@
+{
+  "case_id": "R020",
+  "title": "KB已停止但注册表正命中（全源可用）→高/注册表，KB转上下文",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §9.2 在用为准；judge.py@7fc6826:321（reg_hits→None）:428-439（注册表层+KB归属上下文）",
+  "root_cause": "合成边界（潜在回归）：KB 已停止标注不得压过已核验的在用正证据；若残留判定优先于注册表正命中（本例将给高/知识库），本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\atom",
+  "unit": {
+    "files": 12,
+    "dirs": 3,
+    "logical_bytes": 524288,
+    "allocated_bytes": 532480,
+    "max_mtime": 1784361600,
+    "exe_files": 1
+  },
+  "evidence_scenario": {
+    "uninstall": [
+      {
+        "display_name": "Atom",
+        "publisher": "GitHub",
+        "install_location": "C:\\Program Files\\Atom",
+        "install_date": "2025-06-01",
+        "uninstall_string": "\"C:\\Program Files\\Atom\\unins000.exe\"",
+        "reg_path": "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Atom"
+      }
+    ],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "注册表"
+  },
+  "notes": "合成样例（非真实误判，卸载记录为合成数据）。正命中反例组 B 核心对：与 R006 输入仅多一条注册表正证据，判定来源高/知识库→高/注册表，证明 KB 已停止让位语义。与 R018 同正证据但全源可用，判定一致→available 不影响正证据消费"
+}

@@ -21,7 +21,6 @@ from tests.test_regression_cases import (
     CASES_DIR,
     REG_SCHEMA,
     _build_bundle,
-    _case_files,
 )
 
 SOURCES = ("uninstall", "appx", "processes", "services", "autostart")
@@ -231,11 +230,18 @@ def test_bundle_json_keeps_declared_state_and_content():
 # ---------- ② 旧 5 例兼容（字节/期望不动，状态全 True） ----------
 
 
-def _case_ids() -> list[str]:
-    return [path.stem for path in _case_files()]
+def _legacy_case_ids() -> list[str]:
+    """旧5兼容专用取样钉住 R001~R005 精确名单（DR-009/T602-v2，不再 glob 全目录）。"""
+    return [
+        "R001-code-not-openaicodex",
+        "R002-com-sample-dotted-containment-allowed",
+        "R003-short-name-registry-containment-blocked",
+        "R004-long-name-registry-containment-allowed",
+        "R005-kb-layer-precedes-appx",
+    ]
 
 
-@pytest.mark.parametrize("case_id", _case_ids())
+@pytest.mark.parametrize("case_id", _legacy_case_ids())
 def test_existing_regression_cases_remain_valid_and_available(case_id: str):
     sample = json.loads((CASES_DIR / f"{case_id}.json").read_text(encoding="utf-8"))
     _assert_schema_ok(sample)

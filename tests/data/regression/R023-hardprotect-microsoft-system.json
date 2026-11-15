@@ -1,0 +1,29 @@
+{
+  "case_id": "R023",
+  "title": "硬保护SYSTEM：末段Microsoft系统组件目录直接受保护，不进入打分",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §9.1 底线一；hardprotect.py@7fc6826:77-80（HARDPROTECT-SYSTEM，_SYSTEM_ROOT=microsoft）；judge.py@7fc6826:364-374",
+  "root_cause": "合成边界（潜在回归）：Microsoft 系统组件目录不得进入证据打分；若 SYSTEM 规则被移除或降级为启发式（本例将给低/启发式），本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\Microsoft",
+  "unit": {
+    "files": 20,
+    "dirs": 6,
+    "logical_bytes": 1048576,
+    "allocated_bytes": 1052672,
+    "max_mtime": 0,
+    "exe_files": 2
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "受保护",
+    "verdict_source": "硬保护"
+  },
+  "notes": "合成样例（非真实误判）。五数组全空、无 mtime、有 exe——若无硬保护会落启发式低档；SYSTEM 规则对末段 microsoft（非 DPAPI 子目录）短路→受保护/A5。与 R021(DPAPI)/R022(Junction) 构成硬保护三规则各一例"
+}

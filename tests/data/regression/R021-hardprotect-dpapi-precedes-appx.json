@@ -1,0 +1,35 @@
+{
+  "case_id": "R021",
+  "title": "硬保护DPAPI先于Appx层短路（Microsoft\\Protect即使有Appx正命中也受保护）",
+  "registered_at": "2026-11-15",
+  "registered_by": "Qoder-Dev-T6-02（任务卡 T6-02，T602-v2）",
+  "source_ref": "F1 §9.1 底线一；hardprotect.py@7fc6826:68-76（HARDPROTECT-DPAPI）；judge.py@7fc6826:364-374（硬保护最前短路）",
+  "root_cause": "合成边界（潜在回归）：DPAPI 密钥目录删除将导致已保存密码/证书丢失，任何证据层不得绕过；若硬保护被 Appx/KB 层抢先（本例将给中/Appx），本例失败，非真实用户误判",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\Microsoft\\Protect",
+  "unit": {
+    "files": 5,
+    "dirs": 1,
+    "logical_bytes": 16384,
+    "allocated_bytes": 20480,
+    "max_mtime": 1784361600,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [
+      {
+        "name": "protect",
+        "package_full_name": "protect_1.0.0_x64__abcdef01",
+        "install_location": "C:\\Program Files\\WindowsApps\\protect_1.0.0_x64__abcdef01"
+      }
+    ],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "受保护",
+    "verdict_source": "硬保护"
+  },
+  "notes": "合成样例（非真实误判，Appx 包为合成数据）。appx name='protect' 精确命中本会给中/Appx（KB 无 protect 条目，已只读核验）；硬保护层先短路→受保护/A5。层序/硬保护反例组 C：读副本变体把路径改为非保护 …\\Roaming\\protect（仅去掉 Microsoft 父目录，其余不变）→中/Appx，见证脚本复核"
+}
