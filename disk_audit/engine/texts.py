@@ -433,3 +433,25 @@ RECORDS_TEXTS: dict[str, str] = {
     "records_err_root_not_dir": "体检记录目录的现有路径组成部分不是目录，已拒绝访问：{target}",
     "records_err_root_stat": "无法核验体检记录目录路径：{exc}",
 }
+
+# ======================================================================
+# T5-06 证据源可用性纠偏文案（I1 前置修复；方案 §5.1 五证据 / R9 降级披露）。
+# 本区块 append-only：新增文案一律向文末追加，严禁改动上方既有键值。
+# "不可用"与"已核验无匹配"严格区分：采集源未完成时不得充当已核验的缺席证据；
+# 新增中文只在本区，judge.py 仅引用键名与模板参数。
+# ======================================================================
+T506_TEXTS: dict[str, str] = {
+    # 已核验事实（本分支恒成立 / 扫描 mtime 恒可核验）
+    "kb_stopped": "知识库标注已停止：{product}",
+    "stale": "目录陈旧：{days} 天未修改（> {threshold} 天）",
+    # 已核验的缺席（源 available=True 且无命中；逐源陈述，不合并、不虚写）
+    "verified_registry_absent": "已核验：注册表卸载项无卸载记录",
+    "verified_process_absent": "已核验：进程无匹配",
+    "verified_service_absent": "已核验：服务无匹配",
+    "verified_autostart_absent": "已核验：自启动无匹配",
+    # 不可用披露（未完成的必要源；明确"不作无匹配结论"，不补足计分）
+    "unavailable_registry": "注册表卸载项证据源不可用：未核验卸载记录，不作无匹配结论",
+    "unavailable_processes": "进程证据源不可用：未核验进程匹配，不作无匹配结论",
+    "unavailable_services": "服务证据源不可用：未核验服务匹配，不作无匹配结论",
+    "unavailable_autostart": "自启动证据源不可用：未核验自启动项，不作无匹配结论",
+}
