@@ -9,6 +9,7 @@ KeyboardInterrupt，不依赖 locale/argv 泄漏。本卡不接线 UI、不实�
 """
 from __future__ import annotations
 
+import copy
 import hashlib
 import inspect
 import json
@@ -947,3 +948,89 @@ def test_r1_bad_container_exception_message_clear_and_no_q3():
     message = str(excinfo.value)
     assert message and "confidence" in message  # 真实异常输出仍清晰
     assert "可回收" not in message
+
+
+# ============================================================================
+# T5-03-R1 回归（父 T503 第1次退回 DEF-QA-01；T503R1-v1 + T503-v2 + T503-RETURN-1）。
+# 三层（top/totals/candidate）非字符串额外键须文档化 RecordValidationError，不泄漏
+# 裸 TypeError；未知字符串键仍拒绝；合法控制不误拒；输入深层不变；save 验证先行无写入。
+# 先写后修：红为 c3 上的裸 TypeError 行为断言失败，非 ImportError/构造无效。仅追加。
+# ============================================================================
+
+_R1_NONSTRING_KEYS = [1, None, (1, 2)]  # 代表性内置非字符串键：int/None/tuple
+
+
+def _r1_inject_extra(doc: dict, layer: str, keys: dict) -> dict:
+    """把额外键注入指定层（top/totals/candidate）；keys 为 {键: 值}。"""
+    if layer == "top":
+        doc.update(keys)
+    elif layer == "totals":
+        doc["totals"].update(keys)
+    elif layer == "candidate":
+        doc["candidates"][0].update(keys)
+    else:  # pragma: no cover - 防御参数拼写错误
+        raise AssertionError(layer)
+    return doc
+
+
+@pytest.mark.parametrize("layer", ["top", "totals", "candidate"])
+@pytest.mark.parametrize("key", _R1_NONSTRING_KEYS)
+def test_r1_validate_nonstring_extra_key_rejected(layer, key):
+    report = valid_report()
+    _r1_inject_extra(report, layer, {key: "x"})
+    with pytest.raises(records.RecordValidationError):
+        records.validate_record(report)
+
+
+@pytest.mark.parametrize("layer", ["top", "totals", "candidate"])
+def test_r1_validate_mixed_extra_keys_rejected(layer):
+    report = valid_report()
+    _r1_inject_extra(report, layer, {"bogus_string": "x", 1: "y"})
+    with pytest.raises(records.RecordValidationError):
+        records.validate_record(report)
+
+
+@pytest.mark.parametrize("layer", ["top", "totals", "candidate"])
+def test_r1_validate_string_extra_key_still_rejected(layer):
+    """对照：未知字符串键仍按原文案拒绝（行为不放宽）。"""
+    report = valid_report()
+    _r1_inject_extra(report, layer, {"unknown_string_key": "x"})
+    with pytest.raises(records.RecordValidationError) as excinfo:
+        records.validate_record(report)
+    assert "unknown_string_key" in str(excinfo.value)
+
+
+@pytest.mark.parametrize("layer", ["top", "totals", "candidate"])
+@pytest.mark.parametrize("key", _R1_NONSTRING_KEYS)
+def test_r1_save_nonstring_extra_key_validation_first_no_write(tmp_path, layer, key):
+    report = valid_report()
+    _r1_inject_extra(report, layer, {key: "x"})
+    with pytest.raises(records.RecordValidationError):
+        records.save_record(report, records_dir=str(tmp_path), now=FIXED_NOW)
+    assert list(tmp_path.iterdir()) == []
+
+
+@pytest.mark.parametrize("layer", ["top", "totals", "candidate"])
+def test_r1_validate_nonstring_extra_key_input_unchanged(layer):
+    report = valid_report()
+    _r1_inject_extra(report, layer, {1: "x", "bogus": "y"})
+    snapshot = copy.deepcopy(report)
+    with pytest.raises(records.RecordValidationError):
+        records.validate_record(report)
+    assert report == snapshot
+
+
+def test_r1_validate_nonstring_extra_key_message_uses_existing_resource():
+    report = valid_report()
+    report[1] = "x"
+    with pytest.raises(records.RecordValidationError) as excinfo:
+        records.validate_record(report)
+    message = str(excinfo.value)
+    assert "未定义字段" in message  # 复用既有 records_err_extra_fields 模板
+    assert "可回收" not in message  # Q3 禁词
+
+
+def test_r1_legal_report_still_validates():
+    """合法控制：合法 1.1 报告校验通过（修复不放宽也不误拒）。"""
+    validated = records.validate_record(valid_report())
+    assert validated["schema_version"] == "1.1"

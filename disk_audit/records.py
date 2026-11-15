@@ -136,6 +136,19 @@ def _detail(template_key: str, **params: object) -> str:
     return texts.RECORDS_TEXTS[template_key].format(**params)
 
 
+def _extra_fields_label(extra: set) -> str:
+    """把额外键集合渲染为中文模板的 {fields} 参数（动态值走模板参数，OBS-1）。
+
+    DEF-QA-01（T5-03-R1）：字符串键保持原有字典序与逐字 "、" 拼接；含非字符串键
+    （int/None/tuple 等）时以 repr 披露并按 (是否字符串, repr) 稳定排序，绝不触发
+    sorted/join 的裸 TypeError。额外键一律仍被拒绝——不转为合法字段、不忽略未知数据。
+    """
+    if all(isinstance(key, str) for key in extra):
+        return "、".join(sorted(extra))
+    ordered = sorted(extra, key=lambda key: (isinstance(key, str), repr(key)))
+    return "、".join(key if isinstance(key, str) else repr(key) for key in ordered)
+
+
 def _validate_totals(totals: object) -> None:
     def bad(key: str, **params: object) -> RecordValidationError:
         return RecordValidationError(
@@ -147,9 +160,9 @@ def _validate_totals(totals: object) -> None:
     missing = [key for key in _TOTALS_KEYS if key not in totals]
     if missing:
         raise bad("records_detail_missing_fields", fields="、".join(missing))
-    extra = sorted(set(totals) - set(_TOTALS_KEYS))
+    extra = set(totals) - set(_TOTALS_KEYS)
     if extra:
-        raise bad("records_detail_extra_fields", fields="、".join(extra))
+        raise bad("records_detail_extra_fields", fields=_extra_fields_label(extra))
     for key in _TOTALS_KEYS:
         if not _is_nonneg_int(totals[key]):
             raise bad("records_detail_nonneg_int", field=key)
@@ -169,9 +182,9 @@ def _validate_candidates(candidates: object) -> None:
         missing = [key for key in _CANDIDATE_KEYS if key not in candidate]
         if missing:
             raise bad("records_detail_candidate_missing", index=index, fields="、".join(missing))
-        extra = sorted(set(candidate) - set(_CANDIDATE_KEYS))
+        extra = set(candidate) - set(_CANDIDATE_KEYS)
         if extra:
-            raise bad("records_detail_candidate_extra", index=index, fields="、".join(extra))
+            raise bad("records_detail_candidate_extra", index=index, fields=_extra_fields_label(extra))
         if not isinstance(candidate["path"], str) or not candidate["path"]:
             raise bad("records_detail_candidate_nonempty_str", index=index, field="path")
         for key in ("logical_bytes", "allocated_bytes"):
@@ -242,10 +255,10 @@ def validate_record(report: object) -> dict:
         raise RecordVersionError(
             texts.RECORDS_TEXTS["records_err_bad_version"].format(version=version)
         )
-    extra = sorted(set(report) - _ALLOWED_TOP)
+    extra = set(report) - _ALLOWED_TOP
     if extra:
         raise RecordValidationError(
-            texts.RECORDS_TEXTS["records_err_extra_fields"].format(fields="、".join(extra))
+            texts.RECORDS_TEXTS["records_err_extra_fields"].format(fields=_extra_fields_label(extra))
         )
     for key in ("generated_at", "scan_root"):
         if not isinstance(report[key], str) or not report[key]:

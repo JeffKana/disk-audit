@@ -615,3 +615,87 @@ def test_comparison_texts_zone_and_legacy_zones_intact() -> None:
         texts.RECORDS_TEXTS["records_err_bad_version"]
         == "不支持的体检记录版本 {version}：旧记录不可比，请使用对应版本的工具查看"
     )
+
+
+# ---------------------------------------------------------------------------
+# T5-03-R1 回归（DEF-QA-01；T503R1-v1 + T503-v2 + T503-RETURN-1）
+# 比较 before/after 两侧 × top/totals/candidate 三层 × 单/混合非字符串额外键
+# = 原 12 触发条件，均须文档化 RecordValidationError，不泄漏裸 TypeError；
+# 未知字符串键仍拒绝；合法同模式可比；输入深层不变。仅追加，不改原用例/预期。
+# ---------------------------------------------------------------------------
+
+_R1_LAYERS = ["top", "totals", "candidate"]
+_R1_NONSTRING_KEYS = [1, None, (1, 2)]
+
+
+def _r1_inject(doc: dict, layer: str, keys: dict) -> dict:
+    if layer == "top":
+        doc.update(keys)
+    elif layer == "totals":
+        doc["totals"].update(keys)
+    elif layer == "candidate":
+        doc["candidates"][0].update(keys)
+    else:  # pragma: no cover - 防御参数拼写错误
+        raise AssertionError(layer)
+    return doc
+
+
+@pytest.mark.parametrize("layer", _R1_LAYERS)
+@pytest.mark.parametrize("side", ["before", "after"])
+@pytest.mark.parametrize("mixed", [False, True])
+def test_r1_compare_nonstring_extra_key_rejected(layer, side, mixed):
+    """原 12 触发条件：3层×2侧×单/混合非字符串额外键→RecordValidationError。"""
+    good = _report([_candidate(r"C:\A", 10)])
+    bad = _report([_candidate(r"C:\A", 10)])
+    keys = {"bogus_string": "x", 1: "y"} if mixed else {1: "y"}
+    _r1_inject(bad, layer, keys)
+    before, after = (bad, good) if side == "before" else (good, bad)
+    with pytest.raises(records.RecordValidationError):
+        compare_records(before, after)
+
+
+@pytest.mark.parametrize("layer", _R1_LAYERS)
+@pytest.mark.parametrize("key", _R1_NONSTRING_KEYS)
+def test_r1_compare_each_nonstring_key_both_sides(layer, key):
+    """代表性内置键 int/None/tuple 在比较两侧均文档化拒绝。"""
+    for side in ("before", "after"):
+        good = _report([_candidate(r"C:\A", 10)])
+        bad = _report([_candidate(r"C:\A", 10)])
+        _r1_inject(bad, layer, {key: "x"})
+        before, after = (bad, good) if side == "before" else (good, bad)
+        with pytest.raises(records.RecordValidationError):
+            compare_records(before, after)
+
+
+@pytest.mark.parametrize("layer", _R1_LAYERS)
+@pytest.mark.parametrize("side", ["before", "after"])
+def test_r1_compare_string_extra_key_still_rejected(layer, side):
+    good = _report([_candidate(r"C:\A", 10)])
+    bad = _report([_candidate(r"C:\A", 10)])
+    _r1_inject(bad, layer, {"unknown_string_key": "x"})
+    before, after = (bad, good) if side == "before" else (good, bad)
+    with pytest.raises(records.RecordValidationError) as excinfo:
+        compare_records(before, after)
+    assert "unknown_string_key" in str(excinfo.value)
+
+
+@pytest.mark.parametrize("layer", _R1_LAYERS)
+def test_r1_compare_nonstring_extra_key_input_unchanged(layer):
+    good = _report([_candidate(r"C:\A", 10)])
+    bad = _report([_candidate(r"C:\A", 10)])
+    _r1_inject(bad, layer, {1: "x", "bogus": "y"})
+    good_snap = copy.deepcopy(good)
+    bad_snap = copy.deepcopy(bad)
+    with pytest.raises(records.RecordValidationError):
+        compare_records(bad, good)
+    assert bad == bad_snap
+    assert good == good_snap
+
+
+def test_r1_compare_legal_same_mode_still_comparable():
+    """合法控制：合法同模式 1.1 两份仍可比较（修复不误拒）。"""
+    before = _report([_candidate(r"C:\A", 100)])
+    after = _report([_candidate(r"C:\A", 150), _candidate(r"C:\B", 50)])
+    result = compare_records(before, after)
+    assert result.net_allocated_delta == 100
+    assert _paths(result.added) == [r"C:\B"]
