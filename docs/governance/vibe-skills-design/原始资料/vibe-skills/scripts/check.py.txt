@@ -1,0 +1,365 @@
+#!/usr/bin/env python3
+"""Offline, read-only checks for skill packages or opt-in project artifacts."""
+
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+import re
+import sys
+from urllib.parse import unquote, urlsplit
+
+ROOT = Path(__file__).resolve().parent.parent
+SKILLS = ("project-bootstrap", "plan-cards", "exec-sop", "accept-verify", "ci-cd-ops", "ops-runbook", "independent-test")
+STATES = {"待执行", "执行中", "待验收", "已完成", "阻塞", "退回", "取消"}
+EDGES = {
+    "待执行": {"执行中", "阻塞", "取消"},
+    "执行中": {"待验收", "阻塞", "取消"},
+    "待验收": {"已完成", "退回", "阻塞", "取消"},
+    "退回": {"执行中", "阻塞", "取消"},
+    "已完成": set(),
+    "取消": set(),
+}
+LINK = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
+FIELD = re.compile(r"^- ([a-z_]+):\s*(.*?)\s*$")
+
+
+class Report:
+    def __init__(self) -> None:
+        self.errors: list[str] = []
+        self.warnings: list[str] = []
+
+    def error(self, path: Path, message: str) -> None:
+        self.errors.append(f"{path}: {message}")
+
+    def warn(self, path: Path, message: str) -> None:
+        self.warnings.append(f"{path}: {message}")
+
+    def finish(self) -> int:
+        for message in self.errors:
+            print(f"ERROR {message}")
+        for message in self.warnings:
+            print(f"WARN  {message}")
+        print(f"完成：{len(self.errors)} 错误，{len(self.warnings)} 提示；未修改输入。")
+        return bool(self.errors)
+
+
+def read(path: Path, report: Report) -> str | None:
+    try:
+        return path.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as exc:
+        report.error(path, f"无法读取：{exc}")
+        return None
+
+
+def check_links(root: Path, path: Path, content: str, report: Report) -> None:
+    for raw in LINK.findall(content):
+        url = urlsplit(raw.strip().split(maxsplit=1)[0])
+        if url.scheme or url.netloc or not url.path:
+            continue
+        target = (path.parent / unquote(url.path)).resolve()
+        if target != root and root not in target.parents:
+            report.error(path, f"链接超出检查目录：{raw}")
+        elif not target.exists():
+            report.error(path, f"链接目标不存在：{raw}")
+
+
+def check_package(root: Path, report: Report) -> None:
+    root = root.resolve()
+    if not root.is_dir():
+        report.error(root, "包目录不存在")
+        return
+    changelog_path = root / "CHANGELOG.md"
+    changelog = read(changelog_path, report)
+    latest_version = None
+    if changelog is not None:
+        latest = re.search(r"^## (\d+\.\d+\.\d+)(?:[ \t]|$)", changelog, re.M)
+        if latest:
+            latest_version = latest.group(1)
+        else:
+            report.error(changelog_path, "CHANGELOG 缺少合法版本条目（应以 ## X.Y.Z 起始）")
+    docs: set[Path] = set()
+    for skill in SKILLS:
+        path = root / skill / "SKILL.md"
+        content = read(path, report)
+        if content is None:
+            continue
+        docs.add(path)
+        match = re.match(r"\A---\s*\n(.*?)\n---\s*\n", content, re.S)
+        if not match:
+            report.error(path, "缺少开头的 YAML frontmatter")
+            continue
+        front = match.group(1)
+        name = re.search(r"^name:\s*(.*?)\s*$", front, re.M)
+        description = re.search(r"^description:\s*(.*?)\s*$", front, re.M)
+        if not name or name.group(1).strip('\"\'') != skill:
+            report.error(path, f"name 应为 {skill}")
+        if not description or not 1 <= len(description.group(1).strip('\"\' ')) <= 1024:
+            report.error(path, "description 缺失或长度不在 1–1024 范围")
+        if not re.search(r"\]\((?:\.\./)?references/契约字典\.md\)", content):
+            report.error(path, "未链接共享契约")
+        references = root / skill / "references"
+        if references.is_dir():
+            docs.update(references.glob("*.md"))
+    shared = root / "references"
+    if shared.is_dir():
+        docs.update(shared.glob("*.md"))
+    if (root / "README.md").is_file():
+        docs.add(root / "README.md")
+    if (root / "evals" / "效果评测.md").is_file():
+        docs.add(root / "evals" / "效果评测.md")
+    anchor_versions: set[str] = set()
+    anchor_files = 0
+    for path in sorted(docs):
+        content = read(path, report)
+        if content is not None:
+            check_links(root, path, content, report)
+            if path.name == "契约字典.md":
+                anchor_files += 1
+                lines = [line for line in content.splitlines() if line.startswith("契约字典版本：")]
+                if not lines:
+                    report.error(path, "契约字典缺少版本锚点（契约字典版本：X.Y.Z）")
+                for line in lines:
+                    m = re.match(r"^契约字典版本：(\d+\.\d+\.\d+)(?:（|\s|$)", line)
+                    if not m:
+                        report.error(path, "契约版本锚点格式非法，应为「契约字典版本：X.Y.Z」起始行")
+                    else:
+                        anchor_versions.add(m.group(1))
+    if anchor_files == 0:
+        report.error(root, "未发现契约字典，无法核对契约版本锚点")
+    elif len(anchor_versions) > 1:
+        report.error(root, f"契约字典版本锚点不一致：{'、'.join(sorted(anchor_versions))}")
+    if latest_version is not None and anchor_versions and anchor_versions != {latest_version}:
+        report.error(changelog_path, f"CHANGELOG 最新版本与契约字典版本锚点不一致："
+                     f"{latest_version} / {'、'.join(sorted(anchor_versions))}")
+    report.warn(root, "只检查入口及本地链接目标是否存在；未验证标题锚点、规则语义或客户端加载。")
+
+
+def artifact(path: Path, required: set[str], report: Report) -> dict[str, str] | None:
+    content = read(path, report)
+    if content is None:
+        return None
+    fields: dict[str, str] = {}
+    for line in content.splitlines():
+        match = FIELD.match(line)
+        if match:
+            key, value = match.groups()
+            if key in fields:
+                report.error(path, f"字段重复：{key}")
+            fields[key] = value
+    for key in sorted(required):
+        value = fields.get(key, "")
+        if not value or re.search(r"<[^>]+>", value):
+            report.error(path, f"缺少有效字段：{key}")
+    return fields
+
+
+def check_history(path: Path, task: dict[str, str], report: Report) -> None:
+    status = task.get("status", "")
+    history = [s.strip() for s in task.get("history", "").split(">")]
+    if status not in STATES:
+        report.error(path, f"未知状态：{status}")
+    if not history or history[0] != "待执行" or history[-1] != status:
+        report.error(path, "history 须从待执行开始，最后一项等于 status")
+        return
+    for index, (before, after) in enumerate(zip(history, history[1:])):
+        if before == "阻塞":
+            valid = index > 0 and after in {history[index - 1], "取消"}
+        else:
+            valid = after in EDGES.get(before, set())
+        if not valid:
+            report.error(path, f"非法状态迁移：{before} → {after}")
+
+
+def match(path: Path, field: str, actual: str | None, expected: str | None, report: Report, strict: bool = True) -> None:
+    if actual and expected and actual != expected:
+        emit = report.error if strict else report.warn
+        emit(path, f"{field} 不一致：{actual} != {expected}")
+
+
+def check_task(path: Path, report: Report) -> str | None:
+    task = artifact(path, {"type", "id", "writer", "revision", "contract_version", "status",
+                           "history", "risk", "assignee", "merge_required"}, report)
+    if task is None:
+        return
+    if task.get("type") != "task":
+        report.error(path, "type 应为 task")
+    if task.get("risk") not in {"轻量", "标准", "高风险"}:
+        report.error(path, "risk 应为 轻量、标准 或 高风险")
+    if task.get("merge_required") not in {"yes", "no"}:
+        report.error(path, "merge_required 应为 yes 或 no")
+    check_history(path, task, report)
+    status = task.get("status")
+    execution_path = path.parent / "execution.md"
+    acceptance_path = path.parent / "acceptance.md"
+    merge_path = path.parent / "merge-record.md"
+    if status in {"执行中", "待验收", "退回", "已完成"} and not execution_path.is_file():
+        report.error(execution_path, "当前状态需要执行记录")
+    if status in {"退回", "已完成"} and not acceptance_path.is_file():
+        report.error(acceptance_path, "当前状态需要验收记录")
+    if status == "已完成" and task.get("merge_required") == "yes" and not merge_path.is_file():
+        report.error(merge_path, "任务要求合入，完成前需要合入记录")
+    if status in {"执行中", "待验收", "退回", "已完成"} and task.get("assignee") == "待分派":
+        report.error(path, "已开始的任务必须指定执行实例")
+
+    execution = None
+    if execution_path.is_file():
+        execution = artifact(execution_path, {"type", "id", "writer", "version", "task_contract",
+                                             "task_ack_by", "task_ack_at", "head"}, report)
+        if execution:
+            if execution.get("type") != "execution":
+                report.error(execution_path, "type 应为 execution")
+            for key, expected in (("id", task.get("id")), ("writer", task.get("assignee")),
+                                  ("task_ack_by", execution.get("writer")),
+                                  ("task_contract", task.get("contract_version"))):
+                match(execution_path, key, execution.get(key), expected, report)
+
+    test_report_path = path.parent / "test-report.md"
+    test_report = None
+    failed_test = False
+    strict_states = status in {"待验收", "退回", "已完成"}
+    test_strict = strict_states
+    if test_report_path.is_file():
+        test_report = artifact(test_report_path, {"type", "id", "writer", "version", "task_contract",
+                                                  "execution_version", "head", "result"}, report)
+        if test_report:
+            if test_report.get("type") != "test-report":
+                report.error(test_report_path, "type 应为 test-report")
+            failed_test = test_report.get("result") in {"失败", "阻塞"}
+            test_strict = strict_states or failed_test
+            match(test_report_path, "id", test_report.get("id"), task.get("id"), report)
+            match(test_report_path, "task_contract", test_report.get("task_contract"),
+                  task.get("contract_version"), report, strict=test_strict)
+            match(test_report_path, "execution_version", test_report.get("execution_version"),
+                  execution.get("version") if execution else None, report, strict=test_strict)
+            if execution:
+                match(test_report_path, "head", test_report.get("head"), execution.get("head"), report, strict=test_strict)
+            if test_report.get("result") not in {"通过", "失败", "阻塞"}:
+                report.error(test_report_path, "result 应为 通过、失败 或 阻塞")
+
+    acceptance = None
+    if acceptance_path.is_file():
+        if not execution_path.is_file():
+            report.error(acceptance_path, "验收记录缺少被引用的执行记录")
+        acceptance = artifact(acceptance_path, {"type", "id", "writer", "version", "task_contract",
+                                               "execution_version", "execution_ack_by", "execution_ack_at",
+                                               "head", "conclusion", "returns"}, report)
+        if acceptance:
+            if acceptance.get("type") != "acceptance":
+                report.error(acceptance_path, "type 应为 acceptance")
+            match(acceptance_path, "id", acceptance.get("id"), task.get("id"), report)
+            match(acceptance_path, "execution_ack_by", acceptance.get("execution_ack_by"), acceptance.get("writer"), report)
+            if acceptance.get("conclusion") not in {"通过", "有条件通过", "退回"}:
+                report.error(acceptance_path, "conclusion 应为 通过、有条件通过 或 退回")
+            if not acceptance.get("returns", "").isdigit():
+                report.error(acceptance_path, "returns 应为非负整数")
+            elif int(acceptance["returns"]) >= 2:
+                report.warn(acceptance_path, "已达到升级阈值，需人工核对负责人裁决证据")
+            if execution:
+                if execution.get("writer") == acceptance.get("writer"):
+                    report.error(acceptance_path, "执行人与验收人须独立")
+                strict_refs = status in {"待验收", "退回", "已完成"}
+                for key, expected in (("execution_version", execution.get("version")), ("head", execution.get("head"))):
+                    match(acceptance_path, key, acceptance.get(key), expected, report, strict_refs)
+            if test_report:
+                if acceptance.get("test_report_version"):
+                    match(acceptance_path, "test_report_version", acceptance.get("test_report_version"),
+                          test_report.get("version"), report, strict=test_strict)
+                elif test_strict:
+                    report.error(acceptance_path, "存在测试证据制品但验收记录未引用其版本")
+                else:
+                    report.warn(acceptance_path, "存在测试证据制品但验收记录未引用其版本")
+            elif acceptance.get("test_report_version") and not test_report_path.is_file():
+                if test_strict:
+                    report.error(acceptance_path, "验收记录引用了测试证据版本，但本地无 test-report.md 可核对")
+                else:
+                    report.warn(acceptance_path, "验收记录引用了测试证据版本，但本地无 test-report.md 可核对")
+            match(acceptance_path, "task_contract", acceptance.get("task_contract"), task.get("contract_version"),
+                  report, status == "已完成")
+            if status == "退回" and acceptance.get("conclusion") != "退回":
+                report.error(acceptance_path, "退回状态需要退回结论")
+            if status == "退回" and acceptance.get("returns", "").isdigit() and int(acceptance["returns"]) == 0:
+                report.error(acceptance_path, "退回状态的累计退回次数不能为 0")
+            if status == "已完成" and acceptance.get("conclusion") not in {"通过", "有条件通过"}:
+                report.error(acceptance_path, "完成状态需要通过或有条件通过")
+
+    if failed_test:
+        if acceptance_path.is_file() and acceptance:
+            if acceptance.get("conclusion") != "退回":
+                report.error(acceptance_path, "测试结论为失败或阻塞时验收结论不得覆盖测试结论，必须走退回")
+        elif not acceptance_path.is_file():
+            if strict_states:
+                report.error(acceptance_path, "测试结论为失败或阻塞时需有验收记录且结论为退回")
+            else:
+                report.warn(acceptance_path, "测试结论为失败或阻塞，验收记录尚未建立，须按契约走退回")
+        if status == "已完成":
+            report.error(path, "测试结论为失败或阻塞时任务不得已完成")
+
+    if merge_path.is_file():
+        if not acceptance_path.is_file():
+            report.error(merge_path, "合入记录缺少被引用的验收记录")
+        merge = artifact(merge_path, {"type", "id", "writer", "version", "acceptance_version",
+                                      "acceptance_ack_by", "acceptance_ack_at", "head", "merged"}, report)
+        if merge:
+            if merge.get("type") != "merge":
+                report.error(merge_path, "type 应为 merge")
+            if merge.get("merged") not in {"yes", "no"}:
+                report.error(merge_path, "merged 应为 yes 或 no")
+            if merge.get("merged") == "yes" and (status == "退回" or (acceptance and acceptance.get("conclusion") == "退回")):
+                report.error(merge_path, "退回状态或退回结论下不得标记 merged=yes")
+            if merge.get("merged") == "yes" and failed_test:
+                report.error(merge_path, "测试结论为失败或阻塞时不得标记 merged=yes")
+            if status == "已完成" and task.get("merge_required") == "yes" and merge.get("merged") != "yes":
+                report.error(merge_path, "任务要求合入，但 merged 不是 yes")
+            if task.get("merge_required") == "yes" and merge.get("head", "").lower() in {"", "n/a", "无"}:
+                report.error(merge_path, "需要合入的任务须记录待合 head")
+            match(merge_path, "id", merge.get("id"), task.get("id"), report)
+            match(merge_path, "acceptance_ack_by", merge.get("acceptance_ack_by"), merge.get("writer"), report)
+            if acceptance:
+                strict_refs = status in {"待验收", "退回", "已完成"}
+                for key, expected in (("acceptance_version", acceptance.get("version")), ("head", acceptance.get("head"))):
+                    match(merge_path, key, merge.get(key), expected, report, strict_refs)
+    return task.get("id")
+
+
+def check_project(root: Path, report: Report) -> None:
+    root = root.resolve()
+    if not root.is_dir():
+        report.error(root, "项目制品目录不存在")
+        return
+    paths = sorted(root.rglob("task.md"))
+    if not paths:
+        report.error(root, "未找到 task.md；轻量或外部制品不在本检查器覆盖范围")
+    seen: dict[str, Path] = {}
+    for path in paths:
+        task_id = check_task(path, report)
+        if task_id and task_id in seen:
+            report.error(path, f"任务 ID 与 {seen[task_id]} 重复：{task_id}")
+        elif task_id:
+            seen[task_id] = path
+    report.warn(root, "仅核对模板字段及声明的一致性，不能证明实际写入者、审批、检查结果、锁或事件真实性。"
+                      "project 模式仅适用于制品以任务目录文件为载体的项目；选用 PR 评论、CI 制品等外部载体时本模式不适用，"
+                      "其可达性与内容由人工核对；外部载体下仅引用版本而本地无同名制品文件的报错不构成流程结论。"
+                      "检查器输出不构成验收结论或合入授权；不核验测试证据与平台回执的内容真实性；"
+                      "测试结论一致性仅依据制品声明，不核验其真伪；"
+                      "规则收紧不区分历史冻结卡，适用范围由项目治理文档确定。")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    sub = parser.add_subparsers(dest="mode", required=True)
+    package = sub.add_parser("package", help="检查包入口和本地链接")
+    package.add_argument("root", nargs="?", type=Path, default=ROOT)
+    project = sub.add_parser("project", help="检查采用模板字段的项目任务目录")
+    project.add_argument("root", type=Path)
+    args = parser.parse_args()
+    report = Report()
+    if args.mode == "package":
+        check_package(args.root, report)
+    else:
+        check_project(args.root, report)
+    return report.finish()
+
+
+if __name__ == "__main__":
+    sys.exit(main())

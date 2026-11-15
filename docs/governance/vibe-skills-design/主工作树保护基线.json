@@ -1,0 +1,427 @@
+{
+  "branch": "main",
+  "head": "7fc68262aa6e96fe80e31eeda67121a742a79a77",
+  "main": "7fc68262aa6e96fe80e31eeda67121a742a79a77",
+  "origin_main": "7fc68262aa6e96fe80e31eeda67121a742a79a77",
+  "entries": [
+    {
+      "status": " M",
+      "path": ".agents/skills/accept-verify/SKILL.md",
+      "exists": true,
+      "records": [
+        {
+          "path": ".agents/skills/accept-verify/SKILL.md",
+          "mtime_ns": "1794732462847861600",
+          "sha256": "a02a8dd4c4f1fa3019efe1c1193527f0a36831d1f03da2d15836d321bf435bd9"
+        }
+      ],
+      "tree_sha256": "8f54cd41828c2bc210a489dabc7e1b8fa3978c9619862f30c67fbbcea17583df"
+    },
+    {
+      "status": " M",
+      "path": ".agents/skills/exec-sop/SKILL.md",
+      "exists": true,
+      "records": [
+        {
+          "path": ".agents/skills/exec-sop/SKILL.md",
+          "mtime_ns": "1794732462611874700",
+          "sha256": "246156f7dbfde675841676cbe8efdaafee8c518f313f331b1f77f0908c8157f7"
+        }
+      ],
+      "tree_sha256": "91d4afbf4f8f8b9367c34056265e80872a1c4ad4b1c79225f60768d6f2895ee7"
+    },
+    {
+      "status": " D",
+      "path": ".agents/skills/exec-sop/references/rules-map.md",
+      "exists": false,
+      "records": [],
+      "tree_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "status": " M",
+      "path": ".agents/skills/plan-cards/SKILL.md",
+      "exists": true,
+      "records": [
+        {
+          "path": ".agents/skills/plan-cards/SKILL.md",
+          "mtime_ns": "1794732462400507900",
+          "sha256": "d670e91dff3fc58f8e2bf8022e8f1a22b021a5e9f351391f56e814f109f5a467"
+        }
+      ],
+      "tree_sha256": "52e1ff6aa556b254413a8bf742174b3ab979b45927080e966156145984cfeb1f"
+    },
+    {
+      "status": "??",
+      "path": ".agents-backup-20261115/",
+      "exists": true,
+      "records": [
+        {
+          "path": ".agents-backup-20261115",
+          "mtime_ns": "1794729965790648300",
+          "sha256": null
+        },
+        {
+          "path": ".agents-backup-20261115/skills",
+          "mtime_ns": "1794729965825402000",
+          "sha256": null
+        },
+        {
+          "path": ".agents-backup-20261115/skills/accept-verify",
+          "mtime_ns": "1794729965827410300",
+          "sha256": null
+        },
+        {
+          "path": ".agents-backup-20261115/skills/accept-verify/SKILL.md",
+          "mtime_ns": "1794729965827410300",
+          "sha256": "e39621d82ddb20448183427537bc98f124d78a28f9352847edd9954f364000ab"
+        },
+        {
+          "path": ".agents-backup-20261115/skills/exec-sop",
+          "mtime_ns": "1794729965822392200",
+          "sha256": null
+        },
+        {
+          "path": ".agents-backup-20261115/skills/exec-sop/references",
+          "mtime_ns": "1794729965818391300",
+          "sha256": null
+        },
+        {
+          "path": ".agents-backup-20261115/skills/exec-sop/references/rules-map.md",
+          "mtime_ns": "1794729965819394300",
+          "sha256": "6319c6175867731dcf6ff568220bdd392d88944f29f00cd8cc71f0db2575461c"
+        },
+        {
+          "path": ".agents-backup-20261115/skills/exec-sop/SKILL.md",
+          "mtime_ns": "1794729965823392400",
+          "sha256": "4b5a9ebd8540a42768964a39f216e0a5f8d1bd71d5718b5dec5a396413920e8a"
+        },
+        {
+          "path": ".agents-backup-20261115/skills/kb-curator",
+          "mtime_ns": "1794729965793640100",
+          "sha256": null
+        },
+        {
+          "path": ".agents-backup-20261115/skills/kb-curator/SKILL.md",
+          "mtime_ns": "1794729965795341300",
+          "sha256": "1bcfea1cd3e782e9a89b4297e99e455681ffcf50506a7152e89ac19408989fc3"
+        },
+        {
+          "path": ".agents-backup-20261115/skills/plan-cards",
+          "mtime_ns": "1794729965798354500",
+          "sha256": null
+        },
+        {
+          "path": ".agents-backup-20261115/skills/plan-cards/SKILL.md",
+          "mtime_ns": "1794729965799354100",
+          "sha256": "06dd61fb46214f8b75bd09a9d48ae82c1f9859f2c032a56375c8cdc26e9ac8f1"
+        },
+        {
+          "path": ".agents-backup-20261115/skills/vm-ops",
+          "mtime_ns": "1794729965802355900",
+          "sha256": null
+        },
+        {
+          "path": ".agents-backup-20261115/skills/vm-ops/SKILL.md",
+          "mtime_ns": "1794729965803354600",
+          "sha256": "039de89da58dc94a23aee51784ec6109f8a1a88bbb6ed081bf36830d93d5df68"
+        }
+      ],
+      "tree_sha256": "591c3b7bf67ffd0e14c25c3223614ffdc20a51cd6638bcaa1723bdde6f185f07"
+    },
+    {
+      "status": "??",
+      "path": ".agents/skills-legacy-20261115/",
+      "exists": true,
+      "records": [
+        {
+          "path": ".agents/skills-legacy-20261115",
+          "mtime_ns": "1793520615387920900",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills-legacy-20261115/accept-verify",
+          "mtime_ns": "1793520615385415800",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills-legacy-20261115/accept-verify/SKILL.md",
+          "mtime_ns": "1793520615385415800",
+          "sha256": "e39621d82ddb20448183427537bc98f124d78a28f9352847edd9954f364000ab"
+        },
+        {
+          "path": ".agents/skills-legacy-20261115/exec-sop",
+          "mtime_ns": "1793520615385415800",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills-legacy-20261115/exec-sop/references",
+          "mtime_ns": "1793520615386414400",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills-legacy-20261115/exec-sop/references/rules-map.md",
+          "mtime_ns": "1793520615386414400",
+          "sha256": "6319c6175867731dcf6ff568220bdd392d88944f29f00cd8cc71f0db2575461c"
+        },
+        {
+          "path": ".agents/skills-legacy-20261115/exec-sop/SKILL.md",
+          "mtime_ns": "1793520615386414400",
+          "sha256": "4b5a9ebd8540a42768964a39f216e0a5f8d1bd71d5718b5dec5a396413920e8a"
+        },
+        {
+          "path": ".agents/skills-legacy-20261115/kb-curator",
+          "mtime_ns": "1793520615386414400",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills-legacy-20261115/kb-curator/SKILL.md",
+          "mtime_ns": "1793520615386414400",
+          "sha256": "1bcfea1cd3e782e9a89b4297e99e455681ffcf50506a7152e89ac19408989fc3"
+        },
+        {
+          "path": ".agents/skills-legacy-20261115/plan-cards",
+          "mtime_ns": "1793520615386414400",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills-legacy-20261115/plan-cards/SKILL.md",
+          "mtime_ns": "1793520615387920900",
+          "sha256": "06dd61fb46214f8b75bd09a9d48ae82c1f9859f2c032a56375c8cdc26e9ac8f1"
+        },
+        {
+          "path": ".agents/skills-legacy-20261115/vm-ops",
+          "mtime_ns": "1793719727690385600",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills-legacy-20261115/vm-ops/SKILL.md",
+          "mtime_ns": "1793719727690385600",
+          "sha256": "039de89da58dc94a23aee51784ec6109f8a1a88bbb6ed081bf36830d93d5df68"
+        }
+      ],
+      "tree_sha256": "4a653ceb330c8c82717fbde943d6cdde58b6da400c7c19f987a1995c13e2123e"
+    },
+    {
+      "status": "??",
+      "path": ".agents/skills/CHANGELOG.md",
+      "exists": true,
+      "records": [
+        {
+          "path": ".agents/skills/CHANGELOG.md",
+          "mtime_ns": "1794739777965582900",
+          "sha256": "03300afee320d1bfc9989f41be449285b038c439b3008c26a3b896b5ec1e5595"
+        }
+      ],
+      "tree_sha256": "29d5816f2f02bbb90c9db7377e62207130aef169b101765764b4f2bae8c1c343"
+    },
+    {
+      "status": "??",
+      "path": ".agents/skills/accept-verify/references/",
+      "exists": true,
+      "records": [
+        {
+          "path": ".agents/skills/accept-verify/references",
+          "mtime_ns": "1794732462849771100",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills/accept-verify/references/契约字典.md",
+          "mtime_ns": "1794739777975103000",
+          "sha256": "97f3288235dbd65b058f693a472c2209d1d6daafdd028747c6d3a2a4989a6d6b"
+        },
+        {
+          "path": ".agents/skills/accept-verify/references/模板库.md",
+          "mtime_ns": "1794739777975625900",
+          "sha256": "9ce7cc2b09a10a95f4446a19885a7506e8ab8c770b393e7d1295d87d2e7093b8"
+        }
+      ],
+      "tree_sha256": "2795c9bd8cbc2ca31bcf723153cfe2e234e6e92b4680eb17f656b6d1ab4d3511"
+    },
+    {
+      "status": "??",
+      "path": ".agents/skills/ci-cd-ops/",
+      "exists": true,
+      "records": [
+        {
+          "path": ".agents/skills/ci-cd-ops",
+          "mtime_ns": "1794732463208631100",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills/ci-cd-ops/references",
+          "mtime_ns": "1794732463209632000",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills/ci-cd-ops/references/契约字典.md",
+          "mtime_ns": "1794739777976633900",
+          "sha256": "97f3288235dbd65b058f693a472c2209d1d6daafdd028747c6d3a2a4989a6d6b"
+        },
+        {
+          "path": ".agents/skills/ci-cd-ops/references/模板库.md",
+          "mtime_ns": "1794739777977644300",
+          "sha256": "9ce7cc2b09a10a95f4446a19885a7506e8ab8c770b393e7d1295d87d2e7093b8"
+        },
+        {
+          "path": ".agents/skills/ci-cd-ops/SKILL.md",
+          "mtime_ns": "1794732463207632300",
+          "sha256": "9384037c58593f5784e25fd2fb0a445ddbe3927f55ca65cfafaa2f5a49c61c1b"
+        }
+      ],
+      "tree_sha256": "469c9efedb79208ef4aaa58deecd2a483978b3f43403a224ac093e49efed2a97"
+    },
+    {
+      "status": "??",
+      "path": ".agents/skills/exec-sop/references/契约字典.md",
+      "exists": true,
+      "records": [
+        {
+          "path": ".agents/skills/exec-sop/references/契约字典.md",
+          "mtime_ns": "1794739777973077700",
+          "sha256": "97f3288235dbd65b058f693a472c2209d1d6daafdd028747c6d3a2a4989a6d6b"
+        }
+      ],
+      "tree_sha256": "83ec5e058625e08576e119a8b4ae29ea0ed40df13535bd1c91d077f4e87d6aa9"
+    },
+    {
+      "status": "??",
+      "path": ".agents/skills/exec-sop/references/模板库.md",
+      "exists": true,
+      "records": [
+        {
+          "path": ".agents/skills/exec-sop/references/模板库.md",
+          "mtime_ns": "1794739777973583500",
+          "sha256": "9ce7cc2b09a10a95f4446a19885a7506e8ab8c770b393e7d1295d87d2e7093b8"
+        }
+      ],
+      "tree_sha256": "71b0be66e7bd6b9d9a20b7d780b595f9173884c171530b95b5d3fb3280d63d46"
+    },
+    {
+      "status": "??",
+      "path": ".agents/skills/independent-test/",
+      "exists": true,
+      "records": [
+        {
+          "path": ".agents/skills/independent-test",
+          "mtime_ns": "1794732463025430800",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills/independent-test/references",
+          "mtime_ns": "1794732463027431300",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills/independent-test/references/契约字典.md",
+          "mtime_ns": "1794739777981907300",
+          "sha256": "97f3288235dbd65b058f693a472c2209d1d6daafdd028747c6d3a2a4989a6d6b"
+        },
+        {
+          "path": ".agents/skills/independent-test/references/模板库.md",
+          "mtime_ns": "1794739777981907300",
+          "sha256": "9ce7cc2b09a10a95f4446a19885a7506e8ab8c770b393e7d1295d87d2e7093b8"
+        },
+        {
+          "path": ".agents/skills/independent-test/SKILL.md",
+          "mtime_ns": "1794732463025430800",
+          "sha256": "0386acda379f4d0709770f2282dd954447744a77745e880558cb7db507aaf0b1"
+        }
+      ],
+      "tree_sha256": "a5128fe4b0f8c65b360ab391ad5d981e0fdd2bf6066ba61789ca3c5370eef243"
+    },
+    {
+      "status": "??",
+      "path": ".agents/skills/ops-runbook/",
+      "exists": true,
+      "records": [
+        {
+          "path": ".agents/skills/ops-runbook",
+          "mtime_ns": "1794732463405986400",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills/ops-runbook/references",
+          "mtime_ns": "1794732463405404600",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills/ops-runbook/references/GitHub-故障排查.md",
+          "mtime_ns": "1794732463403891400",
+          "sha256": "7e92887450fa374946a0333e1adf68ed818fd87a95146ad7354622b0c343928f"
+        },
+        {
+          "path": ".agents/skills/ops-runbook/references/契约字典.md",
+          "mtime_ns": "1794739777979993600",
+          "sha256": "97f3288235dbd65b058f693a472c2209d1d6daafdd028747c6d3a2a4989a6d6b"
+        },
+        {
+          "path": ".agents/skills/ops-runbook/references/模板库.md",
+          "mtime_ns": "1794739777980397700",
+          "sha256": "9ce7cc2b09a10a95f4446a19885a7506e8ab8c770b393e7d1295d87d2e7093b8"
+        },
+        {
+          "path": ".agents/skills/ops-runbook/SKILL.md",
+          "mtime_ns": "1794732463405986400",
+          "sha256": "82ad58f737f4818a3dcda80eec6b0780750d8877e5e4354050d9e806c366dd94"
+        }
+      ],
+      "tree_sha256": "c422e7d08fc6e09c074e50a1c8e89d6be3e3a3266efdc7181a30975f20ca3408"
+    },
+    {
+      "status": "??",
+      "path": ".agents/skills/plan-cards/references/",
+      "exists": true,
+      "records": [
+        {
+          "path": ".agents/skills/plan-cards/references",
+          "mtime_ns": "1794732462401507700",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills/plan-cards/references/契约字典.md",
+          "mtime_ns": "1794739777970375500",
+          "sha256": "97f3288235dbd65b058f693a472c2209d1d6daafdd028747c6d3a2a4989a6d6b"
+        },
+        {
+          "path": ".agents/skills/plan-cards/references/模板库.md",
+          "mtime_ns": "1794739777971589000",
+          "sha256": "9ce7cc2b09a10a95f4446a19885a7506e8ab8c770b393e7d1295d87d2e7093b8"
+        }
+      ],
+      "tree_sha256": "80513b9a2a9d095b69521a35bb204c39eecf7029b5ab5865bdcf740b2d45d2a2"
+    },
+    {
+      "status": "??",
+      "path": ".agents/skills/project-bootstrap/",
+      "exists": true,
+      "records": [
+        {
+          "path": ".agents/skills/project-bootstrap",
+          "mtime_ns": "1794732462249293600",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills/project-bootstrap/references",
+          "mtime_ns": "1794732462251082700",
+          "sha256": null
+        },
+        {
+          "path": ".agents/skills/project-bootstrap/references/契约字典.md",
+          "mtime_ns": "1794739777967594200",
+          "sha256": "97f3288235dbd65b058f693a472c2209d1d6daafdd028747c6d3a2a4989a6d6b"
+        },
+        {
+          "path": ".agents/skills/project-bootstrap/references/模板库.md",
+          "mtime_ns": "1794739777968590700",
+          "sha256": "9ce7cc2b09a10a95f4446a19885a7506e8ab8c770b393e7d1295d87d2e7093b8"
+        },
+        {
+          "path": ".agents/skills/project-bootstrap/SKILL.md",
+          "mtime_ns": "1794732462248293100",
+          "sha256": "13aa8dd239fd410967043f6a9d09b9ddf9384af19db936d4d733e237f0f8ec7b"
+        }
+      ],
+      "tree_sha256": "3061a0126c67876a7c0c4ccd574297db1a51edffd543c87604e39eb7997b82a9"
+    }
+  ]
+}
