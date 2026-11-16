@@ -1,0 +1,32 @@
+{
+  "case_id": "R033",
+  "title": "Anki2 用户牌组目录按已安装应用归属，不得当作缓存",
+  "registered_at": "2026-11-16",
+  "registered_by": "CodeBuddy-KB-E4-Batch1（任务卡 T6-03-KB1）",
+  "root_cause": "旧库未登记 anki2，用户牌组/媒体目录可能被启发式误归为缓存或低置信残留",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\Anki2",
+  "unit": {
+    "files": 4,
+    "dirs": 2,
+    "logical_bytes": 8192,
+    "allocated_bytes": 8192,
+    "max_mtime": 0,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "知识库",
+    "forbidden_terms": [
+      "已停止"
+    ]
+  },
+  "notes": "期望来源=知识库（已安装应用）；notes 已含“仅诊断，不读取内容”，判定不读取内容。",
+  "source_ref": "F1 §5.1；DR-016；PM 一手来源快照 pm-primary-source-anki-v1.json"
+}

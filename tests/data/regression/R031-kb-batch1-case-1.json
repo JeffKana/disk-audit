@@ -1,0 +1,32 @@
+{
+  "case_id": "R031",
+  "title": "Notepad++ 用户配置目录应直接命中知识库（新增条目归属）",
+  "registered_at": "2026-11-16",
+  "registered_by": "CodeBuddy-KB-E4-Batch1（任务卡 T6-03-KB1）",
+  "root_cause": "旧 503 条未登记 notepad++，该目录只能落到启发式/其它层，新增后应由知识库层直接给出归属",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\notepad++",
+  "unit": {
+    "files": 4,
+    "dirs": 2,
+    "logical_bytes": 8192,
+    "allocated_bytes": 8192,
+    "max_mtime": 0,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "知识库",
+    "forbidden_terms": [
+      "已停止"
+    ]
+  },
+  "notes": "期望来源=知识库：命中 notepad++（已安装应用，lifecycle 未知→高/A3）；旧库应红、扩库后绿。仅合成数据。",
+  "source_ref": "F1 §5.1 知识库层先于注册表/启发式；DR-016 前置；T6-03-KB1 批准 JSON KB1-APPROVED-20-v1"
+}

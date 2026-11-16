@@ -1,0 +1,32 @@
+{
+  "case_id": "R032",
+  "title": "Neovim 的 nvim-data 精确别名应命中同一条目",
+  "registered_at": "2026-11-16",
+  "registered_by": "CodeBuddy-KB-E4-Batch1（任务卡 T6-03-KB1）",
+  "root_cause": "旧库无 nvim 条目；新条目需以精确别名覆盖 data/state 目录，且 nvim-data-backup 不得被包含匹配误命中",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Local\\nvim-data",
+  "unit": {
+    "files": 4,
+    "dirs": 2,
+    "logical_bytes": 8192,
+    "allocated_bytes": 8192,
+    "max_mtime": 0,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "知识库",
+    "forbidden_terms": [
+      "已停止"
+    ]
+  },
+  "notes": "期望来源=知识库：nvim 的精确别名；反例 nvim-data-backup 另在自有证据见证，不进产品测试。",
+  "source_ref": "F1 §5.1；kb-curator 别名规则；PM 批准 nvim 唯一别名 nvim-data（固定 commit 依据）"
+}

@@ -1,0 +1,33 @@
+{
+  "case_id": "R035",
+  "title": "MobaXterm 官方限定“部分版本”且生命周期未知，不得推停在用/停用",
+  "registered_at": "2026-11-16",
+  "registered_by": "CodeBuddy-KB-E4-Batch1（任务卡 T6-03-KB1）",
+  "source_ref": "F1 §5.1；kb-curator 生命周期纪律；PM 批准 notes 保留限定",
+  "root_cause": "旧库无 mobaxterm；新条目 lifecycle 未知，不得因目录存在推断已停止或残留置信",
+  "path_pattern": "C:\\Users\\<user>\\AppData\\Roaming\\MobaXterm",
+  "unit": {
+    "files": 3,
+    "dirs": 1,
+    "logical_bytes": 4096,
+    "allocated_bytes": 4096,
+    "max_mtime": 0,
+    "exe_files": 0
+  },
+  "evidence_scenario": {
+    "uninstall": [],
+    "appx": [],
+    "processes": [],
+    "services": [],
+    "autostart": []
+  },
+  "expect": {
+    "confidence": "高",
+    "verdict_source": "知识库",
+    "forbidden_terms": [
+      "已停止",
+      "残留"
+    ]
+  },
+  "notes": "期望=知识库/高（已安装应用）；禁词覆盖“已停止/残留”；仅合成数据。"
+}
