@@ -472,3 +472,35 @@ COMPARISON_TEXTS: dict[str, str] = {
     # 同一份报告内路径重复：拒绝后者静默覆盖。
     "comparison_err_duplicate_path": "{side}报告内候选路径重复，拒绝后者静默覆盖：{path}",
 }
+# ======================================================================
+# T5-04-A 体检关联元数据文案（checkup-link-v1；DR-016）。
+# 本区块 append-only：新增文案一律向文末追加，严禁改动上方既有键值。
+# 关联元数据只存标识，record_error 仅固定机器码 record-save-failed；
+# 原始异常、自由文字、用户绝对路径不得进入元数据，只能经本区中文资源披露。
+# ======================================================================
+LINKS_TEXTS: dict[str, str] = {
+    "links_err_not_object": "体检关联元数据应为对象",
+    "links_err_missing_fields": "体检关联元数据缺少字段 {fields}",
+    "links_err_extra_fields": "体检关联元数据出现未定义字段 {fields}",
+    "links_err_bad_version": "体检关联元数据版本不受支持：{version}",
+    "links_err_bad_field": "体检关联元数据字段不合法：{detail}",
+    "links_detail_nonempty_str": "{field} 应为非空字符串",
+    "links_detail_bad_id": "{field} 应为 32 位小写十六进制",
+    "links_detail_bad_time": "{field} 应为含明确时区的 ISO 8601 时间",
+    "links_detail_bad_mode": "{field} 只能是 normal 或 admin",
+    "links_detail_bad_report": "{field} 不符合体检报告命名",
+    "links_detail_bad_record": "{field} 不符合体检记录命名",
+    "links_detail_mode_mismatch": "{field} 的 admin 前缀与 mode 不一致",
+    "links_detail_bad_record_error": "record_error 只能是固定机器码 record-save-failed",
+    "links_detail_xor": "record_id 与 record_error 必须且只能有一个非空",
+    "links_err_bad_id": "体检关联 ID 不合法：{checkup_id}",
+    "links_err_outside_dir": "体检关联路径越界，已拒绝：{target}",
+    "links_err_root": "体检关联目录不可用：{detail}",
+    "links_err_read": "无法读取体检关联文件：{exc}",
+    "links_err_encode": "体检关联文件不是 UTF-8 编码：{exc}",
+    "links_err_json": "体检关联文件不是合法 JSON：{exc}",
+    "links_err_not_regular": "体检关联项不是普通文件（目录或重解析点），已跳过：{filename}",
+    "links_err_conflict": "目标体检关联已存在，拒绝覆盖：{target}",
+    "links_err_write": "写入体检关联文件失败：{exc}",
+    "links_err_id_mismatch": "文件正文 checkup_id 与文件名不一致：{filename}",
+}
