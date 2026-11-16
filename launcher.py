@@ -1344,14 +1344,21 @@ def build_scope_ui(
             pass  # 无 UI 可更新时静默收尾，不掩盖枚举本身的结果
 
     def _apply_records(snapshot: dict, generation: int) -> None:
-        """主线程回填：过期 generation 直接丢弃（乱序刷新只认最新一次）。"""
+        """主线程回填：过期 generation 直接丢弃（乱序刷新只认最新一次）。
+
+        延期执行点隔离（T502B1-RETURN-1）：窗口销毁/控件写入的普通 Exception
+        不得逃出主线程事件循环；BaseException 仍传播，调度失败保护保持原样。
+        """
         if generation != records_state["generation"]:
             return
-        summary, rows = records_view_model(snapshot)
-        records_summary_var.set(summary)
-        records_box.delete(0, "end")
-        for row in rows:
-            records_box.insert("end", row)
+        try:
+            summary, rows = records_view_model(snapshot)
+            records_summary_var.set(summary)
+            records_box.delete(0, "end")
+            for row in rows:
+                records_box.insert("end", row)
+        except Exception:
+            pass  # 无 UI 可更新时静默收尾，与 _dispatch_records 调度保护同边界
 
     def _refresh_records() -> None:
         """I3 只读刷新：后台线程枚举 records.list_records，经 after 回主线程写控件。

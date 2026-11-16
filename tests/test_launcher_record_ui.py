@@ -1185,3 +1185,148 @@ def test_existing_texts_zones_unchanged():
     )
     assert texts.COMPARISON_TEXTS["comparison_side_before"] == "前一份"
     assert len(texts.EVIDENCE_SOURCE_ENUM) == 9
+
+
+# ---------------------------------------------------------------------------
+# T502B1-RETURN-1：新增列表 after 闭包实际执行点普通异常隔离（recovery-1）
+#
+# 真实控制链：build_scope_ui → 刷新按钮 command → 后台记录枚举 → root.after
+# 入队 → 主线程 drain 执行 _apply_records → 控件 set/insert 抛异常。
+# 0061 上普通异常逃出 drain（有效红）；修复只隔离普通 Exception，
+# 自定义 BaseException 哨兵仍传播，过期 generation 仍不写控件。
+# ---------------------------------------------------------------------------
+
+
+class _DeferredSentinel(BaseException):
+    """自定义 BaseException 哨兵：禁真 KeyboardInterrupt（launcher 模块契约）。"""
+
+
+def _wait_refresh_enqueued(root, before: int, count: int = 1, timeout: float = 10.0) -> None:
+    """等待刷新回调真正进入 root.after 队列；不 drain，保留执行点未执行。"""
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if len(root.pending) - before >= count:
+            return
+        for worker in [t for t in threading.enumerate() if t.name == "diskaudit-records"]:
+            worker.join(0.02)
+        time.sleep(0.01)
+    raise AssertionError("刷新回调未在超时内进入延期队列")
+
+
+def _seed_one_record(gui) -> None:
+    """tmp records 根落一条有效记录：让 rows 非空，真正到达 insert 执行点。"""
+    records.save_record(valid_report(version="1.1"), records_dir=str(gui.records_dir))
+
+
+@pytest.mark.parametrize(
+    ("target", "exc_type"),
+    [("summary_set", ValueError), ("insert", RuntimeError)],
+)
+def test_deferred_records_apply_isolates_ordinary_exception(gui, target, exc_type):
+    """延期执行点控件写入普通异常不得逃出主线程事件 drain。"""
+    root = gui.build()
+    settle(root)
+    _seed_one_record(gui)
+    var = records_summary(root).kw["textvariable"]
+    box = records_box(root)
+    button = button_by_text(root, texts.RECORD_UI_TEXTS["records_refresh"])
+
+    def explode(*_args):
+        raise exc_type("deferred-record-list-write")
+
+    if target == "summary_set":
+        original = var.set
+        var.set = explode
+        try:
+            before = len(root.pending)
+            button.invoke()
+            _wait_refresh_enqueued(root, before)
+            root.drain()  # 0061：ValueError 逃出此处；修复后安静返回
+        finally:
+            var.set = original
+    else:
+        original_insert = box.insert
+        box.insert = explode
+        try:
+            before = len(root.pending)
+            button.invoke()
+            _wait_refresh_enqueued(root, before)
+            root.drain()  # 0061：RuntimeError 逃出此处；修复后安静返回
+        finally:
+            box.insert = original_insert
+
+
+def test_deferred_records_apply_after_destroy_is_quiet(gui):
+    """入队后窗口销毁：延期 Tk 写入失败同等隔离，不逃出 drain。"""
+    root = gui.build()
+    settle(root)
+    _seed_one_record(gui)
+    var = records_summary(root).kw["textvariable"]
+    original = var.set
+    button = button_by_text(root, texts.RECORD_UI_TEXTS["records_refresh"])
+
+    def destroyed_write(_value):
+        raise RuntimeError("窗口已销毁")
+
+    var.set = destroyed_write
+    try:
+        before = len(root.pending)
+        button.invoke()
+        _wait_refresh_enqueued(root, before)
+        root.destroyed = True
+        root.drain()  # 0061：RuntimeError 逃出此处；修复后安静收尾
+    finally:
+        var.set = original
+        root.destroyed = False
+
+
+def test_deferred_records_apply_propagates_custom_base_exception(gui):
+    """隔离只针对 Exception：自定义 BaseException 哨兵必须继续传播。"""
+    root = gui.build()
+    settle(root)
+    _seed_one_record(gui)
+    var = records_summary(root).kw["textvariable"]
+    original = var.set
+    button = button_by_text(root, texts.RECORD_UI_TEXTS["records_refresh"])
+
+    def sentinel_write(_value):
+        raise _DeferredSentinel("sentinel-not-a-real-interrupt")
+
+    var.set = sentinel_write
+    try:
+        before = len(root.pending)
+        button.invoke()
+        _wait_refresh_enqueued(root, before)
+        with pytest.raises(_DeferredSentinel):
+            root.drain()
+    finally:
+        var.set = original
+
+
+def test_deferred_records_apply_stale_generation_never_writes_widgets(gui):
+    """同队列两次刷新：过期 generation 的回调执行时不写控件，只有最新一次回填。"""
+    root = gui.build()
+    settle(root)
+    _seed_one_record(gui)
+    var = records_summary(root).kw["textvariable"]
+    button = button_by_text(root, texts.RECORD_UI_TEXTS["records_refresh"])
+    writes_before = len(var.writes)
+    seen: list[str] = []
+    original = var.set
+
+    def record_set(value):
+        seen.append(value)
+        original(value)
+
+    var.set = record_set
+    try:
+        before = len(root.pending)
+        button.invoke()
+        button.invoke()
+        _wait_refresh_enqueued(root, before, count=2)
+        root.drain()
+    finally:
+        var.set = original
+    assert len(seen) == 1, f"过期 generation 不得写控件，实得 {seen}"
+    assert len(var.writes) == writes_before + 1
+    assert seen[0] == texts.RECORD_UI_TEXTS["records_summary_fmt"].format(count=1)
